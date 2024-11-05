@@ -8,71 +8,180 @@ package chess;
  */
 public class ChessBoard {
 
+    private ChessPiece piece_at_a_1;
+    private ChessPiece piece_at_a_2;
+    private ChessPiece piece_at_a_3;
+    private ChessPiece piece_at_a_4;
+    private ChessPiece piece_at_a_5;
+    private ChessPiece piece_at_a_6;
+    private ChessPiece piece_at_a_7;
+    private ChessPiece piece_at_a_8;
+    private ChessPiece piece_at_b_1;
+    private ChessPiece piece_at_b_2;
+    private ChessPiece piece_at_b_3;
+    private ChessPiece piece_at_b_4;
+    private ChessPiece piece_at_b_5;
+    private ChessPiece piece_at_b_6;
+    private ChessPiece piece_at_b_7;
+    private ChessPiece piece_at_b_8;
+    private ChessPiece piece_at_c_1;
+    private ChessPiece piece_at_c_2;
+    private ChessPiece piece_at_c_3;
+    private ChessPiece piece_at_c_4;
+    private ChessPiece piece_at_c_5;
+    private ChessPiece piece_at_c_6;
+    private ChessPiece piece_at_c_7;
+    private ChessPiece piece_at_c_8;
+    private ChessPiece piece_at_d_1;
+    private ChessPiece piece_at_d_2;
+    private ChessPiece piece_at_d_3;
+    private ChessPiece piece_at_d_4;
+    private ChessPiece piece_at_d_5;
+    private ChessPiece piece_at_d_6;
+    private ChessPiece piece_at_d_7;
+    private ChessPiece piece_at_d_8;
+    private ChessPiece piece_at_e_1;
+    private ChessPiece piece_at_e_2;
+    private ChessPiece piece_at_e_3;
+    private ChessPiece piece_at_e_4;
+    private ChessPiece piece_at_e_5;
+    private ChessPiece piece_at_e_6;
+    private ChessPiece piece_at_e_7;
+    private ChessPiece piece_at_e_8;
+    private ChessPiece piece_at_f_1;
+    private ChessPiece piece_at_f_2;
+    private ChessPiece piece_at_f_3;
+    private ChessPiece piece_at_f_4;
+    private ChessPiece piece_at_f_5;
+    private ChessPiece piece_at_f_6;
+    private ChessPiece piece_at_f_7;
+    private ChessPiece piece_at_f_8;
+    private ChessPiece piece_at_g_1;
+    private ChessPiece piece_at_g_2;
+    private ChessPiece piece_at_g_3;
+    private ChessPiece piece_at_g_4;
+    private ChessPiece piece_at_g_5;
+    private ChessPiece piece_at_g_6;
+    private ChessPiece piece_at_g_7;
+    private ChessPiece piece_at_g_8;
+    private ChessPiece piece_at_h_1;
+    private ChessPiece piece_at_h_2;
+    private ChessPiece piece_at_h_3;
+    private ChessPiece piece_at_h_4;
+    private ChessPiece piece_at_h_5;
+    private ChessPiece piece_at_h_6;
+    private ChessPiece piece_at_h_7;
+    private ChessPiece piece_at_h_8;
+    public String toString() {
+        String new_string = "";
+        for (int i = 8; i > 0; i = i - 1) {
+            new_string = String.join("",new_string,"|");
+            for (int j = 1; j < 9; j = j + 1) {
+                ChessPiece chess_piece = this.getPiece(new ChessPosition(i, j));
+                if (chess_piece == null) {
+                    new_string = String.join("",new_string," ");
+                } else if (chess_piece.getTeamColor() == ChessGame.TeamColor.BLACK) {
+                    if (chess_piece.getPieceType() == ChessPiece.PieceType.KING) {
+                        new_string = String.join("",new_string,"k");
+                    } else if (chess_piece.getPieceType() == ChessPiece.PieceType.QUEEN) {
+                        new_string = String.join("",new_string,"q");
+                    } else if (chess_piece.getPieceType() == ChessPiece.PieceType.KNIGHT) {
+                        new_string = String.join("",new_string,"n");
+                    } else if (chess_piece.getPieceType() == ChessPiece.PieceType.PAWN) {
+                        new_string = String.join("",new_string,"p");
+                    } else if (chess_piece.getPieceType() == ChessPiece.PieceType.BISHOP) {
+                        new_string = String.join("",new_string,"b");
+                    } else {
+                        new_string = String.join("",new_string,"r");
+                    }
+                } else {
+                    if (chess_piece.getPieceType() == ChessPiece.PieceType.KING) {
+                        new_string = String.join("",new_string,"K");
+                    } else if (chess_piece.getPieceType() == ChessPiece.PieceType.QUEEN) {
+                        new_string = String.join("",new_string,"Q");
+                    } else if (chess_piece.getPieceType() == ChessPiece.PieceType.KNIGHT) {
+                        new_string = String.join("",new_string,"N");
+                    } else if (chess_piece.getPieceType() == ChessPiece.PieceType.PAWN) {
+                        new_string = String.join("",new_string,"P");
+                    } else if (chess_piece.getPieceType() == ChessPiece.PieceType.BISHOP) {
+                        new_string = String.join("",new_string,"B");
+                    } else {
+                        new_string = String.join("",new_string,"R");
+                    }
+                }
+                new_string = String.join("",new_string,"|");
+            }
+            if (i != 1) {
+                new_string = String.join("",new_string,"\n");
+            }
+        }
+        return new_string;
+    }
     public ChessBoard() {
-        private ChessPiece piece_at_a_1 = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.ROOK);
-        private ChessPiece piece_at_a_2 = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.PAWN);
-        private ChessPiece piece_at_a_3 = null;
-        private ChessPiece piece_at_a_4 = null;
-        private ChessPiece piece_at_a_5 = null;
-        private ChessPiece piece_at_a_6 = null;
-        private ChessPiece piece_at_a_7 = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.PAWN);
-        private ChessPiece piece_at_a_8 = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.ROOK);
-        private ChessPiece piece_at_b_1 = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.KNIGHT);
-        private ChessPiece piece_at_b_2 = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.PAWN);
-        private ChessPiece piece_at_b_3 = null;
-        private ChessPiece piece_at_b_4 = null;
-        private ChessPiece piece_at_b_5 = null;
-        private ChessPiece piece_at_b_6 = null;
-        private ChessPiece piece_at_b_7 = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.PAWN);
-        private ChessPiece piece_at_b_8 = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.KNIGHT);
-        private ChessPiece piece_at_c_1 = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.BISHOP);
-        private ChessPiece piece_at_c_2 = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.PAWN);
-        private ChessPiece piece_at_c_3 = null;
-        private ChessPiece piece_at_c_4 = null;
-        private ChessPiece piece_at_c_5 = null;
-        private ChessPiece piece_at_c_6 = null;
-        private ChessPiece piece_at_c_7 = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.PAWN);
-        private ChessPiece piece_at_c_8 = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.BISHOP);
-        private ChessPiece piece_at_d_1 = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.QUEEN);
-        private ChessPiece piece_at_d_2 = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.PAWN);
-        private ChessPiece piece_at_d_3 = null;
-        private ChessPiece piece_at_d_4 = null;
-        private ChessPiece piece_at_d_5 = null;
-        private ChessPiece piece_at_d_6 = null;
-        private ChessPiece piece_at_d_7 = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.PAWN);
-        private ChessPiece piece_at_d_8 = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.QUEEN);
-        private ChessPiece piece_at_e_1 = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.KING);
-        private ChessPiece piece_at_e_2 = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.PAWN);
-        private ChessPiece piece_at_e_3 = null;
-        private ChessPiece piece_at_e_4 = null;
-        private ChessPiece piece_at_e_5 = null;
-        private ChessPiece piece_at_e_6 = null;
-        private ChessPiece piece_at_e_7 = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.PAWN);
-        private ChessPiece piece_at_e_8 = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.KING);
-        private ChessPiece piece_at_f_1 = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.BISHOP);
-        private ChessPiece piece_at_f_2 = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.PAWN);
-        private ChessPiece piece_at_f_3 = null;
-        private ChessPiece piece_at_f_4 = null;
-        private ChessPiece piece_at_f_5 = null;
-        private ChessPiece piece_at_f_6 = null;
-        private ChessPiece piece_at_f_7 = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.PAWN);
-        private ChessPiece piece_at_f_8 = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.BISHOP);
-        private ChessPiece piece_at_g_1 = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.KNIGHT);
-        private ChessPiece piece_at_g_2 = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.PAWN);
-        private ChessPiece piece_at_g_3 = null;
-        private ChessPiece piece_at_g_4 = null;
-        private ChessPiece piece_at_g_5 = null;
-        private ChessPiece piece_at_g_6 = null;
-        private ChessPiece piece_at_g_7 = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.PAWN);
-        private ChessPiece piece_at_g_8 = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.KNIGHT);
-        private ChessPiece piece_at_h_1 = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.ROOK);
-        private ChessPiece piece_at_h_2 = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.PAWN);
-        private ChessPiece piece_at_h_3 = null;
-        private ChessPiece piece_at_h_4 = null;
-        private ChessPiece piece_at_h_5 = null;
-        private ChessPiece piece_at_h_6 = null;
-        private ChessPiece piece_at_h_7 = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.PAWN);
-        private ChessPiece piece_at_h_8 = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.ROOK);
+        piece_at_a_1 = null;
+        piece_at_a_2 = null;
+        piece_at_a_3 = null;
+        piece_at_a_4 = null;
+        piece_at_a_5 = null;
+        piece_at_a_6 = null;
+        piece_at_a_7 = null;
+        piece_at_a_8 = null;
+        piece_at_b_1 = null;
+        piece_at_b_2 = null;
+        piece_at_b_3 = null;
+        piece_at_b_4 = null;
+        piece_at_b_5 = null;
+        piece_at_b_6 = null;
+        piece_at_b_7 = null;
+        piece_at_b_8 = null;
+        piece_at_c_1 = null;
+        piece_at_c_2 = null;
+        piece_at_c_3 = null;
+        piece_at_c_4 = null;
+        piece_at_c_5 = null;
+        piece_at_c_6 = null;
+        piece_at_c_7 = null;
+        piece_at_c_8 = null;
+        piece_at_d_1 = null;
+        piece_at_d_2 = null;
+        piece_at_d_3 = null;
+        piece_at_d_4 = null;
+        piece_at_d_5 = null;
+        piece_at_d_6 = null;
+        piece_at_d_7 = null;
+        piece_at_d_8 = null;
+        piece_at_e_1 = null;
+        piece_at_e_2 = null;
+        piece_at_e_3 = null;
+        piece_at_e_4 = null;
+        piece_at_e_5 = null;
+        piece_at_e_6 = null;
+        piece_at_e_7 = null;
+        piece_at_e_8 = null;
+        piece_at_f_1 = null;
+        piece_at_f_2 = null;
+        piece_at_f_3 = null;
+        piece_at_f_4 = null;
+        piece_at_f_5 = null;
+        piece_at_f_6 = null;
+        piece_at_f_7 = null;
+        piece_at_f_8 = null;
+        piece_at_g_1 = null;
+        piece_at_g_2 = null;
+        piece_at_g_3 = null;
+        piece_at_g_4 = null;
+        piece_at_g_5 = null;
+        piece_at_g_6 = null;
+        piece_at_g_7 = null;
+        piece_at_g_8 = null;
+        piece_at_h_1 = null;
+        piece_at_h_2 = null;
+        piece_at_h_3 = null;
+        piece_at_h_4 = null;
+        piece_at_h_5 = null;
+        piece_at_h_6 = null;
+        piece_at_h_7 = null;
+        piece_at_h_8 = null;
     }
 
     /**
@@ -720,16 +829,15 @@ public class ChessBoard {
             }
         }
         return;
-        throw new RuntimeException("Not implemented");
     }
 
-    /**
-     * Gets a chess piece on the chessboard
-     *
-     * @param position The position to get the piece from
-     * @return Either the piece at the position, or null if no piece is at that
-     * position
-     */
+    //**
+    // * Gets a chess piece on the chessboard
+    // *
+    // * @param position The position to get the piece from
+    // * @return Either the piece at the position, or null if no piece is at that
+    // * position
+    // */
     private int integerHash(int q) {
         int byte_0 = 0;
         int byte_1 = 0;
@@ -779,9 +887,9 @@ public class ChessBoard {
                 byte_3 = 255 - byte_3;
             }
         }
-        i = 12
+        i = 12;
         while (i > 0) {
-            i = i - 1
+            i = i - 1;
             current_byte_0 = 4 * byte_0;
             current_byte_1 = 4 * byte_1;
             current_byte_2 = 4 * byte_2;
@@ -1028,7 +1136,6 @@ public class ChessBoard {
         } catch (NullPointerException ex) {
             return null;
         }
-        throw new RuntimeException("Not implemented");
     }
 
     /**
@@ -1100,8 +1207,6 @@ public class ChessBoard {
         piece_at_h_6 = null;
         piece_at_h_7 = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.PAWN);
         piece_at_h_8 = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.ROOK);
-        return;
-        throw new RuntimeException("Not implemented");
     }
     public boolean equals(Object compare_with) {
         if (compare_with == null) {
@@ -1113,7 +1218,7 @@ public class ChessBoard {
         ChessBoard my_thing = (ChessBoard) compare_with;
         int i = 0;
         while (i < 64) {
-            my_chess_position = new ChessPosition((i % 8) + 1, (i / 8) + 1);
+            ChessPosition my_chess_position = new ChessPosition((i % 8) + 1, (i / 8) + 1);
             ChessPiece that_chess_piece = my_thing.getPiece(my_chess_position);
             ChessPiece this_chess_piece = this.getPiece(my_chess_position);
             if (this_chess_piece == null) {
@@ -1126,7 +1231,7 @@ public class ChessBoard {
                     return false;
                 }
             }
-            else if (that_chess_piece != this_chess_piece) {
+            else if (that_chess_piece.equals(this_chess_piece) == false) {
                 return false;
             }
             i = 1 + i;
@@ -1137,10 +1242,10 @@ public class ChessBoard {
         ChessBoard cloned_thing = new ChessBoard();
         int i = 0;
         while (i < 64) {
-            my_chess_position = new ChessPosition((i % 8) + 1, (i / 8) + 1);
+            ChessPosition my_chess_position = new ChessPosition((i % 8) + 1, (i / 8) + 1);
             ChessPiece this_chess_piece = this.getPiece(my_chess_position);
             if (this_chess_piece == null) {
-                cloned_thing.addPiece(my_chess_position);
+                cloned_thing.addPiece(my_chess_position, null);
             }
             else {
                 cloned_thing.addPiece(my_chess_position, this_chess_piece);
@@ -1170,7 +1275,7 @@ public class ChessBoard {
         int i_15 = 0;
         while (i < 64) {
             int j = 0;
-            my_chess_position = new ChessPosition((i % 8) + 1, (i / 8) + 1);
+            ChessPosition my_chess_position = new ChessPosition((i % 8) + 1, (i / 8) + 1);
             ChessPiece this_chess_piece = this.getPiece(my_chess_position);
             if (this_chess_piece != null) {
                 j = 7;
@@ -1804,7 +1909,7 @@ public class ChessBoard {
         else {
             i_15 = i_15 % 65536;
         }
-        i_0 = i_0 + i_1 + i_2 + i_3 + i_4 + i_5 + i_6 + i_7 + i_8 + i_9 + i_10 + i_11 + i_12 + i_13 + i_14 + i_15
+        i_0 = i_0 + i_1 + i_2 + i_3 + i_4 + i_5 + i_6 + i_7 + i_8 + i_9 + i_10 + i_11 + i_12 + i_13 + i_14 + i_15;
         my_summation = ((my_summation % 65536) + (i_0 / 65536)) % 65536;
         i_0 = i_0 % 65536;
         if (my_summation == 32768 && i_0 < 3) {

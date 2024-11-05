@@ -8,9 +8,11 @@ package chess;
  */
 public class ChessPosition {
 
+    private int my_row;
+    private int my_column;
     public ChessPosition(int row, int col) {
-        private int my_row = row;
-        private int my_column = col;
+        my_row = row;
+        my_column = col;
     }
 
     /**
@@ -19,7 +21,6 @@ public class ChessPosition {
      */
     public int getRow() {
         return this.my_row;
-        throw new RuntimeException("Not implemented");
     }
 
     /**
@@ -28,7 +29,6 @@ public class ChessPosition {
      */
     public int getColumn() {
         return this.my_column;
-        throw new RuntimeException("Not implemented");
     }
 
     public boolean equals(Object compare_with) {
