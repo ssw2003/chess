@@ -190,4 +190,63 @@ the_board.resetBoard();
     public ChessBoard getBoard() {
         return the_board.clone();
     }
+    public ChessGame clone() {
+        ChessGame cg = new ChessGame();
+        cg.setTeamTurn(whose_turn_is_it);
+        cg.setBoard(the_board);
+        return cg;
+    }
+    public boolean equals(Object compare_with) {
+        if (compare_with == null) {
+            return false;
+        }
+        if (compare_with.getClass() != getClass()) {
+            return false;
+        }
+        ChessGame my_thing = (ChessGame) compare_with;
+        if (my_thing.getTeamTurn() != whose_turn_is_it) {
+            return false;
+        }
+        return my_thing.getBoard().equals(the_board);
+    }
+    public int hashCode() {
+        int i = the_board.hashCode();
+        if (whose_turn_is_it == ChessGame.TeamColor.WHITE) {
+            if (i == 2147483646) {
+                return -2147483613;
+            }
+            if (i == 2147483647) {
+                return -2147483612;
+            }
+            if (i == -2147483648) {
+                return -2147483611;
+            }
+            if (i == -2147483647) {
+                return -2147483610;
+            }
+            if (i == -2147483646) {
+                return -2147483609;
+            }
+            if (i == 2147483613) {
+                return -2147483646;
+            }
+            if (i == 2147483612) {
+                return -2147483647;
+            }
+            if (i == 2147483611) {
+                return -2147483648;
+            }
+            if (i == 2147483610) {
+                return 2147483647;
+            }
+            if (i == 2147483609) {
+                return 2147483646;
+            }
+            if (i > 2147483611) {
+                return (i - 2147483629) - 2147483630;
+            }
+            return i + 37;
+        }
+        return i;
+    }
 }

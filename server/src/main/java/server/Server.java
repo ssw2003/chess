@@ -179,30 +179,10 @@ public class Server {
         if (the_service.check_for(my_auth_data)) {
             res.status(200);
             Collection<GameData> game_data_values = the_service.get_all_games();
-            Collection<Map> new_maps = new ArrayList<>();
+            Collection<GameMetadata> new_maps = new ArrayList<>();
             for (GameData gd: game_data_values) {
-                String the_white_username = "";
-                String the_black_username = "";
-                String the_game_name = "";
-                if (gd.whiteUsername() == null) {
-                    the_white_username = "null";
-                }
-                else {
-                    the_white_username = gd.whiteUsername();
-                }
-                if (gd.blackUsername() == null) {
-                    the_black_username = "null";
-                }
-                else {
-                    the_black_username = gd.blackUsername();
-                }
-                if (gd.gameName() == null) {
-                    the_game_name = "null";
-                }
-                else {
-                    the_game_name = gd.gameName();
-                }
-                new_maps.add(Map.of("gameID", gd.gameID(), "whiteUsername", the_white_username, "blackUsername", the_black_username, "gameName", the_game_name));
+                GameMetadata gm = new GameMetadata(gd.gameID(), gd.whiteUsername(), gd.blackUsername(), gd.gameName());
+                new_maps.add(gm);
             }
             var thing_to_serialize = Map.of("games", new_maps);
             var thing_serializer = new Gson();

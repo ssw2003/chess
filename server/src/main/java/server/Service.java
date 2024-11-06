@@ -54,13 +54,13 @@ public class Service {
     public int add_game(String game_name) {
         return data_access.add_game(game_name);
     }
-    public Collection<GameData> get_all_games() {
-        return data_access.get_all_games();
-    }
     public boolean join_game_thingy(int game_id, ChessGame.TeamColor game_color, String my_auth_data) {
         return data_access.join_game_thingy(game_id, game_color, my_auth_data);
     }
     public boolean check_for_game_existence(int game_id) {
         return data_access.check_for_game_existence(game_id);
+    }
+    public Collection<GameData> get_all_games() {
+        return data_access.get_all_games();
     }
 }

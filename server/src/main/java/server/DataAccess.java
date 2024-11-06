@@ -6,11 +6,11 @@ import java.util.*;
 
 public class DataAccess {
     Collection<UserData> user_data_values = new ArrayList<>();
-    Collection<GameData> game_data_values = new ArrayList<>();
+    GameDataSet game_data_values = new GameDataSet();
     Collection<AuthData> auth_data_values = new ArrayList<>();
 
     public DataAccess() {
-        game_data_values = new ArrayList<>();
+        game_data_values = new GameDataSet();
     }
     private String generateAuthToken() {
         return UUID.randomUUID().toString();
@@ -42,53 +42,47 @@ public class DataAccess {
     }
     public void clear_thing() {
         user_data_values = new ArrayList<>();
-        game_data_values = new ArrayList<>();
+        game_data_values = new GameDataSet();
         auth_data_values = new ArrayList<>();
     }
     public int add_game(String game_name) {
-        int i = game_data_values.size() + 1;
-        game_data_values.add(new GameData(i, game_name));
+        int i = game_data_values.mySize() + 1;
+        game_data_values.addGame(new GameData(i, null, null, game_name, null));
         return i;
     }
     public Collection<GameData> get_all_games() {
-        Collection<GameData> all_the_games = new ArrayList<>();
-        for (GameData gd: game_data_values) {
-            all_the_games.add(gd);
+        Collection<GameData> all_my_games = new ArrayList<>();
+        for (int i = 1; i < 1 + game_data_values.mySize(); i = i + 1) {
+            all_my_games.add(game_data_values.getGame(i));
         }
-        return all_the_games;
+        return all_my_games;
     }
     public boolean join_game_thingy(int game_id, ChessGame.TeamColor game_color, String my_auth_data) {
-        for (GameData gd: game_data_values) {
-            if (gd.gameID() == game_id) {
-                return join_game_thingy(gd, game_color, getAuth(my_auth_data).username());
-            }
+        if (!check_for_game_existence(game_id)) {
+            return false;
         }
-        return false;
-    }
-    public boolean join_game_thingy(GameData game_id, ChessGame.TeamColor game_color, String my_person) {
+        GameData gd = game_data_values.getGame(game_id);
         if (game_color == ChessGame.TeamColor.WHITE) {
-            if (!(game_id.whiteUsername() == null)) {
+            if (gd.whiteUsername() != null) {
                 return false;
             }
-            game_id.changeWhiteUsername(my_person);
-            return true;
+            gd = new GameData(gd.gameID(), getAuth(my_auth_data).username(), gd.blackUsername(), gd.gameName(), gd.game());
         }
         if (game_color == ChessGame.TeamColor.BLACK) {
-            if (!(game_id.blackUsername() == null)) {
+            if (gd.blackUsername() != null) {
                 return false;
             }
-            game_id.changeBlackUsername(my_person);
-            return true;
+            gd = new GameData(gd.gameID(), gd.whiteUsername(), getAuth(my_auth_data).username(), gd.gameName(), gd.game());
         }
-        return false;
+        game_data_values.changeGame(game_id, gd);
+        return true;
     }
+
     public boolean check_for_game_existence(int game_id) {
-        for (GameData gd: game_data_values) {
-            if (gd.gameID() == game_id) {
-                return true;
-            }
+        if (game_id < 1 || game_id > game_data_values.mySize()) {
+            return false;
         }
-        return false;
+        return true;
     }
 
 }
