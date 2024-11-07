@@ -1,10 +1,14 @@
-package server;
+package dataaccess;
 
 import chess.ChessGame;
+import server.AuthData;
+import server.GameData;
+import server.GameDataSet;
+import server.UserData;
 
 import java.util.*;
 
-public class DataAccess {
+public class DataAccess implements DatabaseAccess {
     Collection<UserData> user_data_values = new ArrayList<>();
     GameDataSet game_data_values = new GameDataSet();
     Collection<AuthData> auth_data_values = new ArrayList<>();
@@ -12,7 +16,7 @@ public class DataAccess {
     public DataAccess() {
         game_data_values = new GameDataSet();
     }
-    private String generateAuthToken() {
+    public String generateAuthToken() {
         return UUID.randomUUID().toString();
     }
     public UserData getUser(String potential_username) {

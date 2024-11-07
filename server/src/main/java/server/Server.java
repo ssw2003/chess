@@ -37,9 +37,6 @@ public class Server {
         Spark.awaitInitialization();
         return Spark.port();
     }
-    private String generateAuthToken() {
-        return UUID.randomUUID().toString();
-    }
     private String addUser(Request req, Response res) {
         //try {
             var registerRequest = new Gson().fromJson(req.body(), UserData.class);
