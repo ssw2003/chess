@@ -3,6 +3,8 @@ import chess.ChessGame;
 import dataaccess.DataAccess;
 import dataaccess.DataAccessException;
 import dataaccess.DatabaseAccess;
+import dataaccess.SQLThing;
+import org.mindrot.jbcrypt.BCrypt;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -10,12 +12,18 @@ import java.util.Collection;
 public class Service {
     DatabaseAccess data_access = new DataAccess();
     public Service() {
-        data_access = new DataAccess();
+        try {
+            data_access = new SQLThing();
+        } catch (Exception s) {
+            //System.out.println(s.getMessage());
+            String t = s.getMessage();
+        }
     }
     private String generateAuthToken() {
         try {
             return data_access.generateAuthToken();
         } catch (DataAccessException e) {
+            //System.out.println(e.getMessage());
             return null;
         }
     }
@@ -29,6 +37,7 @@ public class Service {
             }
             return null;
         } catch (Exception e) {
+            //System.out.println(e.getMessage());
             return null;
         }
     }
@@ -36,7 +45,7 @@ public class Service {
         try {
             UserData get_my_user = data_access.getUser(u);
             if (get_my_user != null) {
-                if (get_my_user.password().equals(p)) {
+                if (BCrypt.checkpw(p, get_my_user.password())) {
                     AuthData at = new AuthData(generateAuthToken(), u);
                     data_access.CreateAuth(at);
                     return at;
@@ -44,6 +53,7 @@ public class Service {
             }
             return null;
         } catch (Exception e) {
+            //System.out.println(e.getMessage());
             return null;
         }
     }
@@ -56,10 +66,11 @@ public class Service {
             }
             return false;
         } catch (Exception e) {
+            //System.out.println(e.getMessage());
             return false;
         }
     }
-    public boolean check_for (String ad) {
+    public boolean check_for(String ad) {
         try {
             AuthData get_my_user = data_access.getAuth(ad);
             if (get_my_user != null) {
@@ -67,6 +78,7 @@ public class Service {
             }
             return false;
         } catch (DataAccessException e) {
+            //System.out.println(e.getMessage());
             return false;
         }
     }
@@ -74,6 +86,7 @@ public class Service {
         try {
             data_access.clear_thing();
         } catch (DataAccessException e) {
+            //System.out.println(e.getMessage());
             return;
         }
     }
@@ -81,13 +94,17 @@ public class Service {
         try {
             return data_access.add_game(game_name);
         } catch (DataAccessException e) {
+            //System.out.println(e.getMessage());
             return 0;
         }
     }
     public boolean join_game_thingy(int game_id, ChessGame.TeamColor game_color, String my_auth_data) {
         try {
+
             return data_access.join_game_thingy(game_id, game_color, my_auth_data);
+
         } catch (DataAccessException e) {
+            //System.out.println(e.getMessage());
             return false;
         }
     }
@@ -95,6 +112,7 @@ public class Service {
         try {
             return data_access.check_for_game_existence(game_id);
         } catch (DataAccessException e) {
+            //System.out.println(e.getMessage());
             return false;
         }
     }
@@ -102,6 +120,7 @@ public class Service {
         try {
             return data_access.get_all_games();
         } catch (DataAccessException e) {
+            //System.out.println(e.getMessage());
             return new ArrayList<>();
         }
     }

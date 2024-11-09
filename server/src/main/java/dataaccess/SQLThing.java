@@ -2,11 +2,13 @@ package dataaccess;
 
 import chess.ChessGame;
 import com.google.gson.Gson;
+import org.mindrot.jbcrypt.BCrypt;
 import server.AuthData;
 import server.GameData;
 import server.UserData;
 
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -24,49 +26,45 @@ public class SQLThing implements DatabaseAccess {
                     ps.executeUpdate();
                 }
             }
-            for (var s: AuthDataTable) {
-                try (var ps = DatabaseManager.getConnection().prepareStatement(s)) {
+            for (var u: AuthDataTable) {
+                try (var ps = DatabaseManager.getConnection().prepareStatement(u)) {
                     ps.executeUpdate();
                 }
             }
-            for (var s: GameDataTable) {
-                try (var ps = DatabaseManager.getConnection().prepareStatement(s)) {
+            for (var t: GameDataTable) {
+                try (var ps = DatabaseManager.getConnection().prepareStatement(t)) {
                     ps.executeUpdate();
                 }
             }
         } catch (Exception e) {
-            throw new DataAccessException("");
+            throw new DataAccessException(e.getMessage());
         }
     }
     private final String[] UserDataTable = {
             """
                 create table if not exists user_data (
-                `username` varchar(65536) not null primary key,
-                `password` varchar(65536) not null,
-                `email` varchar(65536) not null
+                `username` varchar(256) not null primary key,
+                `password` varchar(256) not null,
+                `email` varchar(256) not null
             )"""
     };
     private final String[] AuthDataTable = {
             """
                 create table if not exists auth_data (
-                `auth_token` varchar(65536) not null primary key,
-                `username` varchar(65536) not null
+                `auth_token` varchar(256) not null primary key,
+                `username` varchar(256) not null
             )"""
     };
     private final String[] GameDataTable = {
             """
                 create table if not exists game_data (
                 `game_id` int not null primary key auto_increment,
-                `white_username` varchar(65536),
-                `black_username` varchar(65536),
-                `game_name` varchar(65536) not null,
+                `white_username` varchar(256),
+                `black_username` varchar(256),
+                `game_name` varchar(256) not null,
                 `game` longtext
             )"""
     };
-    //private void CreateAction(thing)
-    //private thing ReadAction(query)
-    //private void UpdateAction(query, update)
-    //private thing DeleteAction(query)
 
     @Override
     public String generateAuthToken() throws DataAccessException {
@@ -97,23 +95,23 @@ public class SQLThing implements DatabaseAccess {
         try (var cn = DatabaseManager.getConnection();
         var ps = cn.prepareStatement("INSERT INTO user_data (username, password, email) VALUES(?, ?, ?)")) {
             ps.setString(1, userData.username());
-            ps.setString(2, userData.password());
+            ps.setString(2, BCrypt.hashpw(userData.password(), BCrypt.gensalt()));
             ps.setString(3, userData.email());
             ps.executeUpdate();
         } catch (SQLException s) {
-            throw new DataAccessException("Bad");
+            throw new DataAccessException(s.getMessage());
         }
     }
 
     @Override
     public void CreateAuth(AuthData authData) throws DataAccessException {
         try (var cn = DatabaseManager.getConnection();
-             var ps = cn.prepareStatement("INSERT INTO user_data (auth_token, username) VALUES(?, ?)")) {
+             var ps = cn.prepareStatement("INSERT INTO auth_data (auth_token, username) VALUES(?, ?)")) {
             ps.setString(1, authData.authToken());
             ps.setString(2, authData.username());
             ps.executeUpdate();
         } catch (SQLException s) {
-            throw new DataAccessException("Bad");
+            throw new DataAccessException(s.getMessage());
         }
     }
 
@@ -131,7 +129,7 @@ public class SQLThing implements DatabaseAccess {
                 return null;
             }
         } catch (SQLException dae) {
-            throw new DataAccessException("Bad");
+            throw new DataAccessException(dae.getMessage());
         }
     }
 
@@ -143,17 +141,29 @@ public class SQLThing implements DatabaseAccess {
             ps.setString(2, ad.username());
             ps.executeUpdate();
         } catch (SQLException dae) {
-            throw new DataAccessException("Bad");
+            throw new DataAccessException(dae.getMessage());
         }
     }
 
     @Override
     public void clear_thing() throws DataAccessException {
         try (var cn = DatabaseManager.getConnection();
-             var ps = cn.prepareStatement("DELETE FROM auth_data")) {
+             var ps = cn.prepareStatement("TRUNCATE auth_data")) {
             ps.executeUpdate();
         } catch (SQLException dae) {
-            throw new DataAccessException("Bad");
+            throw new DataAccessException(dae.getMessage());
+        }
+        try (var cn = DatabaseManager.getConnection();
+             var ps = cn.prepareStatement("TRUNCATE user_data")) {
+            ps.executeUpdate();
+        } catch (SQLException dae) {
+            throw new DataAccessException(dae.getMessage());
+        }
+        try (var cn = DatabaseManager.getConnection();
+             var ps = cn.prepareStatement("TRUNCATE game_data")) {
+            ps.executeUpdate();
+        } catch (SQLException dae) {
+            throw new DataAccessException(dae.getMessage());
         }
     }
 
@@ -161,12 +171,20 @@ public class SQLThing implements DatabaseAccess {
     public int add_game(String game_name) throws DataAccessException {
 
         try (var cn = DatabaseManager.getConnection();
-             var ps = cn.prepareStatement("INSERT INTO game_data (game_name) VALUES (?)")) {
-            var j = new Gson().toJson(game_name);
-            var i = ps.executeUpdate(j);
+             var ps = cn.prepareStatement("INSERT INTO game_data (game_name) VALUES (?)", Statement.RETURN_GENERATED_KEYS)) {
+            ps.setString(1, game_name);
+            ps.executeUpdate();
+            var j = ps.getGeneratedKeys();
+            var i = 0;
+            if (j.next()) {
+                i = j.getInt(1);
+            }
+            //var j = new Gson().toJson(game_name);
+            //ps.executeUpdate(j);
+            //var i = ps.executeUpdate(j);
             return i;
         } catch (SQLException dae) {
-            throw new DataAccessException("Bad");
+            throw new DataAccessException(dae.getMessage());
         }
     }
 
@@ -187,7 +205,7 @@ public class SQLThing implements DatabaseAccess {
                 }
             }
         } catch (SQLException dae) {
-            throw new DataAccessException("Bad");
+            throw new DataAccessException(dae.getMessage());
         }
         return all_games;
     }
@@ -199,15 +217,16 @@ public class SQLThing implements DatabaseAccess {
                 return false;
             }
         } catch (DataAccessException s){
-            throw new DataAccessException("Bad");
+            throw new DataAccessException(s.getMessage());
         }
+
         if (game_color == ChessGame.TeamColor.WHITE) {
             try (var cn = DatabaseManager.getConnection();
                  var ps = cn.prepareStatement("SELECT white_username FROM game_data WHERE game_id=?")) {
                 ps.setInt(1, game_id);
                 try (var v = ps.executeQuery()) {
                     if (v.next()) {
-                        if (v != null) {
+                        if (v.getString("white_username") != null) {
                             return false;
                         }
                     }
@@ -222,7 +241,7 @@ public class SQLThing implements DatabaseAccess {
                 ps.executeUpdate();
                 return true;
             } catch (SQLException dae) {
-                throw new DataAccessException("Bad");
+                throw new DataAccessException(dae.getMessage());
             }
         }
         else {
@@ -231,13 +250,13 @@ public class SQLThing implements DatabaseAccess {
                 ps.setInt(1, game_id);
                 try (var v = ps.executeQuery()) {
                     if (v.next()) {
-                        if (v != null) {
+                        if (v.getString("black_username") != null) {
                             return false;
                         }
                     }
                 }
             } catch (SQLException dae) {
-                throw new DataAccessException("Bad");
+                throw new DataAccessException(dae.getMessage());
             }
             try (var cn = DatabaseManager.getConnection();
                  var ps = cn.prepareStatement("UPDATE game_data SET black_username=? WHERE game_id=?")) {
@@ -246,7 +265,7 @@ public class SQLThing implements DatabaseAccess {
                 ps.executeUpdate();
                 return true;
             } catch (SQLException dae) {
-                throw new DataAccessException("Bad");
+                throw new DataAccessException(dae.getMessage());
             }
         }
     }
@@ -263,7 +282,7 @@ public class SQLThing implements DatabaseAccess {
                 return false;
             }
         } catch (SQLException dae) {
-            throw new DataAccessException("Bad");
+            throw new DataAccessException(dae.getMessage());
         }
     }
 }
