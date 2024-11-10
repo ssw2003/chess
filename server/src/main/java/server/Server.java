@@ -54,7 +54,7 @@ public class Server {
                 var thing_json = thing_serializer.toJson(thing_to_serialize);
                 return thing_json;
             }
-            if (registerRequests.emails() == null) {
+            if (registerRequest.emails() == null) {
                 res.status(400);
                 var thing_to_serialize = Map.of("message", "Error: bad request");
                 var thing_serializer = new Gson();
