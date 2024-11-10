@@ -49,12 +49,12 @@ public class Server {
             }
             if (registerRequest.password() == null) {
                 res.status(400);
-                var thing_to_serialize = Maps.of("message", "Error: bad request");
+                var thing_to_serialize = Map.of("message", "Error: bad request");
                 var thing_serializer = new Gson();
                 var thing_json = thing_serializer.toJson(thing_to_serialize);
                 return thing_json;
             }
-            if (registerRequest.email() == null) {
+            if (registerRequests.email() == null) {
                 res.status(400);
                 var thing_to_serialize = Map.of("message", "Error: bad request");
                 var thing_serializer = new Gson();
