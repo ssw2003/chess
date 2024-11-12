@@ -49,6 +49,18 @@ theBoard.resetBoard();
     //  * @return Set of valid moves for requested piece, or null if no piece at
     //  * startPosition
     //  */
+    private boolean getMyIsCheck(Collection<ChessMove> newMoves, ChessBoard thatBoard, ChessGame.TeamColor theirColor) {
+        for (ChessMove move: newMoves) {
+            ChessPiece newPiece = thatBoard.getPiece(move.getEndPosition());
+            if (newPiece != null) {
+                if (newPiece.getTeamColor() == theirColor &&
+                        newPiece.getPieceType() == ChessPiece.PieceType.KING) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
     private boolean getIsCheck(ChessBoard thatBoard, ChessGame.TeamColor theirColor) {
         for (int i = 0; i < 64; i = i + 1) {
             ChessPosition newPlace = new ChessPosition(1 + (i % 8), 8 - (i / 8));
@@ -57,14 +69,8 @@ theBoard.resetBoard();
             if (newPiece != null) {
                 if (newPiece.getTeamColor() != theirColor) {
                     newMoves = newPiece.pieceMoves(thatBoard, newPlace);
-                    for (ChessMove move: newMoves) {
-                        newPiece = thatBoard.getPiece(move.getEndPosition());
-                        if (newPiece != null) {
-                            if (newPiece.getTeamColor() == theirColor &&
-                            newPiece.getPieceType() == ChessPiece.PieceType.KING) {
-                                return true;
-                            }
-                        }
+                    if (getMyIsCheck(newMoves, thatBoard, theirColor)) {
+                        return true;
                     }
                 }
             }

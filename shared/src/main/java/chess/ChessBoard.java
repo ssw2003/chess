@@ -9,51 +9,6 @@ package chess;
 public class ChessBoard {
 
     private ChessPiece[] chessPieceGrid;
-    public String toString() {
-        String new_string = "";
-        for (int i = 8; i > 0; i = i - 1) {
-            new_string = String.join("",new_string,"|");
-            for (int j = 1; j < 9; j = j + 1) {
-                ChessPiece chess_piece = this.getPiece(new ChessPosition(i, j));
-                if (chess_piece == null) {
-                    new_string = String.join("",new_string," ");
-                } else if (chess_piece.getTeamColor() == ChessGame.TeamColor.BLACK) {
-                    if (chess_piece.getPieceType() == ChessPiece.PieceType.KING) {
-                        new_string = String.join("",new_string,"k");
-                    } else if (chess_piece.getPieceType() == ChessPiece.PieceType.QUEEN) {
-                        new_string = String.join("",new_string,"q");
-                    } else if (chess_piece.getPieceType() == ChessPiece.PieceType.KNIGHT) {
-                        new_string = String.join("",new_string,"n");
-                    } else if (chess_piece.getPieceType() == ChessPiece.PieceType.PAWN) {
-                        new_string = String.join("",new_string,"p");
-                    } else if (chess_piece.getPieceType() == ChessPiece.PieceType.BISHOP) {
-                        new_string = String.join("",new_string,"b");
-                    } else {
-                        new_string = String.join("",new_string,"r");
-                    }
-                } else {
-                    if (chess_piece.getPieceType() == ChessPiece.PieceType.KING) {
-                        new_string = String.join("",new_string,"K");
-                    } else if (chess_piece.getPieceType() == ChessPiece.PieceType.QUEEN) {
-                        new_string = String.join("",new_string,"Q");
-                    } else if (chess_piece.getPieceType() == ChessPiece.PieceType.KNIGHT) {
-                        new_string = String.join("",new_string,"N");
-                    } else if (chess_piece.getPieceType() == ChessPiece.PieceType.PAWN) {
-                        new_string = String.join("",new_string,"P");
-                    } else if (chess_piece.getPieceType() == ChessPiece.PieceType.BISHOP) {
-                        new_string = String.join("",new_string,"B");
-                    } else {
-                        new_string = String.join("",new_string,"R");
-                    }
-                }
-                new_string = String.join("",new_string,"|");
-            }
-            if (i != 1) {
-                new_string = String.join("",new_string,"\n");
-            }
-        }
-        return new_string;
-    }
     public ChessBoard() {
         chessPieceGrid = new ChessPiece[64];
         for (int i = 0; i < 64; i = i + 1) {

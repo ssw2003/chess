@@ -60,7 +60,6 @@ public class Server {
 
             if (theNewAuthData != null) {
                 res.status(200);
-                //System.out.println(String.join("","200 " ,"{ \"username\":\"", theNewAuthData.username(), "\", \"authToken\":\"\"", theNewAuthData.authToken(), "\"\" }"));
                 var thingToSerialize = Map.of("username", theNewAuthData.username(), "authToken", theNewAuthData.authToken());
                 var thingSerializer = new Gson();
                 var thingJson = thingSerializer.toJson(thingToSerialize);
