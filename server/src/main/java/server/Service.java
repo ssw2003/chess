@@ -30,9 +30,9 @@ public class Service {
     public AuthData register(UserData req) {
         try {
             if (data_access.getUser(req.username()) == null) {
-                data_access.CreateUser(req);
+                data_access.createUser(req);
                 AuthData the_auth_data = new AuthData(generateAuthToken(), req.username());
-                data_access.CreateAuth(the_auth_data);
+                data_access.createAuth(the_auth_data);
                 return the_auth_data;
             }
             return null;
@@ -47,7 +47,7 @@ public class Service {
             if (get_my_user != null) {
                 if (BCrypt.checkpw(p, get_my_user.password())) {
                     AuthData at = new AuthData(generateAuthToken(), u);
-                    data_access.CreateAuth(at);
+                    data_access.createAuth(at);
                     return at;
                 }
             }
@@ -70,7 +70,7 @@ public class Service {
             return false;
         }
     }
-    public boolean check_for(String ad) {
+    public boolean checkFor(String ad) {
         try {
             AuthData get_my_user = data_access.getAuth(ad);
             if (get_my_user != null) {
@@ -82,43 +82,43 @@ public class Service {
             return false;
         }
     }
-    public void clear_thing() {
+    public void clearThing() {
         try {
-            data_access.clear_thing();
+            data_access.clearThing();
         } catch (DataAccessException e) {
             //System.out.println(e.getMessage());
             return;
         }
     }
-    public int add_game(String game_name) {
+    public int addGame(String game_name) {
         try {
-            return data_access.add_game(game_name);
+            return data_access.addGame(game_name);
         } catch (DataAccessException e) {
             //System.out.println(e.getMessage());
             return 0;
         }
     }
-    public boolean join_game_thingy(int game_id, ChessGame.TeamColor game_color, String my_auth_data) {
+    public boolean joinGameThingy(int game_id, ChessGame.TeamColor game_color, String my_auth_data) {
         try {
 
-            return data_access.join_game_thingy(game_id, game_color, my_auth_data);
+            return data_access.joinGameThingy(game_id, game_color, my_auth_data);
 
         } catch (DataAccessException e) {
             //System.out.println(e.getMessage());
             return false;
         }
     }
-    public boolean check_for_game_existence(int game_id) {
+    public boolean checkForGameExistence(int game_id) {
         try {
-            return data_access.check_for_game_existence(game_id);
+            return data_access.checkForGameExistence(game_id);
         } catch (DataAccessException e) {
             //System.out.println(e.getMessage());
             return false;
         }
     }
-    public Collection<GameData> get_all_games() {
+    public Collection<GameData> getAllGames() {
         try {
-            return data_access.get_all_games();
+            return data_access.getAllGames();
         } catch (DataAccessException e) {
             //System.out.println(e.getMessage());
             return new ArrayList<>();

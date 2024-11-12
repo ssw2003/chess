@@ -91,7 +91,7 @@ public class SQLThing implements DatabaseAccess {
     }
 
     @Override
-    public void CreateUser(UserData userData) throws DataAccessException {
+    public void createUser(UserData userData) throws DataAccessException {
         try (var cn = DatabaseManager.getConnection();
         var ps = cn.prepareStatement("INSERT INTO user_data (username, password, email) VALUES(?, ?, ?)")) {
             ps.setString(1, userData.username());
@@ -104,7 +104,7 @@ public class SQLThing implements DatabaseAccess {
     }
 
     @Override
-    public void CreateAuth(AuthData authData) throws DataAccessException {
+    public void createAuth(AuthData authData) throws DataAccessException {
         try (var cn = DatabaseManager.getConnection();
              var ps = cn.prepareStatement("INSERT INTO auth_data (auth_token, username) VALUES(?, ?)")) {
             ps.setString(1, authData.authToken());
@@ -146,7 +146,7 @@ public class SQLThing implements DatabaseAccess {
     }
 
     @Override
-    public void clear_thing() throws DataAccessException {
+    public void clearThing() throws DataAccessException {
         try (var cn = DatabaseManager.getConnection();
              var ps = cn.prepareStatement("TRUNCATE auth_data")) {
             ps.executeUpdate();
@@ -168,7 +168,7 @@ public class SQLThing implements DatabaseAccess {
     }
 
     @Override
-    public int add_game(String game_name) throws DataAccessException {
+    public int addGame(String game_name) throws DataAccessException {
 
         try (var cn = DatabaseManager.getConnection();
              var ps = cn.prepareStatement("INSERT INTO game_data (game_name) VALUES (?)", Statement.RETURN_GENERATED_KEYS)) {
@@ -189,7 +189,7 @@ public class SQLThing implements DatabaseAccess {
     }
 
     @Override
-    public Collection<GameData> get_all_games() throws DataAccessException {
+    public Collection<GameData> getAllGames() throws DataAccessException {
         var all_games = new ArrayList<GameData>();
         try (var cn = DatabaseManager.getConnection();
              var ps = cn.prepareStatement("SELECT game_id, white_username, black_username, game_name, game FROM game_data")) {
@@ -211,7 +211,7 @@ public class SQLThing implements DatabaseAccess {
     }
 
     @Override
-    public boolean join_game_thingy(int game_id, ChessGame.TeamColor game_color, String my_auth_data) throws DataAccessException {
+    public boolean joinGameThingy(int game_id, ChessGame.TeamColor game_color, String my_auth_data) throws DataAccessException {
         try {
             if (getAuth(my_auth_data) == null) {
                 return false;
@@ -271,7 +271,7 @@ public class SQLThing implements DatabaseAccess {
     }
 
     @Override
-    public boolean check_for_game_existence(int game_id) throws DataAccessException {
+    public boolean checkForGameExistence(int game_id) throws DataAccessException {
         try (var cn = DatabaseManager.getConnection();
              var ps = cn.prepareStatement("SELECT game_id FROM game_data WHERE game_id=?")) {
             ps.setInt(1, game_id);

@@ -8,17 +8,17 @@ package chess;
  */
 public class ChessMove {
 
-    private ChessPosition my_start_position;
-    private ChessPosition my_end_position;
-    private ChessPiece.PieceType my_promotion_piece;
+    private ChessPosition myStartPosition;
+    private ChessPosition myEndPosition;
+    private ChessPiece.PieceType myPromotionPiece;
     public ChessMove(ChessPosition startPosition, ChessPosition endPosition,
                      ChessPiece.PieceType promotionPiece) {
-        my_start_position = startPosition.clone();
-        my_end_position = endPosition.clone();
+        myStartPosition = startPosition.clone();
+        myEndPosition = endPosition.clone();
         if (promotionPiece == null) {
-            my_promotion_piece = null;
+            myPromotionPiece = null;
         }else{
-            my_promotion_piece = promotionPiece;
+            myPromotionPiece = promotionPiece;
         }
     }
 
@@ -26,14 +26,14 @@ public class ChessMove {
      * @return ChessPosition of starting location
      */
     public ChessPosition getStartPosition() {
-        return this.my_start_position.clone();
+        return this.myStartPosition.clone();
     }
 
     /**
      * @return ChessPosition of ending location
      */
     public ChessPosition getEndPosition() {
-        return this.my_end_position.clone();
+        return this.myEndPosition.clone();
     }
 
     /**
@@ -43,26 +43,26 @@ public class ChessMove {
      * @return Type of piece to promote a pawn to, or null if no promotion
      */
     public ChessPiece.PieceType getPromotionPiece() {
-        if (null == this.my_promotion_piece) {
+        if (null == this.myPromotionPiece) {
             return null;
         }
-        return this.my_promotion_piece;
+        return this.myPromotionPiece;
     }
-    public boolean equals(Object compare_with) {
-        if (compare_with == null) {
+    public boolean equals(Object compareWith) {
+        if (compareWith == null) {
             return false;
         }
-        if (compare_with.getClass() != getClass()) {
+        if (compareWith.getClass() != getClass()) {
             return false;
         }
-        ChessMove my_thing = (ChessMove) compare_with;
-        if (my_thing.getStartPosition().hashCode() != my_start_position.hashCode()) {
+        ChessMove my_thing = (ChessMove) compareWith;
+        if (my_thing.getStartPosition().hashCode() != myStartPosition.hashCode()) {
             return false;
         }
-        if (my_thing.getEndPosition().hashCode() != my_end_position.hashCode()) {
+        if (my_thing.getEndPosition().hashCode() != myEndPosition.hashCode()) {
             return false;
         }
-        if (my_promotion_piece == null) {
+        if (myPromotionPiece == null) {
             if (null == my_thing.getPromotionPiece()) {
                 return true;
             }
@@ -71,49 +71,49 @@ public class ChessMove {
         if (null == my_thing.getPromotionPiece()) {
             return false;
         }
-        if (my_promotion_piece != my_thing.getPromotionPiece()) {
+        if (myPromotionPiece != my_thing.getPromotionPiece()) {
             return false;
         }
         return true;
     }
     public int hashCode() {
         int i = 2;
-        if (my_promotion_piece == null) {
+        if (myPromotionPiece == null) {
             i = 5;
         }
         else {
-            if (my_promotion_piece == ChessPiece.PieceType.KNIGHT) {
+            if (myPromotionPiece == ChessPiece.PieceType.KNIGHT) {
                 i = 1;
             }
-            if (my_promotion_piece == ChessPiece.PieceType.PAWN) {
+            if (myPromotionPiece == ChessPiece.PieceType.PAWN) {
                 i = 7;
             }
-            if (my_promotion_piece == ChessPiece.PieceType.QUEEN) {
+            if (myPromotionPiece == ChessPiece.PieceType.QUEEN) {
                 i = 3;
             }
-            if (my_promotion_piece == ChessPiece.PieceType.KING) {
+            if (myPromotionPiece == ChessPiece.PieceType.KING) {
                 i = 0;
             }
-            if (my_promotion_piece == ChessPiece.PieceType.BISHOP) {
+            if (myPromotionPiece == ChessPiece.PieceType.BISHOP) {
                 i = 4;
             }
         }
-        int j = my_end_position.hashCode();
+        int j = myEndPosition.hashCode();
         if (j > 63) {
             j = j - 64;
         }
-        int k = my_start_position.hashCode();
+        int k = myStartPosition.hashCode();
         if (k > 63) {
             k = k - 64;
         }
         return 4096 * i + 64 * j + k;
     }
     public ChessMove clone() {
-        ChessMove cloned_thing = new ChessMove(my_start_position.clone(), my_end_position.clone(), null);
-        if (my_promotion_piece == null) {
+        ChessMove cloned_thing = new ChessMove(myStartPosition.clone(), myEndPosition.clone(), null);
+        if (myPromotionPiece == null) {
             return cloned_thing;
         }
-        cloned_thing = new ChessMove(my_start_position.clone(), my_end_position.clone(), my_promotion_piece);
+        cloned_thing = new ChessMove(myStartPosition.clone(), myEndPosition.clone(), myPromotionPiece);
         return cloned_thing;
     }
 }

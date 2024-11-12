@@ -8,11 +8,11 @@ package chess;
  */
 public class ChessPosition {
 
-    private int my_row;
-    private int my_column;
+    private int myRow;
+    private int myColumn;
     public ChessPosition(int row, int col) {
-        my_row = row;
-        my_column = col;
+        myRow = row;
+        myColumn = col;
     }
 
     /**
@@ -20,7 +20,7 @@ public class ChessPosition {
      * 1 codes for the bottom row
      */
     public int getRow() {
-        return this.my_row;
+        return this.myRow;
     }
 
     /**
@@ -28,7 +28,7 @@ public class ChessPosition {
      * 1 codes for the left row
      */
     public int getColumn() {
-        return this.my_column;
+        return this.myColumn;
     }
 
     public boolean equals(Object compare_with) {
@@ -39,19 +39,19 @@ public class ChessPosition {
             return false;
         }
         ChessPosition my_thing = (ChessPosition) compare_with;
-        if (my_thing.getRow() != my_row) {
+        if (my_thing.getRow() != myRow) {
             return false;
         }
-        if (my_thing.getColumn() != my_column) {
+        if (my_thing.getColumn() != myColumn) {
             return false;
         }
         return true;
     }
     public int hashCode() {
-        return my_row * 8 + my_column;
+        return myRow * 8 + myColumn;
     }
     public ChessPosition clone() {
-        ChessPosition cloned_thing = new ChessPosition(my_row, my_column);
+        ChessPosition cloned_thing = new ChessPosition(myRow, myColumn);
         return cloned_thing;
     }
 }

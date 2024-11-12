@@ -2,13 +2,9 @@ package server;
 
 import chess.ChessGame;
 import com.google.gson.Gson;
-import com.google.gson.JsonObject;
 import spark.*;
 
 import java.util.Map;
-
-import java.util.UUID;
-
 
 
 import java.util.ArrayList;
@@ -125,7 +121,7 @@ public class Server {
     }
     private String clearApplication(Request req, Response res) {
         //var new_thing = new Gson().fromJson(req.body(), UserData.class);
-        the_service.clear_thing();
+        the_service.clearThing();
         res.status(200);
         var thing_to_serialize = Map.of();
         var thing_serializer = new Gson();
@@ -136,7 +132,7 @@ public class Server {
         var new_thing = new Gson().fromJson(req.body(), PlayerColorGameNumber.class);
         String my_auth_data = req.headers("authorization");
 
-        if (!the_service.check_for(my_auth_data)) {
+        if (!the_service.checkFor(my_auth_data)) {
             res.status(401);
             var the_thing_to_serialize = Map.of("message", "Error: unauthorized");
             var the_thing_serializer = new Gson();
@@ -151,14 +147,14 @@ public class Server {
             var the_thing_json = the_thing_serializer.toJson(the_thing_to_serialize);
             return the_thing_json;
         }
-        if (!the_service.check_for_game_existence(new_thing.gameID())) {
+        if (!the_service.checkForGameExistence(new_thing.gameID())) {
             res.status(400);
             var the_thing_to_serialize = Map.of("message", "Error: bad request");
             var the_thing_serializer = new Gson();
             var the_thing_json = the_thing_serializer.toJson(the_thing_to_serialize);
             return the_thing_json;
         }
-        if (the_service.join_game_thingy(new_thing.gameID(), new_thing.playerColor(), my_auth_data)) {
+        if (the_service.joinGameThingy(new_thing.gameID(), new_thing.playerColor(), my_auth_data)) {
             res.status(200);
             var the_thing_to_serialize = Map.of();
             var the_thing_serializer = new Gson();
@@ -173,9 +169,9 @@ public class Server {
     }
     private String listGames(Request req, Response res) {
         String my_auth_data = req.headers("authorization");
-        if (the_service.check_for(my_auth_data)) {
+        if (the_service.checkFor(my_auth_data)) {
             res.status(200);
-            Collection<GameData> game_data_values = the_service.get_all_games();
+            Collection<GameData> game_data_values = the_service.getAllGames();
             Collection<GameMetadata> new_maps = new ArrayList<>();
             for (GameData gd: game_data_values) {
                 GameMetadata gm = new GameMetadata(gd.gameID(), gd.whiteUsername(), gd.blackUsername(), gd.gameName());
@@ -197,9 +193,9 @@ public class Server {
     private String createGame(Request req, Response res) {
         GameName new_thing = new Gson().fromJson(req.body(), GameName.class);
         String my_auth_data = req.headers("authorization"); //req.attribute("Authorization");
-        if (the_service.check_for(my_auth_data)) {
+        if (the_service.checkFor(my_auth_data)) {
             res.status(200);
-            var thing_to_serialize = Map.of("gameID", the_service.add_game(new_thing.gameName()));
+            var thing_to_serialize = Map.of("gameID", the_service.addGame(new_thing.gameName()));
             var thing_serializer = new Gson();
             var thing_json = thing_serializer.toJson(thing_to_serialize);
             return thing_json;

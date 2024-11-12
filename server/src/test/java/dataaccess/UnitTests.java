@@ -4,7 +4,6 @@ import chess.ChessGame;
 import org.junit.jupiter.api.*;
 import server.AuthData;
 import server.GameData;
-import server.Server;
 import server.UserData;
 
 import java.util.ArrayList;
@@ -73,8 +72,8 @@ public class UnitTests {
     }
 
     @AfterEach
-    public void shut_down() throws DataAccessException {
-        sqlThing.clear_thing();
+    public void shutDown() throws DataAccessException {
+        sqlThing.clearThing();
     }
 
     //@Test
@@ -131,7 +130,7 @@ public class UnitTests {
     //    TestResult lR = sF.joinPlayer(null, "Anand will steal the game");
     //}
 
-    private GameData GameAtInteger(Collection<GameData> game_data, int i) {
+    private GameData gameAtInteger(Collection<GameData> game_data, int i) {
         for (GameData gD: game_data) {
             if (gD.gameID() == i) {
                 return gD;
@@ -141,262 +140,262 @@ public class UnitTests {
     }
     @Test
     @DisplayName("Auth Tokens")
-    public void AuthTokens() throws DataAccessException {
+    public void authTokens() throws DataAccessException {
         String s = sqlThing.generateAuthToken();
         Assertions.assertNotNull(s);
         Assertions.assertTrue(s.length() >= 32);
     }
     @Test
     @DisplayName("Kramnik Auth Tokens Passed")
-    public void KramnikAuthTokensPassed() throws DataAccessException {
-        sqlThing.CreateAuth(new AuthData("kRaMnIk", kramnik.username()));
+    public void kramnikAuthTokensPassed() throws DataAccessException {
+        sqlThing.createAuth(new AuthData("kRaMnIk", kramnik.username()));
         AuthData authData = sqlThing.getAuth("kRaMnIk");
         Assertions.assertEquals(authData.username(), kramnik.username());
     }
     @Test
     @DisplayName("Create Kasparov Passed")
-    public void CreateKasparovPassed() throws DataAccessException {
-        sqlThing.CreateUser(kasparov);
+    public void createKasparovPassed() throws DataAccessException {
+        sqlThing.createUser(kasparov);
         UserData uD = sqlThing.getUser(kasparov.username());
         Assertions.assertEquals(uD.username(), kasparov.username());
         Assertions.assertEquals(uD.email(), kasparov.email());
     }
     @Test
     @DisplayName("Get Anand From Database Passed")
-    public void GetAnandFromDatabasePassed() throws DataAccessException {
+    public void getAnandFromDatabasePassed() throws DataAccessException {
         //sv.
-        sqlThing.CreateUser(anand);
+        sqlThing.createUser(anand);
         UserData userData = sqlThing.getUser(anand.username());
         Assertions.assertEquals(userData.username(), anand.username());
         Assertions.assertEquals(userData.email(), anand.email());
     }
     @Test
     @DisplayName("Kramnik Auth Tokens Failed")
-    public void KramnikAuthTokensFailed() throws DataAccessException {
-        sqlThing.CreateAuth(new AuthData("vladimir kramnik", kramnik.username()));
+    public void kramnikAuthTokensFailed() throws DataAccessException {
+        sqlThing.createAuth(new AuthData("vladimir kramnik", kramnik.username()));
         AuthData authData = sqlThing.getAuth("kRaMnIk");
         Assertions.assertNull(authData);
     }
     @Test
     @DisplayName("Create Kasparov Failed")
-    public void CreateKasparovFailed() throws DataAccessException {
-        sqlThing.CreateUser(new UserData("ChessBoy", "abcdef", "chessboy@.edu"));
+    public void createKasparovFailed() throws DataAccessException {
+        sqlThing.createUser(new UserData("ChessBoy", "abcdef", "chessboy@.edu"));
         UserData userData = sqlThing.getUser(kasparov.username());
         Assertions.assertNull(userData);
     }
     @Test
     @DisplayName("Get Anand From Database Failed")
-    public void GetAnandFromDatabaseFailed() throws DataAccessException {
+    public void getAnandFromDatabaseFailed() throws DataAccessException {
         UserData userData = sqlThing.getUser(anand.username());
         Assertions.assertNull(userData);
     }
     @Test
     @DisplayName("Get Auth Tokens Passed")
-    public void GetAuthTokensPassed() throws DataAccessException {
-        sqlThing.CreateAuth(new AuthData("kAsPaRoV", kasparov.username()));
+    public void getAuthTokensPassed() throws DataAccessException {
+        sqlThing.createAuth(new AuthData("kAsPaRoV", kasparov.username()));
         Assertions.assertEquals(sqlThing.getAuth("kAsPaRoV").username(), kasparov.username());
     }
     @Test
     @DisplayName("Get Auth Tokens Failed")
-    public void GetAuthTokensFailed() throws DataAccessException {
-        sqlThing.CreateAuth(new AuthData("garry kasparov", kasparov.username()));
+    public void getAuthTokensFailed() throws DataAccessException {
+        sqlThing.createAuth(new AuthData("garry kasparov", kasparov.username()));
         Assertions.assertNull(sqlThing.getAuth("kAsPaRoV"));
     }
     @Test
     @DisplayName("Test Clear")
-    public void TestClear() throws DataAccessException {
-        sqlThing.clear_thing();
-        Assertions.assertEquals(0, sqlThing.get_all_games().size());
+    public void testClear() throws DataAccessException {
+        sqlThing.clearThing();
+        Assertions.assertEquals(0, sqlThing.getAllGames().size());
     }
     @Test
     @DisplayName("Delete Auth Kasparov Passed")
-    public void DeleteAuthKasparovPassed() throws DataAccessException {
-        sqlThing.CreateAuth(new AuthData("kAsPaRoV", kasparov.username()));
+    public void deleteAuthKasparovPassed() throws DataAccessException {
+        sqlThing.createAuth(new AuthData("kAsPaRoV", kasparov.username()));
         sqlThing.deleteAuth(new AuthData("kAsPaRoV", kasparov.username()));
         AuthData authData = sqlThing.getAuth("kAsPaRoV");
         Assertions.assertNull(authData);
     }
     @Test
     @DisplayName("Delete Auth Kramnik Passed")
-    public void DeleteAuthKramnikPassed() throws DataAccessException {
-        sqlThing.CreateAuth(new AuthData("kRaMnIk", kramnik.username()));
+    public void deleteAuthKramnikPassed() throws DataAccessException {
+        sqlThing.createAuth(new AuthData("kRaMnIk", kramnik.username()));
         sqlThing.deleteAuth(new AuthData("kRaMnIk", kramnik.username()));
         AuthData authData = sqlThing.getAuth("kRaMnIk");
         Assertions.assertNull(authData);
     }
     @Test
     @DisplayName("Delete Auth Anand Passed")
-    public void DeleteAuthAnandPassed() throws DataAccessException {
-        sqlThing.CreateAuth(new AuthData("aNaNd", anand.username()));
+    public void deleteAuthAnandPassed() throws DataAccessException {
+        sqlThing.createAuth(new AuthData("aNaNd", anand.username()));
         sqlThing.deleteAuth(new AuthData("aNaNd", anand.username()));
         AuthData authData = sqlThing.getAuth("aNaNd");
         Assertions.assertNull(authData);
     }
     @Test
     @DisplayName("Delete Auth Kasparov Failed")
-    public void DeleteAuthKasparovFailed() throws DataAccessException {
-        sqlThing.CreateAuth(new AuthData("kAsPaRoV", kasparov.username()));
+    public void deleteAuthKasparovFailed() throws DataAccessException {
+        sqlThing.createAuth(new AuthData("kAsPaRoV", kasparov.username()));
         sqlThing.deleteAuth(new AuthData("garry kasparov", kasparov.username()));
         AuthData authData = sqlThing.getAuth("kAsPaRoV");
         Assertions.assertEquals(authData, new AuthData("kAsPaRoV", kasparov.username()));
     }
     @Test
     @DisplayName("Delete Auth Kramnik Failed")
-    public void DeleteAuthKramnikFailed() throws DataAccessException {
-        sqlThing.CreateAuth(new AuthData("kRaMnIk", kramnik.username()));
+    public void deleteAuthKramnikFailed() throws DataAccessException {
+        sqlThing.createAuth(new AuthData("kRaMnIk", kramnik.username()));
         sqlThing.deleteAuth(new AuthData("vladimir kramnik", kramnik.username()));
         AuthData authData = sqlThing.getAuth("kRaMnIk");
         Assertions.assertEquals(authData, new AuthData("kRaMnIk", kramnik.username()));
     }
     @Test
     @DisplayName("Delete Auth Anand Failed")
-    public void DeleteAuthAnandFailed() throws DataAccessException {
-        sqlThing.CreateAuth(new AuthData("aNaNd", anand.username()));
+    public void deleteAuthAnandFailed() throws DataAccessException {
+        sqlThing.createAuth(new AuthData("aNaNd", anand.username()));
         sqlThing.deleteAuth(new AuthData("viswanathan anand", anand.username()));
         AuthData authData = sqlThing.getAuth("aNaNd");
         Assertions.assertEquals(authData, new AuthData("aNaNd", anand.username()));
     }
     @Test
     @DisplayName("Add Game Passed")
-    public void AddGamePassed() throws DataAccessException {
-        sqlThing.add_game("CHESS! YAY! LET'S PLAY");
-        sqlThing.add_game("CS 240 Chess Server Web API");
-        sqlThing.add_game("World Championship");
-        Assertions.assertEquals(3, sqlThing.get_all_games().size());
-        Assertions.assertEquals(GameAtInteger(sqlThing.get_all_games(), 1).gameName(), "CHESS! YAY! LET'S PLAY");
-        Assertions.assertEquals(GameAtInteger(sqlThing.get_all_games(), 2).gameName(), "CS 240 Chess Server Web API");
-        Assertions.assertEquals(GameAtInteger(sqlThing.get_all_games(), 3).gameName(), "World Championship");
+    public void addGamePassed() throws DataAccessException {
+        sqlThing.addGame("CHESS! YAY! LET'S PLAY");
+        sqlThing.addGame("CS 240 Chess Server Web API");
+        sqlThing.addGame("World Championship");
+        Assertions.assertEquals(3, sqlThing.getAllGames().size());
+        Assertions.assertEquals(gameAtInteger(sqlThing.getAllGames(), 1).gameName(), "CHESS! YAY! LET'S PLAY");
+        Assertions.assertEquals(gameAtInteger(sqlThing.getAllGames(), 2).gameName(), "CS 240 Chess Server Web API");
+        Assertions.assertEquals(gameAtInteger(sqlThing.getAllGames(), 3).gameName(), "World Championship");
     }
     @Test
     @DisplayName("Add Game Failed")
-    public void AddGameFailed() throws DataAccessException {
+    public void addGameFailed() throws DataAccessException {
         if (0 == 1) {
-            sqlThing.add_game("CHESS! YAY! LET'S PLAY");
-            sqlThing.add_game("CS 240 Chess Server Web API");
-            sqlThing.add_game("World Championship");
+            sqlThing.addGame("CHESS! YAY! LET'S PLAY");
+            sqlThing.addGame("CS 240 Chess Server Web API");
+            sqlThing.addGame("World Championship");
         }
-        Assertions.assertFalse(3 == sqlThing.get_all_games().size());
+        Assertions.assertFalse(3 == sqlThing.getAllGames().size());
     }
     @Test
     @DisplayName("List Game Passed")
-    public void ListGamePassed() throws DataAccessException {
-        sqlThing.add_game("CHESS! YAY! LET'S PLAY");
-        sqlThing.add_game("CS 240 Chess Server Web API");
-        sqlThing.add_game("World Championship");
-        Collection<GameData> my_games = sqlThing.get_all_games();
+    public void listGamePassed() throws DataAccessException {
+        sqlThing.addGame("CHESS! YAY! LET'S PLAY");
+        sqlThing.addGame("CS 240 Chess Server Web API");
+        sqlThing.addGame("World Championship");
+        Collection<GameData> my_games = sqlThing.getAllGames();
         Collection<GameData> the_actual = new ArrayList<>();
         the_actual.add(new GameData(1, null, null, "CHESS! YAY! LET'S PLAY", null));
         the_actual.add(new GameData(2, null, null, "CS 240 Chess Server Web API", null));
         the_actual.add(new GameData(3, null, null, "World Championship", null));
         for (int i = 1; i < 4; i = i + 1) {
-            Assertions.assertEquals(GameAtInteger(the_actual, i).gameName(), GameAtInteger(my_games, i).gameName());
+            Assertions.assertEquals(gameAtInteger(the_actual, i).gameName(), gameAtInteger(my_games, i).gameName());
         }
     }
     @Test
     @DisplayName("List Game Failed")
-    public void ListGameFailed() throws DataAccessException {
+    public void listGameFailed() throws DataAccessException {
         if (0 == 1) {
-            sqlThing.add_game("CHESS! YAY! LET'S PLAY");
-            sqlThing.add_game("CS 240 Chess Server Web API");
-            sqlThing.add_game("World Championship");
+            sqlThing.addGame("CHESS! YAY! LET'S PLAY");
+            sqlThing.addGame("CS 240 Chess Server Web API");
+            sqlThing.addGame("World Championship");
         }
-        Collection<GameData> my_games = sqlThing.get_all_games();
+        Collection<GameData> my_games = sqlThing.getAllGames();
         Collection<GameData> the_actual = new ArrayList<>();
         the_actual.add(new GameData(1, null, null, "CHESS! YAY! LET'S PLAY", null));
         the_actual.add(new GameData(2, null, null, "CS 240 Chess Server Web API", null));
         the_actual.add(new GameData(3, null, null, "World Championship", null));
         for (int i = 1; i < 4; i = i + 1) {
-            Assertions.assertNull(GameAtInteger(my_games, i));
+            Assertions.assertNull(gameAtInteger(my_games, i));
         }
     }
     @Test
     @DisplayName("First Join Game Passed")
-    public void FirstJoinGamePassed() throws DataAccessException {
-        sqlThing.add_game("CHESS! YAY! LET'S PLAY");
-        sqlThing.add_game("CS 240 Chess Server Web API");
-        sqlThing.add_game("World Championship");
-        sqlThing.CreateUser(kramnik);
-        sqlThing.CreateAuth(new AuthData("vladimir", kramnik.username()));
-        sqlThing.join_game_thingy(1, ChessGame.TeamColor.WHITE, "vladimir");
-        Collection<GameData> my_games = sqlThing.get_all_games();
-        Assertions.assertEquals(GameAtInteger(my_games, 1).whiteUsername(), kramnik.username());
+    public void firstJoinGamePassed() throws DataAccessException {
+        sqlThing.addGame("CHESS! YAY! LET'S PLAY");
+        sqlThing.addGame("CS 240 Chess Server Web API");
+        sqlThing.addGame("World Championship");
+        sqlThing.createUser(kramnik);
+        sqlThing.createAuth(new AuthData("vladimir", kramnik.username()));
+        sqlThing.joinGameThingy(1, ChessGame.TeamColor.WHITE, "vladimir");
+        Collection<GameData> my_games = sqlThing.getAllGames();
+        Assertions.assertEquals(gameAtInteger(my_games, 1).whiteUsername(), kramnik.username());
     }
     @Test
     @DisplayName("First Join Game Failed")
-    public void FirstJoinGameFailed() throws DataAccessException {
-        sqlThing.add_game("CHESS! YAY! LET'S PLAY");
-        sqlThing.add_game("CS 240 Chess Server Web API");
-        sqlThing.add_game("World Championship");
-        sqlThing.join_game_thingy(1, ChessGame.TeamColor.WHITE, "vladimir");
-        Collection<GameData> my_games = sqlThing.get_all_games();
-        Assertions.assertNull(GameAtInteger(my_games, 1).whiteUsername());
+    public void firstJoinGameFailed() throws DataAccessException {
+        sqlThing.addGame("CHESS! YAY! LET'S PLAY");
+        sqlThing.addGame("CS 240 Chess Server Web API");
+        sqlThing.addGame("World Championship");
+        sqlThing.joinGameThingy(1, ChessGame.TeamColor.WHITE, "vladimir");
+        Collection<GameData> my_games = sqlThing.getAllGames();
+        Assertions.assertNull(gameAtInteger(my_games, 1).whiteUsername());
     }
     @Test
     @DisplayName("Second Join Game Passed")
-    public void SecondJoinGamePassed() throws DataAccessException {
-        sqlThing.add_game("CHESS! YAY! LET'S PLAY");
-        sqlThing.add_game("CS 240 Chess Server Web API");
-        sqlThing.add_game("World Championship");
-        sqlThing.CreateUser(kasparov);
-        sqlThing.CreateAuth(new AuthData("garry", kasparov.username()));
-        sqlThing.CreateUser(kramnik);
-        sqlThing.CreateAuth(new AuthData("vladimir", kramnik.username()));
-        sqlThing.CreateUser(anand);
-        sqlThing.CreateAuth(new AuthData("viswanathan", anand.username()));
-        sqlThing.join_game_thingy(1, ChessGame.TeamColor.WHITE, "vladimir");
-        sqlThing.join_game_thingy(1, ChessGame.TeamColor.BLACK, "garry");
-        Collection<GameData> my_games = sqlThing.get_all_games();
-        Assertions.assertEquals(GameAtInteger(my_games, 1).blackUsername(), kasparov.username());
+    public void secondJoinGamePassed() throws DataAccessException {
+        sqlThing.addGame("CHESS! YAY! LET'S PLAY");
+        sqlThing.addGame("CS 240 Chess Server Web API");
+        sqlThing.addGame("World Championship");
+        sqlThing.createUser(kasparov);
+        sqlThing.createAuth(new AuthData("garry", kasparov.username()));
+        sqlThing.createUser(kramnik);
+        sqlThing.createAuth(new AuthData("vladimir", kramnik.username()));
+        sqlThing.createUser(anand);
+        sqlThing.createAuth(new AuthData("viswanathan", anand.username()));
+        sqlThing.joinGameThingy(1, ChessGame.TeamColor.WHITE, "vladimir");
+        sqlThing.joinGameThingy(1, ChessGame.TeamColor.BLACK, "garry");
+        Collection<GameData> my_games = sqlThing.getAllGames();
+        Assertions.assertEquals(gameAtInteger(my_games, 1).blackUsername(), kasparov.username());
     }
     @Test
     @DisplayName("Second Join Game Failed")
-    public void SecondJoinGameFailed() throws DataAccessException {
-        sqlThing.add_game("CHESS! YAY! LET'S PLAY");
-        sqlThing.add_game("CS 240 Chess Server Web API");
-        sqlThing.add_game("World Championship");
-        sqlThing.CreateUser(kasparov);
-        sqlThing.CreateAuth(new AuthData("garry", kasparov.username()));
-        sqlThing.CreateUser(kramnik);
-        sqlThing.CreateAuth(new AuthData("vladimir", kramnik.username()));
-        sqlThing.CreateUser(anand);
-        sqlThing.CreateAuth(new AuthData("viswanathan", anand.username()));
-        sqlThing.join_game_thingy(1, ChessGame.TeamColor.BLACK, "vladimir");
-        sqlThing.join_game_thingy(1, ChessGame.TeamColor.BLACK, "garry");
-        Collection<GameData> my_games = sqlThing.get_all_games();
-        Assertions.assertNull(GameAtInteger(my_games, 1).whiteUsername());
-        Assertions.assertEquals(GameAtInteger(my_games, 1).blackUsername(), kramnik.username());
+    public void secondJoinGameFailed() throws DataAccessException {
+        sqlThing.addGame("CHESS! YAY! LET'S PLAY");
+        sqlThing.addGame("CS 240 Chess Server Web API");
+        sqlThing.addGame("World Championship");
+        sqlThing.createUser(kasparov);
+        sqlThing.createAuth(new AuthData("garry", kasparov.username()));
+        sqlThing.createUser(kramnik);
+        sqlThing.createAuth(new AuthData("vladimir", kramnik.username()));
+        sqlThing.createUser(anand);
+        sqlThing.createAuth(new AuthData("viswanathan", anand.username()));
+        sqlThing.joinGameThingy(1, ChessGame.TeamColor.BLACK, "vladimir");
+        sqlThing.joinGameThingy(1, ChessGame.TeamColor.BLACK, "garry");
+        Collection<GameData> my_games = sqlThing.getAllGames();
+        Assertions.assertNull(gameAtInteger(my_games, 1).whiteUsername());
+        Assertions.assertEquals(gameAtInteger(my_games, 1).blackUsername(), kramnik.username());
     }
     @Test
     @DisplayName("First Game Existence Check Passed")
-    public void FirstGameExistenceCheckPassed() throws DataAccessException {
-        sqlThing.add_game("CHESS! YAY! LET'S PLAY");
-        Assertions.assertTrue(sqlThing.check_for_game_existence(1));
+    public void firstGameExistenceCheckPassed() throws DataAccessException {
+        sqlThing.addGame("CHESS! YAY! LET'S PLAY");
+        Assertions.assertTrue(sqlThing.checkForGameExistence(1));
     }
     @Test
     @DisplayName("First Game Existence Check Failed")
-    public void FirstGameExistenceCheckFailed() throws DataAccessException {
+    public void firstGameExistenceCheckFailed() throws DataAccessException {
         if (0 == 1) {
-            sqlThing.add_game("CHESS! YAY! LET'S PLAY");
+            sqlThing.addGame("CHESS! YAY! LET'S PLAY");
         }
-        Assertions.assertFalse(sqlThing.check_for_game_existence(1));
+        Assertions.assertFalse(sqlThing.checkForGameExistence(1));
     }
     @Test
     @DisplayName("Second Game Existence Check Passed")
     public void SecondGameExistenceCheckPassed() throws DataAccessException {
-        sqlThing.add_game("CHESS! YAY! LET'S PLAY");
-        sqlThing.add_game("CS 240 Chess Server Web API");
-        sqlThing.add_game("World Championship");
-        Assertions.assertTrue(sqlThing.check_for_game_existence(1));
-        Assertions.assertTrue(sqlThing.check_for_game_existence(2));
-        Assertions.assertTrue(sqlThing.check_for_game_existence(3));
+        sqlThing.addGame("CHESS! YAY! LET'S PLAY");
+        sqlThing.addGame("CS 240 Chess Server Web API");
+        sqlThing.addGame("World Championship");
+        Assertions.assertTrue(sqlThing.checkForGameExistence(1));
+        Assertions.assertTrue(sqlThing.checkForGameExistence(2));
+        Assertions.assertTrue(sqlThing.checkForGameExistence(3));
     }
     @Test
     @DisplayName("Second Game Existence Check Failed")
-    public void SecondGameExistenceCheckFailed() throws DataAccessException {
+    public void secondGameExistenceCheckFailed() throws DataAccessException {
         if (0 == 1) {
-            sqlThing.add_game("CHESS! YAY! LET'S PLAY");
+            sqlThing.addGame("CHESS! YAY! LET'S PLAY");
         }
-        Assertions.assertFalse(sqlThing.check_for_game_existence(0));
+        Assertions.assertFalse(sqlThing.checkForGameExistence(0));
     }
 
 }

@@ -2,7 +2,6 @@ package chess;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 
 /**
  * Represents a single chess piece
@@ -12,12 +11,12 @@ import java.util.Iterator;
  */
 public class ChessPiece {
 
-    private ChessGame.TeamColor my_color;
-    private ChessPiece.PieceType my_type;
+    private ChessGame.TeamColor myColor;
+    private ChessPiece.PieceType myType;
 
     public ChessPiece(ChessGame.TeamColor pieceColor, ChessPiece.PieceType type) {
-        my_color = pieceColor;
-        my_type = type;
+        myColor = pieceColor;
+        myType = type;
     }
 
     /**
@@ -36,14 +35,14 @@ public class ChessPiece {
      * @return Which team this chess piece belongs to
      */
     public ChessGame.TeamColor getTeamColor() {
-        return my_color;
+        return myColor;
     }
 
     /**
      * @return which type of chess piece this piece is
      */
     public ChessPiece.PieceType getPieceType() {
-        return my_type;
+        return myType;
     }
 
     /**
@@ -54,150 +53,133 @@ public class ChessPiece {
      * @return Collection of valid moves
      */
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
-        boolean can_add_move = true;
-        Collection<ChessMove> chess_moves = new ArrayList<>();
-        ChessPiece the_position = board.getPiece(myPosition).clone();
-        ChessPiece.PieceType the_type = the_position.getPieceType();
-        int the_color = 23;
-        int first_phoneme = 63;
-        int that_row = myPosition.getRow();
-        int that_column = myPosition.getColumn();
-        if (the_type == ChessPiece.PieceType.KING) {
-            first_phoneme = 11;
+        boolean canAddMove = true;
+        Collection<ChessMove> chessMoves = new ArrayList<>();
+        ChessPiece thePosition = board.getPiece(myPosition).clone();
+        ChessPiece.PieceType theType = thePosition.getPieceType();
+        int theColor = 23;
+        int firstPhoneme = 63;
+        int thatRow = myPosition.getRow();
+        int thatColumn = myPosition.getColumn();
+        if (theType == ChessPiece.PieceType.KING) {
+            firstPhoneme = 11;
         }
-        if (the_type == ChessPiece.PieceType.QUEEN) {
-            first_phoneme = 17;
+        if (theType == ChessPiece.PieceType.QUEEN) {
+            firstPhoneme = 17;
         }
-        if (the_type == ChessPiece.PieceType.BISHOP) {
-            first_phoneme = 2;
+        if (theType == ChessPiece.PieceType.BISHOP) {
+            firstPhoneme = 2;
         }
-        if (the_type == ChessPiece.PieceType.KNIGHT) {
-            first_phoneme = 14;
+        if (theType == ChessPiece.PieceType.KNIGHT) {
+            firstPhoneme = 14;
         }
-        if (the_type == ChessPiece.PieceType.ROOK) {
-            first_phoneme = 18;
+        if (theType == ChessPiece.PieceType.ROOK) {
+            firstPhoneme = 18;
         }
-        if (the_type == ChessPiece.PieceType.PAWN) {
-            first_phoneme = 16;
+        if (theType == ChessPiece.PieceType.PAWN) {
+            firstPhoneme = 16;
         }
-        if (the_position.getTeamColor() == ChessGame.TeamColor.BLACK) {
-            the_color = 2;
+        if (thePosition.getTeamColor() == ChessGame.TeamColor.BLACK) {
+            theColor = 2;
         }
-        ChessPosition the_new_place = new ChessPosition(1, 1);
-        ChessMove the_new_move = new ChessMove(the_new_place.clone(), the_new_place.clone(), null);
-        if (first_phoneme == 18 || first_phoneme == 17) {
-            int i = that_row + 1;
-            int j = that_column;
+        ChessPosition theNewPlace = new ChessPosition(1, 1);
+        ChessMove theNewMove = new ChessMove(theNewPlace.clone(), theNewPlace.clone(), null);
+        if (firstPhoneme == 18 || firstPhoneme == 17) {
+            int i = thatRow + 1;
+            int j = thatColumn;
             while (i < 9) {
-                the_new_place = new ChessPosition(i, j);
-                if (board.getPiece(the_new_place) != null && board.getPiece(myPosition) != null) {
-                    if (board.getPiece(the_new_place).getTeamColor() ==
+                theNewPlace = new ChessPosition(i, j);
+                if (board.getPiece(theNewPlace) != null && board.getPiece(myPosition) != null) {
+                    if (board.getPiece(theNewPlace).getTeamColor() ==
                             board.getPiece(myPosition).getTeamColor()) {
                         break;
                     }
                 }
-                the_new_move = new ChessMove(myPosition.clone(), the_new_place.clone(), null);
-                chess_moves.add(the_new_move.clone());
-                if (board.getPiece(the_new_place) != null && board.getPiece(myPosition) != null) {
-                    if (board.getPiece(the_new_place).getTeamColor() !=
+                theNewMove = new ChessMove(myPosition.clone(), theNewPlace.clone(), null);
+                chessMoves.add(theNewMove.clone());
+                if (board.getPiece(theNewPlace) != null && board.getPiece(myPosition) != null) {
+                    if (board.getPiece(theNewPlace).getTeamColor() !=
                             board.getPiece(myPosition).getTeamColor()) {
                         break;
                     }
                 }
                 i = i + 1;
             }
-            i = that_row - 1;
-            j = that_column;
+            i = thatRow - 1;
+            j = thatColumn;
             while (i > 0) {
-                the_new_place = new ChessPosition(i, j);
-                if (board.getPiece(the_new_place) != null && board.getPiece(myPosition) != null) {
-                    if (board.getPiece(the_new_place).getTeamColor() ==
+                theNewPlace = new ChessPosition(i, j);
+                if (board.getPiece(theNewPlace) != null && board.getPiece(myPosition) != null) {
+                    if (board.getPiece(theNewPlace).getTeamColor() ==
                             board.getPiece(myPosition).getTeamColor()) {
                         break;
                     }
                 }
-                the_new_move = new ChessMove(myPosition.clone(), the_new_place.clone(), null);
-                chess_moves.add(the_new_move.clone());
-                if (board.getPiece(the_new_place) != null && board.getPiece(myPosition) != null) {
-                    if (board.getPiece(the_new_place).getTeamColor() !=
+                theNewMove = new ChessMove(myPosition.clone(), theNewPlace.clone(), null);
+                chessMoves.add(theNewMove.clone());
+                if (board.getPiece(theNewPlace) != null && board.getPiece(myPosition) != null) {
+                    if (board.getPiece(theNewPlace).getTeamColor() !=
                             board.getPiece(myPosition).getTeamColor()) {
                         break;
                     }
                 }
                 i = i - 1;
             }
-            i = that_row;
-            j = that_column + 1;
+            i = thatRow;
+            j = thatColumn + 1;
             while (j < 9) {
-                the_new_place = new ChessPosition(i, j);
-                if (board.getPiece(the_new_place) != null && board.getPiece(myPosition) != null) {
-                    if (board.getPiece(the_new_place).getTeamColor() ==
+                theNewPlace = new ChessPosition(i, j);
+                if (board.getPiece(theNewPlace) != null && board.getPiece(myPosition) != null) {
+                    if (board.getPiece(theNewPlace).getTeamColor() ==
                             board.getPiece(myPosition).getTeamColor()) {
                         break;
                     }
                 }
-                the_new_move = new ChessMove(myPosition.clone(), the_new_place.clone(), null);
-                chess_moves.add(the_new_move.clone());
-                if (board.getPiece(the_new_place) != null && board.getPiece(myPosition) != null) {
-                    if (board.getPiece(the_new_place).getTeamColor() !=
+                theNewMove = new ChessMove(myPosition.clone(), theNewPlace.clone(), null);
+                chessMoves.add(theNewMove.clone());
+                if (board.getPiece(theNewPlace) != null && board.getPiece(myPosition) != null) {
+                    if (board.getPiece(theNewPlace).getTeamColor() !=
                             board.getPiece(myPosition).getTeamColor()) {
                         break;
                     }
                 }
                 j = j + 1;
             }
-            j = that_column - 1;
+            j = thatColumn - 1;
             while (j > 0) {
-                the_new_place = new ChessPosition(i, j);
-                if (board.getPiece(the_new_place) != null && board.getPiece(myPosition) != null) {
-                    if (board.getPiece(the_new_place).getTeamColor() ==
+                theNewPlace = new ChessPosition(i, j);
+                if (board.getPiece(theNewPlace) != null && board.getPiece(myPosition) != null) {
+                    if (board.getPiece(theNewPlace).getTeamColor() ==
                             board.getPiece(myPosition).getTeamColor()) {
                         break;
                     }
                 }
-                the_new_move = new ChessMove(myPosition.clone(), the_new_place.clone(), null);
-                chess_moves.add(the_new_move.clone());
-                if (board.getPiece(the_new_place) != null && board.getPiece(myPosition) != null) {
-                    if (board.getPiece(the_new_place).getTeamColor() !=
+                theNewMove = new ChessMove(myPosition.clone(), theNewPlace.clone(), null);
+                chessMoves.add(theNewMove.clone());
+                if (board.getPiece(theNewPlace) != null && board.getPiece(myPosition) != null) {
+                    if (board.getPiece(theNewPlace).getTeamColor() !=
                             board.getPiece(myPosition).getTeamColor()) {
                         break;
                     }
                 }
                 j = j - 1;
             }
-            //int i = 1;
-            //while (i < 9) {
-            //    if (that_row != i) {
-            //        the_new_place = new ChessPosition(i, that_column);
-            //        the_new_move = new ChessMove(myPosition.clone(), the_new_place.clone(), null);
-            //        chess_moves.add(the_new_move.clone());
-            //    }
-            //    i = i + 1;
-            //}
-            //while (i > 1) {
-            //    i = i - 1;
-            //    if (that_column != i) {
-            //        the_new_place = new ChessPosition(that_row, i);
-            //        the_new_move = new ChessMove(myPosition.clone(), the_new_place.clone(), null);
-            //        chess_moves.add(the_new_move.clone());
-            //    }
-            //}
         }
-        if (first_phoneme == 17 || first_phoneme == 2) {
-            int i = that_row + 1;
-            int j = that_column + 1;
+        if (firstPhoneme == 17 || firstPhoneme == 2) {
+            int i = thatRow + 1;
+            int j = thatColumn + 1;
             while (i < 9 && j < 9) {
-                the_new_place = new ChessPosition(i, j);
-                if (board.getPiece(the_new_place) != null && board.getPiece(myPosition) != null) {
-                    if (board.getPiece(the_new_place).getTeamColor() ==
+                theNewPlace = new ChessPosition(i, j);
+                if (board.getPiece(theNewPlace) != null && board.getPiece(myPosition) != null) {
+                    if (board.getPiece(theNewPlace).getTeamColor() ==
                     board.getPiece(myPosition).getTeamColor()) {
                         break;
                     }
                 }
-                the_new_move = new ChessMove(myPosition.clone(), the_new_place.clone(), null);
-                chess_moves.add(the_new_move.clone());
-                if (board.getPiece(the_new_place) != null && board.getPiece(myPosition) != null) {
-                    if (board.getPiece(the_new_place).getTeamColor() !=
+                theNewMove = new ChessMove(myPosition.clone(), theNewPlace.clone(), null);
+                chessMoves.add(theNewMove.clone());
+                if (board.getPiece(theNewPlace) != null && board.getPiece(myPosition) != null) {
+                    if (board.getPiece(theNewPlace).getTeamColor() !=
                             board.getPiece(myPosition).getTeamColor()) {
                         break;
                     }
@@ -205,20 +187,20 @@ public class ChessPiece {
                 i = i + 1;
                 j = j + 1;
             }
-            i = that_row + 1;
-            j = that_column - 1;
+            i = thatRow + 1;
+            j = thatColumn - 1;
             while (i < 9 && j > 0) {
-                the_new_place = new ChessPosition(i, j);
-                if (board.getPiece(the_new_place) != null && board.getPiece(myPosition) != null) {
-                    if (board.getPiece(the_new_place).getTeamColor() ==
+                theNewPlace = new ChessPosition(i, j);
+                if (board.getPiece(theNewPlace) != null && board.getPiece(myPosition) != null) {
+                    if (board.getPiece(theNewPlace).getTeamColor() ==
                             board.getPiece(myPosition).getTeamColor()) {
                         break;
                     }
                 }
-                the_new_move = new ChessMove(myPosition.clone(), the_new_place.clone(), null);
-                chess_moves.add(the_new_move.clone());
-                if (board.getPiece(the_new_place) != null && board.getPiece(myPosition) != null) {
-                    if (board.getPiece(the_new_place).getTeamColor() !=
+                theNewMove = new ChessMove(myPosition.clone(), theNewPlace.clone(), null);
+                chessMoves.add(theNewMove.clone());
+                if (board.getPiece(theNewPlace) != null && board.getPiece(myPosition) != null) {
+                    if (board.getPiece(theNewPlace).getTeamColor() !=
                             board.getPiece(myPosition).getTeamColor()) {
                         break;
                     }
@@ -226,20 +208,20 @@ public class ChessPiece {
                 i = i + 1;
                 j = j - 1;
             }
-            i = that_row - 1;
-            j = that_column - 1;
+            i = thatRow - 1;
+            j = thatColumn - 1;
             while (i > 0 && j > 0) {
-                the_new_place = new ChessPosition(i, j);
-                if (board.getPiece(the_new_place) != null && board.getPiece(myPosition) != null) {
-                    if (board.getPiece(the_new_place).getTeamColor() ==
+                theNewPlace = new ChessPosition(i, j);
+                if (board.getPiece(theNewPlace) != null && board.getPiece(myPosition) != null) {
+                    if (board.getPiece(theNewPlace).getTeamColor() ==
                             board.getPiece(myPosition).getTeamColor()) {
                         break;
                     }
                 }
-                the_new_move = new ChessMove(myPosition.clone(), the_new_place.clone(), null);
-                chess_moves.add(the_new_move.clone());
-                if (board.getPiece(the_new_place) != null && board.getPiece(myPosition) != null) {
-                    if (board.getPiece(the_new_place).getTeamColor() !=
+                theNewMove = new ChessMove(myPosition.clone(), theNewPlace.clone(), null);
+                chessMoves.add(theNewMove.clone());
+                if (board.getPiece(theNewPlace) != null && board.getPiece(myPosition) != null) {
+                    if (board.getPiece(theNewPlace).getTeamColor() !=
                             board.getPiece(myPosition).getTeamColor()) {
                         break;
                     }
@@ -247,20 +229,20 @@ public class ChessPiece {
                 i = i - 1;
                 j = j - 1;
             }
-            i = that_row - 1;
-            j = that_column + 1;
+            i = thatRow - 1;
+            j = thatColumn + 1;
             while (i > 0 && j < 9) {
-                the_new_place = new ChessPosition(i, j);
-                if (board.getPiece(the_new_place) != null && board.getPiece(myPosition) != null) {
-                    if (board.getPiece(the_new_place).getTeamColor() ==
+                theNewPlace = new ChessPosition(i, j);
+                if (board.getPiece(theNewPlace) != null && board.getPiece(myPosition) != null) {
+                    if (board.getPiece(theNewPlace).getTeamColor() ==
                             board.getPiece(myPosition).getTeamColor()) {
                         break;
                     }
                 }
-                the_new_move = new ChessMove(myPosition.clone(), the_new_place.clone(), null);
-                chess_moves.add(the_new_move.clone());
-                if (board.getPiece(the_new_place) != null && board.getPiece(myPosition) != null) {
-                    if (board.getPiece(the_new_place).getTeamColor() !=
+                theNewMove = new ChessMove(myPosition.clone(), theNewPlace.clone(), null);
+                chessMoves.add(theNewMove.clone());
+                if (board.getPiece(theNewPlace) != null && board.getPiece(myPosition) != null) {
+                    if (board.getPiece(theNewPlace).getTeamColor() !=
                             board.getPiece(myPosition).getTeamColor()) {
                         break;
                     }
@@ -269,1105 +251,1095 @@ public class ChessPiece {
                 j = j + 1;
             }
         }
-        if (first_phoneme == 16) {
-            boolean can_attack_left = false;
-            boolean can_attack_right = false;
-            if (the_color == 2) {
-                if (that_column != 1) {
-                    if (board.getPiece(new ChessPosition(that_row - 1, that_column - 1)) != null) {
-                        if (board.getPiece(new ChessPosition(that_row - 1, that_column - 1)).getTeamColor() == ChessGame.TeamColor.WHITE) {
-                            can_attack_right = true;
+        if (firstPhoneme == 16) {
+            boolean canAttackLeft = false;
+            boolean canAttackRight = false;
+            if (theColor == 2) {
+                if (thatColumn != 1) {
+                    if (board.getPiece(new ChessPosition(thatRow - 1, thatColumn - 1)) != null) {
+                        if (board.getPiece(new ChessPosition(thatRow - 1, thatColumn - 1)).getTeamColor() == ChessGame.TeamColor.WHITE) {
+                            canAttackRight = true;
                         }
                     }
                 }
-                if (that_column != 8) {
-                    if (board.getPiece(new ChessPosition(that_row - 1, that_column + 1)) != null) {
-                        if (board.getPiece(new ChessPosition(that_row - 1, that_column + 1)).getTeamColor() == ChessGame.TeamColor.WHITE) {
-                            can_attack_left = true;
+                if (thatColumn != 8) {
+                    if (board.getPiece(new ChessPosition(thatRow - 1, thatColumn + 1)) != null) {
+                        if (board.getPiece(new ChessPosition(thatRow - 1, thatColumn + 1)).getTeamColor() == ChessGame.TeamColor.WHITE) {
+                            canAttackLeft = true;
                         }
                     }
                 }
-                if (that_row != 2) {
-                    if (can_attack_right) {
-                        the_new_place = new ChessPosition(that_row - 1, that_column - 1);
-                        the_new_move = new ChessMove(myPosition.clone(), the_new_place.clone(), null);
-                        if (board.getPiece(the_new_place) != null && board.getPiece(myPosition) != null) {
-                            if (board.getPiece(the_new_place).getTeamColor() ==
+                if (thatRow != 2) {
+                    if (canAttackRight) {
+                        theNewPlace = new ChessPosition(thatRow - 1, thatColumn - 1);
+                        theNewMove = new ChessMove(myPosition.clone(), theNewPlace.clone(), null);
+                        if (board.getPiece(theNewPlace) != null && board.getPiece(myPosition) != null) {
+                            if (board.getPiece(theNewPlace).getTeamColor() ==
                                     board.getPiece(myPosition).getTeamColor()) {
-                                can_add_move = false;
+                                canAddMove = false;
                             }
                         }
-                        if (can_add_move) {
-                            chess_moves.add(the_new_move.clone());
+                        if (canAddMove) {
+                            chessMoves.add(theNewMove.clone());
                         }
-                        can_add_move = true;
+                        canAddMove = true;
                     }
-                    if (can_attack_left) {
-                        the_new_place = new ChessPosition(that_row - 1, that_column + 1);
-                        the_new_move = new ChessMove(myPosition.clone(), the_new_place.clone(), null);
-                        if (board.getPiece(the_new_place) != null && board.getPiece(myPosition) != null) {
-                            if (board.getPiece(the_new_place).getTeamColor() ==
+                    if (canAttackLeft) {
+                        theNewPlace = new ChessPosition(thatRow - 1, thatColumn + 1);
+                        theNewMove = new ChessMove(myPosition.clone(), theNewPlace.clone(), null);
+                        if (board.getPiece(theNewPlace) != null && board.getPiece(myPosition) != null) {
+                            if (board.getPiece(theNewPlace).getTeamColor() ==
                                     board.getPiece(myPosition).getTeamColor()) {
-                                can_add_move = false;
+                                canAddMove = false;
                             }
                         }
-                        if (can_add_move) {
-                            chess_moves.add(the_new_move.clone());
+                        if (canAddMove) {
+                            chessMoves.add(theNewMove.clone());
                         }
-                        can_add_move = true;
+                        canAddMove = true;
                     }
-                    the_new_place = new ChessPosition(that_row - 1, that_column);
-                    the_new_move = new ChessMove(myPosition.clone(), the_new_place.clone(), null);
-                    if (board.getPiece(the_new_place) != null && board.getPiece(myPosition) != null) {
-                        can_add_move = false;
+                    theNewPlace = new ChessPosition(thatRow - 1, thatColumn);
+                    theNewMove = new ChessMove(myPosition.clone(), theNewPlace.clone(), null);
+                    if (board.getPiece(theNewPlace) != null && board.getPiece(myPosition) != null) {
+                        canAddMove = false;
                     }
-                    if (can_add_move) {
-                        chess_moves.add(the_new_move.clone());
+                    if (canAddMove) {
+                        chessMoves.add(theNewMove.clone());
                     }
-                    can_add_move = true;
+                    canAddMove = true;
                 }
-                if (that_row == 2) {
-                    if (can_attack_right) {
-                        the_new_place = new ChessPosition(that_row - 1, that_column - 1);
-                        the_new_move = new ChessMove(myPosition.clone(), the_new_place.clone(), ChessPiece.PieceType.QUEEN);
-                        if (board.getPiece(the_new_place) != null && board.getPiece(myPosition) != null) {
-                            if (board.getPiece(the_new_place).getTeamColor() ==
+                if (thatRow == 2) {
+                    if (canAttackRight) {
+                        theNewPlace = new ChessPosition(thatRow - 1, thatColumn - 1);
+                        theNewMove = new ChessMove(myPosition.clone(), theNewPlace.clone(), ChessPiece.PieceType.QUEEN);
+                        if (board.getPiece(theNewPlace) != null && board.getPiece(myPosition) != null) {
+                            if (board.getPiece(theNewPlace).getTeamColor() ==
                                     board.getPiece(myPosition).getTeamColor()) {
-                                can_add_move = false;
+                                canAddMove = false;
                             }
                         }
-                        if (can_add_move) {
-                            chess_moves.add(the_new_move.clone());
+                        if (canAddMove) {
+                            chessMoves.add(theNewMove.clone());
                         }
-                        can_add_move = true;
-                        the_new_place = new ChessPosition(that_row - 1, that_column - 1);
-                        the_new_move = new ChessMove(myPosition.clone(), the_new_place.clone(), ChessPiece.PieceType.BISHOP);
-                        if (board.getPiece(the_new_place) != null && board.getPiece(myPosition) != null) {
-                            if (board.getPiece(the_new_place).getTeamColor() ==
+                        canAddMove = true;
+                        theNewPlace = new ChessPosition(thatRow - 1, thatColumn - 1);
+                        theNewMove = new ChessMove(myPosition.clone(), theNewPlace.clone(), ChessPiece.PieceType.BISHOP);
+                        if (board.getPiece(theNewPlace) != null && board.getPiece(myPosition) != null) {
+                            if (board.getPiece(theNewPlace).getTeamColor() ==
                                     board.getPiece(myPosition).getTeamColor()) {
-                                can_add_move = false;
+                                canAddMove = false;
                             }
                         }
-                        if (can_add_move) {
-                            chess_moves.add(the_new_move.clone());
+                        if (canAddMove) {
+                            chessMoves.add(theNewMove.clone());
                         }
-                        can_add_move = true;
-                        the_new_place = new ChessPosition(that_row - 1, that_column - 1);
-                        the_new_move = new ChessMove(myPosition.clone(), the_new_place.clone(), ChessPiece.PieceType.KNIGHT);
-                        if (board.getPiece(the_new_place) != null && board.getPiece(myPosition) != null) {
-                            if (board.getPiece(the_new_place).getTeamColor() ==
+                        canAddMove = true;
+                        theNewPlace = new ChessPosition(thatRow - 1, thatColumn - 1);
+                        theNewMove = new ChessMove(myPosition.clone(), theNewPlace.clone(), ChessPiece.PieceType.KNIGHT);
+                        if (board.getPiece(theNewPlace) != null && board.getPiece(myPosition) != null) {
+                            if (board.getPiece(theNewPlace).getTeamColor() ==
                                     board.getPiece(myPosition).getTeamColor()) {
-                                can_add_move = false;
+                                canAddMove = false;
                             }
                         }
-                        if (can_add_move) {
-                            chess_moves.add(the_new_move.clone());
+                        if (canAddMove) {
+                            chessMoves.add(theNewMove.clone());
                         }
-                        can_add_move = true;
-                        the_new_place = new ChessPosition(that_row - 1, that_column - 1);
-                        the_new_move = new ChessMove(myPosition.clone(), the_new_place.clone(), ChessPiece.PieceType.ROOK);
-                        if (board.getPiece(the_new_place) != null && board.getPiece(myPosition) != null) {
-                            if (board.getPiece(the_new_place).getTeamColor() ==
+                        canAddMove = true;
+                        theNewPlace = new ChessPosition(thatRow - 1, thatColumn - 1);
+                        theNewMove = new ChessMove(myPosition.clone(), theNewPlace.clone(), ChessPiece.PieceType.ROOK);
+                        if (board.getPiece(theNewPlace) != null && board.getPiece(myPosition) != null) {
+                            if (board.getPiece(theNewPlace).getTeamColor() ==
                                     board.getPiece(myPosition).getTeamColor()) {
-                                can_add_move = false;
+                                canAddMove = false;
                             }
                         }
-                        if (can_add_move) {
-                            chess_moves.add(the_new_move.clone());
+                        if (canAddMove) {
+                            chessMoves.add(theNewMove.clone());
                         }
-                        can_add_move = true;
+                        canAddMove = true;
                     }
-                    if (can_attack_left) {
-                        the_new_place = new ChessPosition(that_row - 1, that_column + 1);
-                        the_new_move = new ChessMove(myPosition.clone(), the_new_place.clone(), ChessPiece.PieceType.QUEEN);
-                        if (board.getPiece(the_new_place) != null && board.getPiece(myPosition) != null) {
-                            if (board.getPiece(the_new_place).getTeamColor() ==
+                    if (canAttackLeft) {
+                        theNewPlace = new ChessPosition(thatRow - 1, thatColumn + 1);
+                        theNewMove = new ChessMove(myPosition.clone(), theNewPlace.clone(), ChessPiece.PieceType.QUEEN);
+                        if (board.getPiece(theNewPlace) != null && board.getPiece(myPosition) != null) {
+                            if (board.getPiece(theNewPlace).getTeamColor() ==
                                     board.getPiece(myPosition).getTeamColor()) {
-                                can_add_move = false;
+                                canAddMove = false;
                             }
                         }
-                        if (can_add_move) {
-                            chess_moves.add(the_new_move.clone());
+                        if (canAddMove) {
+                            chessMoves.add(theNewMove.clone());
                         }
-                        can_add_move = true;
-                        the_new_place = new ChessPosition(that_row - 1, that_column + 1);
-                        the_new_move = new ChessMove(myPosition.clone(), the_new_place.clone(), ChessPiece.PieceType.BISHOP);
-                        if (board.getPiece(the_new_place) != null && board.getPiece(myPosition) != null) {
-                            if (board.getPiece(the_new_place).getTeamColor() ==
+                        canAddMove = true;
+                        theNewPlace = new ChessPosition(thatRow - 1, thatColumn + 1);
+                        theNewMove = new ChessMove(myPosition.clone(), theNewPlace.clone(), ChessPiece.PieceType.BISHOP);
+                        if (board.getPiece(theNewPlace) != null && board.getPiece(myPosition) != null) {
+                            if (board.getPiece(theNewPlace).getTeamColor() ==
                                     board.getPiece(myPosition).getTeamColor()) {
-                                can_add_move = false;
+                                canAddMove = false;
                             }
                         }
-                        if (can_add_move) {
-                            chess_moves.add(the_new_move.clone());
+                        if (canAddMove) {
+                            chessMoves.add(theNewMove.clone());
                         }
-                        can_add_move = true;
-                        the_new_place = new ChessPosition(that_row - 1, that_column + 1);
-                        the_new_move = new ChessMove(myPosition.clone(), the_new_place.clone(), ChessPiece.PieceType.KNIGHT);
-                        if (board.getPiece(the_new_place) != null && board.getPiece(myPosition) != null) {
-                            if (board.getPiece(the_new_place).getTeamColor() ==
+                        canAddMove = true;
+                        theNewPlace = new ChessPosition(thatRow - 1, thatColumn + 1);
+                        theNewMove = new ChessMove(myPosition.clone(), theNewPlace.clone(), ChessPiece.PieceType.KNIGHT);
+                        if (board.getPiece(theNewPlace) != null && board.getPiece(myPosition) != null) {
+                            if (board.getPiece(theNewPlace).getTeamColor() ==
                                     board.getPiece(myPosition).getTeamColor()) {
-                                can_add_move = false;
+                                canAddMove = false;
                             }
                         }
-                        if (can_add_move) {
-                            chess_moves.add(the_new_move.clone());
+                        if (canAddMove) {
+                            chessMoves.add(theNewMove.clone());
                         }
-                        can_add_move = true;
-                        the_new_place = new ChessPosition(that_row - 1, that_column + 1);
-                        the_new_move = new ChessMove(myPosition.clone(), the_new_place.clone(), ChessPiece.PieceType.ROOK);
-                        if (board.getPiece(the_new_place) != null && board.getPiece(myPosition) != null) {
-                            if (board.getPiece(the_new_place).getTeamColor() ==
+                        canAddMove = true;
+                        theNewPlace = new ChessPosition(thatRow - 1, thatColumn + 1);
+                        theNewMove = new ChessMove(myPosition.clone(), theNewPlace.clone(), ChessPiece.PieceType.ROOK);
+                        if (board.getPiece(theNewPlace) != null && board.getPiece(myPosition) != null) {
+                            if (board.getPiece(theNewPlace).getTeamColor() ==
                                     board.getPiece(myPosition).getTeamColor()) {
-                                can_add_move = false;
+                                canAddMove = false;
                             }
                         }
-                        if (can_add_move) {
-                            chess_moves.add(the_new_move.clone());
+                        if (canAddMove) {
+                            chessMoves.add(theNewMove.clone());
                         }
-                        can_add_move = true;
+                        canAddMove = true;
                     }
-                    the_new_place = new ChessPosition(that_row - 1, that_column);
-                    the_new_move = new ChessMove(myPosition.clone(), the_new_place.clone(), ChessPiece.PieceType.QUEEN);
-                    if (board.getPiece(the_new_place) != null && board.getPiece(myPosition) != null) {
-                        can_add_move = false;
+                    theNewPlace = new ChessPosition(thatRow - 1, thatColumn);
+                    theNewMove = new ChessMove(myPosition.clone(), theNewPlace.clone(), ChessPiece.PieceType.QUEEN);
+                    if (board.getPiece(theNewPlace) != null && board.getPiece(myPosition) != null) {
+                        canAddMove = false;
                     }
-                    if (can_add_move) {
-                        chess_moves.add(the_new_move.clone());
+                    if (canAddMove) {
+                        chessMoves.add(theNewMove.clone());
                     }
-                    can_add_move = true;
-                    the_new_place = new ChessPosition(that_row - 1, that_column);
-                    the_new_move = new ChessMove(myPosition.clone(), the_new_place.clone(), ChessPiece.PieceType.BISHOP);
-                    if (board.getPiece(the_new_place) != null && board.getPiece(myPosition) != null) {
-                        can_add_move = false;
+                    canAddMove = true;
+                    theNewPlace = new ChessPosition(thatRow - 1, thatColumn);
+                    theNewMove = new ChessMove(myPosition.clone(), theNewPlace.clone(), ChessPiece.PieceType.BISHOP);
+                    if (board.getPiece(theNewPlace) != null && board.getPiece(myPosition) != null) {
+                        canAddMove = false;
                     }
-                    if (can_add_move) {
-                        chess_moves.add(the_new_move.clone());
+                    if (canAddMove) {
+                        chessMoves.add(theNewMove.clone());
                     }
-                    can_add_move = true;
-                    the_new_place = new ChessPosition(that_row - 1, that_column);
-                    the_new_move = new ChessMove(myPosition.clone(), the_new_place.clone(), ChessPiece.PieceType.KNIGHT);
-                    if (board.getPiece(the_new_place) != null && board.getPiece(myPosition) != null) {
-                        can_add_move = false;
+                    canAddMove = true;
+                    theNewPlace = new ChessPosition(thatRow - 1, thatColumn);
+                    theNewMove = new ChessMove(myPosition.clone(), theNewPlace.clone(), ChessPiece.PieceType.KNIGHT);
+                    if (board.getPiece(theNewPlace) != null && board.getPiece(myPosition) != null) {
+                        canAddMove = false;
                     }
-                    if (can_add_move) {
-                        chess_moves.add(the_new_move.clone());
+                    if (canAddMove) {
+                        chessMoves.add(theNewMove.clone());
                     }
-                    can_add_move = true;
-                    the_new_place = new ChessPosition(that_row - 1, that_column);
-                    the_new_move = new ChessMove(myPosition.clone(), the_new_place.clone(), ChessPiece.PieceType.ROOK);
-                    if (board.getPiece(the_new_place) != null && board.getPiece(myPosition) != null) {
-                        can_add_move = false;
+                    canAddMove = true;
+                    theNewPlace = new ChessPosition(thatRow - 1, thatColumn);
+                    theNewMove = new ChessMove(myPosition.clone(), theNewPlace.clone(), ChessPiece.PieceType.ROOK);
+                    if (board.getPiece(theNewPlace) != null && board.getPiece(myPosition) != null) {
+                        canAddMove = false;
                     }
-                    if (can_add_move) {
-                        chess_moves.add(the_new_move.clone());
+                    if (canAddMove) {
+                        chessMoves.add(theNewMove.clone());
                     }
-                    can_add_move = true;
+                    canAddMove = true;
                 }
-                if (that_row == 7) {
-                    the_new_place = new ChessPosition(5, that_column);
-                    the_new_move = new ChessMove(myPosition.clone(), the_new_place.clone(), null);
-                    if (board.getPiece(the_new_place) != null && board.getPiece(myPosition) != null) {
-                        can_add_move = false;
+                if (thatRow == 7) {
+                    theNewPlace = new ChessPosition(5, thatColumn);
+                    theNewMove = new ChessMove(myPosition.clone(), theNewPlace.clone(), null);
+                    if (board.getPiece(theNewPlace) != null && board.getPiece(myPosition) != null) {
+                        canAddMove = false;
                     }
-                    if (board.getPiece(new ChessPosition(6 ,that_column)) != null) {
-                        can_add_move = false;
+                    if (board.getPiece(new ChessPosition(6 ,thatColumn)) != null) {
+                        canAddMove = false;
                     }
-                    if (can_add_move) {
-                        chess_moves.add(the_new_move.clone());
+                    if (canAddMove) {
+                        chessMoves.add(theNewMove.clone());
                     }
-                    can_add_move = true;
+                    canAddMove = true;
                 }
             }
-            if (the_color == 23) {
-                if (that_column != 8) {
-                    if (board.getPiece(new ChessPosition(that_row + 1, that_column + 1)) != null) {
-                        if (board.getPiece(new ChessPosition(that_row + 1, that_column + 1)).getTeamColor() == ChessGame.TeamColor.BLACK) {
-                            can_attack_right = true;
+            if (theColor == 23) {
+                if (thatColumn != 8) {
+                    if (board.getPiece(new ChessPosition(thatRow + 1, thatColumn + 1)) != null) {
+                        if (board.getPiece(new ChessPosition(thatRow + 1, thatColumn + 1)).getTeamColor() == ChessGame.TeamColor.BLACK) {
+                            canAttackRight = true;
                         }
                     }
                 }
-                if (that_column != 1) {
-                    if (board.getPiece(new ChessPosition(that_row + 1, that_column - 1)) != null) {
-                        if (board.getPiece(new ChessPosition(that_row + 1, that_column - 1)).getTeamColor() == ChessGame.TeamColor.BLACK) {
-                            can_attack_left = true;
+                if (thatColumn != 1) {
+                    if (board.getPiece(new ChessPosition(thatRow + 1, thatColumn - 1)) != null) {
+                        if (board.getPiece(new ChessPosition(thatRow + 1, thatColumn - 1)).getTeamColor() == ChessGame.TeamColor.BLACK) {
+                            canAttackLeft = true;
                         }
                     }
                 }
-                if (that_row != 7) {
-                    if (can_attack_right) {
-                        the_new_place = new ChessPosition(that_row + 1, that_column + 1);
-                        the_new_move = new ChessMove(myPosition.clone(), the_new_place.clone(), null);
-                        if (board.getPiece(the_new_place) != null && board.getPiece(myPosition) != null) {
-                            if (board.getPiece(the_new_place).getTeamColor() ==
+                if (thatRow != 7) {
+                    if (canAttackRight) {
+                        theNewPlace = new ChessPosition(thatRow + 1, thatColumn + 1);
+                        theNewMove = new ChessMove(myPosition.clone(), theNewPlace.clone(), null);
+                        if (board.getPiece(theNewPlace) != null && board.getPiece(myPosition) != null) {
+                            if (board.getPiece(theNewPlace).getTeamColor() ==
                                     board.getPiece(myPosition).getTeamColor()) {
-                                can_add_move = false;
+                                canAddMove = false;
                             }
                         }
-                        if (can_add_move) {
-                            chess_moves.add(the_new_move.clone());
+                        if (canAddMove) {
+                            chessMoves.add(theNewMove.clone());
                         }
-                        can_add_move = true;
+                        canAddMove = true;
                     }
-                    if (can_attack_left) {
-                        the_new_place = new ChessPosition(that_row + 1, that_column - 1);
-                        the_new_move = new ChessMove(myPosition.clone(), the_new_place.clone(), null);
-                        if (board.getPiece(the_new_place) != null && board.getPiece(myPosition) != null) {
-                            if (board.getPiece(the_new_place).getTeamColor() ==
+                    if (canAttackLeft) {
+                        theNewPlace = new ChessPosition(thatRow + 1, thatColumn - 1);
+                        theNewMove = new ChessMove(myPosition.clone(), theNewPlace.clone(), null);
+                        if (board.getPiece(theNewPlace) != null && board.getPiece(myPosition) != null) {
+                            if (board.getPiece(theNewPlace).getTeamColor() ==
                                     board.getPiece(myPosition).getTeamColor()) {
-                                can_add_move = false;
+                                canAddMove = false;
                             }
                         }
-                        if (can_add_move) {
-                            chess_moves.add(the_new_move.clone());
+                        if (canAddMove) {
+                            chessMoves.add(theNewMove.clone());
                         }
-                        can_add_move = true;
+                        canAddMove = true;
                     }
-                    the_new_place = new ChessPosition(that_row + 1, that_column);
-                    the_new_move = new ChessMove(myPosition.clone(), the_new_place.clone(), null);
-                    if (board.getPiece(the_new_place) != null && board.getPiece(myPosition) != null) {
-                        can_add_move = false;
+                    theNewPlace = new ChessPosition(thatRow + 1, thatColumn);
+                    theNewMove = new ChessMove(myPosition.clone(), theNewPlace.clone(), null);
+                    if (board.getPiece(theNewPlace) != null && board.getPiece(myPosition) != null) {
+                        canAddMove = false;
                     }
-                    if (can_add_move) {
-                        chess_moves.add(the_new_move.clone());
+                    if (canAddMove) {
+                        chessMoves.add(theNewMove.clone());
                     }
-                    can_add_move = true;
+                    canAddMove = true;
                 }
-                if (that_row == 7) {
-                    if (can_attack_right) {
-                        the_new_place = new ChessPosition(that_row + 1, that_column + 1);
-                        the_new_move = new ChessMove(myPosition.clone(), the_new_place.clone(), ChessPiece.PieceType.QUEEN);
-                        if (board.getPiece(the_new_place) != null && board.getPiece(myPosition) != null) {
-                            if (board.getPiece(the_new_place).getTeamColor() ==
+                if (thatRow == 7) {
+                    if (canAttackRight) {
+                        theNewPlace = new ChessPosition(thatRow + 1, thatColumn + 1);
+                        theNewMove = new ChessMove(myPosition.clone(), theNewPlace.clone(), ChessPiece.PieceType.QUEEN);
+                        if (board.getPiece(theNewPlace) != null && board.getPiece(myPosition) != null) {
+                            if (board.getPiece(theNewPlace).getTeamColor() ==
                                     board.getPiece(myPosition).getTeamColor()) {
-                                can_add_move = false;
+                                canAddMove = false;
                             }
                         }
-                        if (can_add_move) {
-                            chess_moves.add(the_new_move.clone());
+                        if (canAddMove) {
+                            chessMoves.add(theNewMove.clone());
                         }
-                        can_add_move = true;
-                        the_new_place = new ChessPosition(that_row + 1, that_column + 1);
-                        the_new_move = new ChessMove(myPosition.clone(), the_new_place.clone(), ChessPiece.PieceType.BISHOP);
-                        if (board.getPiece(the_new_place) != null && board.getPiece(myPosition) != null) {
-                            if (board.getPiece(the_new_place).getTeamColor() ==
+                        canAddMove = true;
+                        theNewPlace = new ChessPosition(thatRow + 1, thatColumn + 1);
+                        theNewMove = new ChessMove(myPosition.clone(), theNewPlace.clone(), ChessPiece.PieceType.BISHOP);
+                        if (board.getPiece(theNewPlace) != null && board.getPiece(myPosition) != null) {
+                            if (board.getPiece(theNewPlace).getTeamColor() ==
                                     board.getPiece(myPosition).getTeamColor()) {
-                                can_add_move = false;
+                                canAddMove = false;
                             }
                         }
-                        if (can_add_move) {
-                            chess_moves.add(the_new_move.clone());
+                        if (canAddMove) {
+                            chessMoves.add(theNewMove.clone());
                         }
-                        can_add_move = true;
-                        the_new_place = new ChessPosition(that_row + 1, that_column + 1);
-                        the_new_move = new ChessMove(myPosition.clone(), the_new_place.clone(), ChessPiece.PieceType.KNIGHT);
-                        if (board.getPiece(the_new_place) != null && board.getPiece(myPosition) != null) {
-                            if (board.getPiece(the_new_place).getTeamColor() ==
+                        canAddMove = true;
+                        theNewPlace = new ChessPosition(thatRow + 1, thatColumn + 1);
+                        theNewMove = new ChessMove(myPosition.clone(), theNewPlace.clone(), ChessPiece.PieceType.KNIGHT);
+                        if (board.getPiece(theNewPlace) != null && board.getPiece(myPosition) != null) {
+                            if (board.getPiece(theNewPlace).getTeamColor() ==
                                     board.getPiece(myPosition).getTeamColor()) {
-                                can_add_move = false;
+                                canAddMove = false;
                             }
                         }
-                        if (can_add_move) {
-                            chess_moves.add(the_new_move.clone());
+                        if (canAddMove) {
+                            chessMoves.add(theNewMove.clone());
                         }
-                        can_add_move = true;
-                        the_new_place = new ChessPosition(that_row + 1, that_column + 1);
-                        the_new_move = new ChessMove(myPosition.clone(), the_new_place.clone(), ChessPiece.PieceType.ROOK);
-                        if (board.getPiece(the_new_place) != null && board.getPiece(myPosition) != null) {
-                            if (board.getPiece(the_new_place).getTeamColor() ==
+                        canAddMove = true;
+                        theNewPlace = new ChessPosition(thatRow + 1, thatColumn + 1);
+                        theNewMove = new ChessMove(myPosition.clone(), theNewPlace.clone(), ChessPiece.PieceType.ROOK);
+                        if (board.getPiece(theNewPlace) != null && board.getPiece(myPosition) != null) {
+                            if (board.getPiece(theNewPlace).getTeamColor() ==
                                     board.getPiece(myPosition).getTeamColor()) {
-                                can_add_move = false;
+                                canAddMove = false;
                             }
                         }
-                        if (can_add_move) {
-                            chess_moves.add(the_new_move.clone());
+                        if (canAddMove) {
+                            chessMoves.add(theNewMove.clone());
                         }
-                        can_add_move = true;
+                        canAddMove = true;
                     }
-                    if (can_attack_left) {
-                        the_new_place = new ChessPosition(that_row + 1, that_column - 1);
-                        the_new_move = new ChessMove(myPosition.clone(), the_new_place.clone(), ChessPiece.PieceType.QUEEN);
-                        if (board.getPiece(the_new_place) != null && board.getPiece(myPosition) != null) {
-                            if (board.getPiece(the_new_place).getTeamColor() ==
+                    if (canAttackLeft) {
+                        theNewPlace = new ChessPosition(thatRow + 1, thatColumn - 1);
+                        theNewMove = new ChessMove(myPosition.clone(), theNewPlace.clone(), ChessPiece.PieceType.QUEEN);
+                        if (board.getPiece(theNewPlace) != null && board.getPiece(myPosition) != null) {
+                            if (board.getPiece(theNewPlace).getTeamColor() ==
                                     board.getPiece(myPosition).getTeamColor()) {
-                                can_add_move = false;
+                                canAddMove = false;
                             }
                         }
-                        if (can_add_move) {
-                            chess_moves.add(the_new_move.clone());
+                        if (canAddMove) {
+                            chessMoves.add(theNewMove.clone());
                         }
-                        can_add_move = true;
-                        the_new_place = new ChessPosition(that_row + 1, that_column - 1);
-                        the_new_move = new ChessMove(myPosition.clone(), the_new_place.clone(), ChessPiece.PieceType.BISHOP);
-                        if (board.getPiece(the_new_place) != null && board.getPiece(myPosition) != null) {
-                            if (board.getPiece(the_new_place).getTeamColor() ==
+                        canAddMove = true;
+                        theNewPlace = new ChessPosition(thatRow + 1, thatColumn - 1);
+                        theNewMove = new ChessMove(myPosition.clone(), theNewPlace.clone(), ChessPiece.PieceType.BISHOP);
+                        if (board.getPiece(theNewPlace) != null && board.getPiece(myPosition) != null) {
+                            if (board.getPiece(theNewPlace).getTeamColor() ==
                                     board.getPiece(myPosition).getTeamColor()) {
-                                can_add_move = false;
+                                canAddMove = false;
                             }
                         }
-                        if (can_add_move) {
-                            chess_moves.add(the_new_move.clone());
+                        if (canAddMove) {
+                            chessMoves.add(theNewMove.clone());
                         }
-                        can_add_move = true;
-                        the_new_place = new ChessPosition(that_row + 1, that_column - 1);
-                        the_new_move = new ChessMove(myPosition.clone(), the_new_place.clone(), ChessPiece.PieceType.KNIGHT);
-                        if (board.getPiece(the_new_place) != null && board.getPiece(myPosition) != null) {
-                            if (board.getPiece(the_new_place).getTeamColor() ==
+                        canAddMove = true;
+                        theNewPlace = new ChessPosition(thatRow + 1, thatColumn - 1);
+                        theNewMove = new ChessMove(myPosition.clone(), theNewPlace.clone(), ChessPiece.PieceType.KNIGHT);
+                        if (board.getPiece(theNewPlace) != null && board.getPiece(myPosition) != null) {
+                            if (board.getPiece(theNewPlace).getTeamColor() ==
                                     board.getPiece(myPosition).getTeamColor()) {
-                                can_add_move = false;
+                                canAddMove = false;
                             }
                         }
-                        if (can_add_move) {
-                            chess_moves.add(the_new_move.clone());
+                        if (canAddMove) {
+                            chessMoves.add(theNewMove.clone());
                         }
-                        can_add_move = true;
-                        the_new_place = new ChessPosition(that_row + 1, that_column - 1);
-                        the_new_move = new ChessMove(myPosition.clone(), the_new_place.clone(), ChessPiece.PieceType.ROOK);
-                        if (board.getPiece(the_new_place) != null && board.getPiece(myPosition) != null) {
-                            if (board.getPiece(the_new_place).getTeamColor() ==
+                        canAddMove = true;
+                        theNewPlace = new ChessPosition(thatRow + 1, thatColumn - 1);
+                        theNewMove = new ChessMove(myPosition.clone(), theNewPlace.clone(), ChessPiece.PieceType.ROOK);
+                        if (board.getPiece(theNewPlace) != null && board.getPiece(myPosition) != null) {
+                            if (board.getPiece(theNewPlace).getTeamColor() ==
                                     board.getPiece(myPosition).getTeamColor()) {
-                                can_add_move = false;
+                                canAddMove = false;
                             }
                         }
-                        if (can_add_move) {
-                            chess_moves.add(the_new_move.clone());
+                        if (canAddMove) {
+                            chessMoves.add(theNewMove.clone());
                         }
-                        can_add_move = true;
+                        canAddMove = true;
                     }
-                    the_new_place = new ChessPosition(that_row + 1, that_column);
-                    the_new_move = new ChessMove(myPosition.clone(), the_new_place.clone(), ChessPiece.PieceType.QUEEN);
-                    if (board.getPiece(the_new_place) != null && board.getPiece(myPosition) != null) {
-                        can_add_move = false;
+                    theNewPlace = new ChessPosition(thatRow + 1, thatColumn);
+                    theNewMove = new ChessMove(myPosition.clone(), theNewPlace.clone(), ChessPiece.PieceType.QUEEN);
+                    if (board.getPiece(theNewPlace) != null && board.getPiece(myPosition) != null) {
+                        canAddMove = false;
                     }
-                    if (can_add_move) {
-                        chess_moves.add(the_new_move.clone());
+                    if (canAddMove) {
+                        chessMoves.add(theNewMove.clone());
                     }
-                    can_add_move = true;
-                    the_new_place = new ChessPosition(that_row + 1, that_column);
-                    the_new_move = new ChessMove(myPosition.clone(), the_new_place.clone(), ChessPiece.PieceType.BISHOP);
-                    if (board.getPiece(the_new_place) != null && board.getPiece(myPosition) != null) {
-                        can_add_move = false;
+                    canAddMove = true;
+                    theNewPlace = new ChessPosition(thatRow + 1, thatColumn);
+                    theNewMove = new ChessMove(myPosition.clone(), theNewPlace.clone(), ChessPiece.PieceType.BISHOP);
+                    if (board.getPiece(theNewPlace) != null && board.getPiece(myPosition) != null) {
+                        canAddMove = false;
                     }
-                    if (can_add_move) {
-                        chess_moves.add(the_new_move.clone());
+                    if (canAddMove) {
+                        chessMoves.add(theNewMove.clone());
                     }
-                    can_add_move = true;
-                    the_new_place = new ChessPosition(that_row + 1, that_column);
-                    the_new_move = new ChessMove(myPosition.clone(), the_new_place.clone(), ChessPiece.PieceType.KNIGHT);
-                    if (board.getPiece(the_new_place) != null && board.getPiece(myPosition) != null) {
-                        can_add_move = false;
+                    canAddMove = true;
+                    theNewPlace = new ChessPosition(thatRow + 1, thatColumn);
+                    theNewMove = new ChessMove(myPosition.clone(), theNewPlace.clone(), ChessPiece.PieceType.KNIGHT);
+                    if (board.getPiece(theNewPlace) != null && board.getPiece(myPosition) != null) {
+                        canAddMove = false;
                     }
-                    if (can_add_move) {
-                        chess_moves.add(the_new_move.clone());
+                    if (canAddMove) {
+                        chessMoves.add(theNewMove.clone());
                     }
-                    can_add_move = true;
-                    the_new_place = new ChessPosition(that_row + 1, that_column);
-                    the_new_move = new ChessMove(myPosition.clone(), the_new_place.clone(), ChessPiece.PieceType.ROOK);
-                    if (board.getPiece(the_new_place) != null && board.getPiece(myPosition) != null) {
-                        can_add_move = false;
+                    canAddMove = true;
+                    theNewPlace = new ChessPosition(thatRow + 1, thatColumn);
+                    theNewMove = new ChessMove(myPosition.clone(), theNewPlace.clone(), ChessPiece.PieceType.ROOK);
+                    if (board.getPiece(theNewPlace) != null && board.getPiece(myPosition) != null) {
+                        canAddMove = false;
                     }
-                    if (can_add_move) {
-                        chess_moves.add(the_new_move.clone());
+                    if (canAddMove) {
+                        chessMoves.add(theNewMove.clone());
                     }
-                    can_add_move = true;
+                    canAddMove = true;
                 }
-                if (that_row == 2) {
-                    the_new_place = new ChessPosition(4, that_column);
-                    the_new_move = new ChessMove(myPosition.clone(), the_new_place.clone(), null);
-                    if (board.getPiece(the_new_place) != null && board.getPiece(myPosition) != null) {
-                        can_add_move = false;
+                if (thatRow == 2) {
+                    theNewPlace = new ChessPosition(4, thatColumn);
+                    theNewMove = new ChessMove(myPosition.clone(), theNewPlace.clone(), null);
+                    if (board.getPiece(theNewPlace) != null && board.getPiece(myPosition) != null) {
+                        canAddMove = false;
                     }
-                    if (board.getPiece(new ChessPosition(3 ,that_column)) != null) {
-                        can_add_move = false;
+                    if (board.getPiece(new ChessPosition(3 ,thatColumn)) != null) {
+                        canAddMove = false;
                     }
-                    if (can_add_move) {
-                        chess_moves.add(the_new_move.clone());
+                    if (canAddMove) {
+                        chessMoves.add(theNewMove.clone());
                     }
-                    can_add_move = true;
+                    canAddMove = true;
                 }
-            }
-        }
-        if (first_phoneme == 14) {
-            int i = that_row + 1;
-            int j = that_column + 2;
-            if (i > 0 && i < 9 && j > 0 && j < 9) {
-                the_new_place = new ChessPosition(i, j);
-                the_new_move = new ChessMove(myPosition.clone(), the_new_place.clone(), null);
-                if (board.getPiece(the_new_place) != null && board.getPiece(myPosition) != null) {
-                    if (board.getPiece(the_new_place).getTeamColor() ==
-                            board.getPiece(myPosition).getTeamColor()) {
-                        can_add_move = false;
-                    }
-                }
-                if (can_add_move) {
-                    chess_moves.add(the_new_move.clone());
-                }
-                can_add_move = true;
-            }
-            j = that_column - 2;
-            if (i > 0 && i < 9 && j > 0 && j < 9) {
-                the_new_place = new ChessPosition(i, j);
-                the_new_move = new ChessMove(myPosition.clone(), the_new_place.clone(), null);
-                if (board.getPiece(the_new_place) != null && board.getPiece(myPosition) != null) {
-                    if (board.getPiece(the_new_place).getTeamColor() ==
-                            board.getPiece(myPosition).getTeamColor()) {
-                        can_add_move = false;
-                    }
-                }
-                if (can_add_move) {
-                    chess_moves.add(the_new_move.clone());
-                }
-                can_add_move = true;
-            }
-            i = that_row - 1;
-            if (i > 0 && i < 9 && j > 0 && j < 9) {
-                the_new_place = new ChessPosition(i, j);
-                the_new_move = new ChessMove(myPosition.clone(), the_new_place.clone(), null);
-                if (board.getPiece(the_new_place) != null && board.getPiece(myPosition) != null) {
-                    if (board.getPiece(the_new_place).getTeamColor() ==
-                            board.getPiece(myPosition).getTeamColor()) {
-                        can_add_move = false;
-                    }
-                }
-                if (can_add_move) {
-                    chess_moves.add(the_new_move.clone());
-                }
-                can_add_move = true;
-            }
-            j = that_column + 2;
-            if (i > 0 && i < 9 && j > 0 && j < 9) {
-                the_new_place = new ChessPosition(i, j);
-                the_new_move = new ChessMove(myPosition.clone(), the_new_place.clone(), null);
-                if (board.getPiece(the_new_place) != null && board.getPiece(myPosition) != null) {
-                    if (board.getPiece(the_new_place).getTeamColor() ==
-                            board.getPiece(myPosition).getTeamColor()) {
-                        can_add_move = false;
-                    }
-                }
-                if (can_add_move) {
-                    chess_moves.add(the_new_move.clone());
-                }
-                can_add_move = true;
-            }
-            i = that_row + 2;
-            j = that_column - 1;
-            if (i > 0 && i < 9 && j > 0 && j < 9) {
-                the_new_place = new ChessPosition(i, j);
-                the_new_move = new ChessMove(myPosition.clone(), the_new_place.clone(), null);
-                if (board.getPiece(the_new_place) != null && board.getPiece(myPosition) != null) {
-                    if (board.getPiece(the_new_place).getTeamColor() ==
-                            board.getPiece(myPosition).getTeamColor()) {
-                        can_add_move = false;
-                    }
-                }
-                if (can_add_move) {
-                    chess_moves.add(the_new_move.clone());
-                }
-                can_add_move = true;
-            }
-            i = that_row - 2;
-            if (i > 0 && i < 9 && j > 0 && j < 9) {
-                the_new_place = new ChessPosition(i, j);
-                the_new_move = new ChessMove(myPosition.clone(), the_new_place.clone(), null);
-                if (board.getPiece(the_new_place) != null && board.getPiece(myPosition) != null) {
-                    if (board.getPiece(the_new_place).getTeamColor() ==
-                            board.getPiece(myPosition).getTeamColor()) {
-                        can_add_move = false;
-                    }
-                }
-                if (can_add_move) {
-                    chess_moves.add(the_new_move.clone());
-                }
-                can_add_move = true;
-            }
-            j = that_column + 1;
-            if (i > 0 && i < 9 && j > 0 && j < 9) {
-                the_new_place = new ChessPosition(i, j);
-                the_new_move = new ChessMove(myPosition.clone(), the_new_place.clone(), null);
-                if (board.getPiece(the_new_place) != null && board.getPiece(myPosition) != null) {
-                    if (board.getPiece(the_new_place).getTeamColor() ==
-                            board.getPiece(myPosition).getTeamColor()) {
-                        can_add_move = false;
-                    }
-                }
-                if (can_add_move) {
-                    chess_moves.add(the_new_move.clone());
-                }
-                can_add_move = true;
-            }
-            i = that_row + 2;
-            if (i > 0 && i < 9 && j > 0 && j < 9) {
-                the_new_place = new ChessPosition(i, j);
-                the_new_move = new ChessMove(myPosition.clone(), the_new_place.clone(), null);
-                if (board.getPiece(the_new_place) != null && board.getPiece(myPosition) != null) {
-                    if (board.getPiece(the_new_place).getTeamColor() ==
-                            board.getPiece(myPosition).getTeamColor()) {
-                        can_add_move = false;
-                    }
-                }
-                if (can_add_move) {
-                    chess_moves.add(the_new_move.clone());
-                }
-                can_add_move = true;
             }
         }
-        if (first_phoneme == 11) {
-            if (that_row == 1) {
-                if (that_column == 1) {
-                    the_new_place = new ChessPosition(1, 2);
-                    the_new_move = new ChessMove(myPosition.clone(), the_new_place.clone(), null);
+        if (firstPhoneme == 14) {
+            int i = thatRow + 1;
+            int j = thatColumn + 2;
+            if (i > 0 && i < 9 && j > 0 && j < 9) {
+                theNewPlace = new ChessPosition(i, j);
+                theNewMove = new ChessMove(myPosition.clone(), theNewPlace.clone(), null);
+                if (board.getPiece(theNewPlace) != null && board.getPiece(myPosition) != null) {
+                    if (board.getPiece(theNewPlace).getTeamColor() ==
+                            board.getPiece(myPosition).getTeamColor()) {
+                        canAddMove = false;
+                    }
+                }
+                if (canAddMove) {
+                    chessMoves.add(theNewMove.clone());
+                }
+                canAddMove = true;
+            }
+            j = thatColumn - 2;
+            if (i > 0 && i < 9 && j > 0 && j < 9) {
+                theNewPlace = new ChessPosition(i, j);
+                theNewMove = new ChessMove(myPosition.clone(), theNewPlace.clone(), null);
+                if (board.getPiece(theNewPlace) != null && board.getPiece(myPosition) != null) {
+                    if (board.getPiece(theNewPlace).getTeamColor() ==
+                            board.getPiece(myPosition).getTeamColor()) {
+                        canAddMove = false;
+                    }
+                }
+                if (canAddMove) {
+                    chessMoves.add(theNewMove.clone());
+                }
+                canAddMove = true;
+            }
+            i = thatRow - 1;
+            if (i > 0 && i < 9 && j > 0 && j < 9) {
+                theNewPlace = new ChessPosition(i, j);
+                theNewMove = new ChessMove(myPosition.clone(), theNewPlace.clone(), null);
+                if (board.getPiece(theNewPlace) != null && board.getPiece(myPosition) != null) {
+                    if (board.getPiece(theNewPlace).getTeamColor() ==
+                            board.getPiece(myPosition).getTeamColor()) {
+                        canAddMove = false;
+                    }
+                }
+                if (canAddMove) {
+                    chessMoves.add(theNewMove.clone());
+                }
+                canAddMove = true;
+            }
+            j = thatColumn + 2;
+            if (i > 0 && i < 9 && j > 0 && j < 9) {
+                theNewPlace = new ChessPosition(i, j);
+                theNewMove = new ChessMove(myPosition.clone(), theNewPlace.clone(), null);
+                if (board.getPiece(theNewPlace) != null && board.getPiece(myPosition) != null) {
+                    if (board.getPiece(theNewPlace).getTeamColor() ==
+                            board.getPiece(myPosition).getTeamColor()) {
+                        canAddMove = false;
+                    }
+                }
+                if (canAddMove) {
+                    chessMoves.add(theNewMove.clone());
+                }
+                canAddMove = true;
+            }
+            i = thatRow + 2;
+            j = thatColumn - 1;
+            if (i > 0 && i < 9 && j > 0 && j < 9) {
+                theNewPlace = new ChessPosition(i, j);
+                theNewMove = new ChessMove(myPosition.clone(), theNewPlace.clone(), null);
+                if (board.getPiece(theNewPlace) != null && board.getPiece(myPosition) != null) {
+                    if (board.getPiece(theNewPlace).getTeamColor() ==
+                            board.getPiece(myPosition).getTeamColor()) {
+                        canAddMove = false;
+                    }
+                }
+                if (canAddMove) {
+                    chessMoves.add(theNewMove.clone());
+                }
+                canAddMove = true;
+            }
+            i = thatRow - 2;
+            if (i > 0 && i < 9 && j > 0 && j < 9) {
+                theNewPlace = new ChessPosition(i, j);
+                theNewMove = new ChessMove(myPosition.clone(), theNewPlace.clone(), null);
+                if (board.getPiece(theNewPlace) != null && board.getPiece(myPosition) != null) {
+                    if (board.getPiece(theNewPlace).getTeamColor() ==
+                            board.getPiece(myPosition).getTeamColor()) {
+                        canAddMove = false;
+                    }
+                }
+                if (canAddMove) {
+                    chessMoves.add(theNewMove.clone());
+                }
+                canAddMove = true;
+            }
+            j = thatColumn + 1;
+            if (i > 0 && i < 9 && j > 0 && j < 9) {
+                theNewPlace = new ChessPosition(i, j);
+                theNewMove = new ChessMove(myPosition.clone(), theNewPlace.clone(), null);
+                if (board.getPiece(theNewPlace) != null && board.getPiece(myPosition) != null) {
+                    if (board.getPiece(theNewPlace).getTeamColor() ==
+                            board.getPiece(myPosition).getTeamColor()) {
+                        canAddMove = false;
+                    }
+                }
+                if (canAddMove) {
+                    chessMoves.add(theNewMove.clone());
+                }
+                canAddMove = true;
+            }
+            i = thatRow + 2;
+            if (i > 0 && i < 9 && j > 0 && j < 9) {
+                theNewPlace = new ChessPosition(i, j);
+                theNewMove = new ChessMove(myPosition.clone(), theNewPlace.clone(), null);
+                if (board.getPiece(theNewPlace) != null && board.getPiece(myPosition) != null) {
+                    if (board.getPiece(theNewPlace).getTeamColor() ==
+                            board.getPiece(myPosition).getTeamColor()) {
+                        canAddMove = false;
+                    }
+                }
+                if (canAddMove) {
+                    chessMoves.add(theNewMove.clone());
+                }
+                canAddMove = true;
+            }
+        }
+        if (firstPhoneme == 11) {
+            if (thatRow == 1) {
+                if (thatColumn == 1) {
+                    theNewPlace = new ChessPosition(1, 2);
+                    theNewMove = new ChessMove(myPosition.clone(), theNewPlace.clone(), null);
 
-                    if (board.getPiece(the_new_place) != null && board.getPiece(myPosition) != null) {
-                        if (board.getPiece(the_new_place).getTeamColor() ==
+                    if (board.getPiece(theNewPlace) != null && board.getPiece(myPosition) != null) {
+                        if (board.getPiece(theNewPlace).getTeamColor() ==
                                 board.getPiece(myPosition).getTeamColor()) {
-                            can_add_move = false;
+                            canAddMove = false;
                         }
                     }
-                    if (can_add_move) {
-                        chess_moves.add(the_new_move.clone());
+                    if (canAddMove) {
+                        chessMoves.add(theNewMove.clone());
                     }
-                    can_add_move = true;
-                    the_new_place = new ChessPosition(2, 2);
-                    the_new_move = new ChessMove(myPosition.clone(), the_new_place.clone(), null);
-                    if (board.getPiece(the_new_place) != null && board.getPiece(myPosition) != null) {
-                        if (board.getPiece(the_new_place).getTeamColor() ==
+                    canAddMove = true;
+                    theNewPlace = new ChessPosition(2, 2);
+                    theNewMove = new ChessMove(myPosition.clone(), theNewPlace.clone(), null);
+                    if (board.getPiece(theNewPlace) != null && board.getPiece(myPosition) != null) {
+                        if (board.getPiece(theNewPlace).getTeamColor() ==
                                 board.getPiece(myPosition).getTeamColor()) {
-                            can_add_move = false;
+                            canAddMove = false;
                         }
                     }
-                    if (can_add_move) {
-                        chess_moves.add(the_new_move.clone());
+                    if (canAddMove) {
+                        chessMoves.add(theNewMove.clone());
                     }
-                    can_add_move = true;
-                    the_new_place = new ChessPosition(2, 1);
-                    the_new_move = new ChessMove(myPosition.clone(), the_new_place.clone(), null);
-                    if (board.getPiece(the_new_place) != null && board.getPiece(myPosition) != null) {
-                        if (board.getPiece(the_new_place).getTeamColor() ==
+                    canAddMove = true;
+                    theNewPlace = new ChessPosition(2, 1);
+                    theNewMove = new ChessMove(myPosition.clone(), theNewPlace.clone(), null);
+                    if (board.getPiece(theNewPlace) != null && board.getPiece(myPosition) != null) {
+                        if (board.getPiece(theNewPlace).getTeamColor() ==
                                 board.getPiece(myPosition).getTeamColor()) {
-                            can_add_move = false;
+                            canAddMove = false;
                         }
                     }
-                    if (can_add_move) {
-                        chess_moves.add(the_new_move.clone());
+                    if (canAddMove) {
+                        chessMoves.add(theNewMove.clone());
                     }
-                    can_add_move = true;
+                    canAddMove = true;
                 }
-                if (that_column == 8) {
-                    the_new_place = new ChessPosition(1, 7);
-                    the_new_move = new ChessMove(myPosition.clone(), the_new_place.clone(), null);
-                    if (board.getPiece(the_new_place) != null && board.getPiece(myPosition) != null) {
-                        if (board.getPiece(the_new_place).getTeamColor() ==
+                if (thatColumn == 8) {
+                    theNewPlace = new ChessPosition(1, 7);
+                    theNewMove = new ChessMove(myPosition.clone(), theNewPlace.clone(), null);
+                    if (board.getPiece(theNewPlace) != null && board.getPiece(myPosition) != null) {
+                        if (board.getPiece(theNewPlace).getTeamColor() ==
                                 board.getPiece(myPosition).getTeamColor()) {
-                            can_add_move = false;
+                            canAddMove = false;
                         }
                     }
-                    if (can_add_move) {
-                        chess_moves.add(the_new_move.clone());
+                    if (canAddMove) {
+                        chessMoves.add(theNewMove.clone());
                     }
-                    can_add_move = true;
-                    the_new_place = new ChessPosition(2, 7);
-                    the_new_move = new ChessMove(myPosition.clone(), the_new_place.clone(), null);
-                    if (board.getPiece(the_new_place) != null && board.getPiece(myPosition) != null) {
-                        if (board.getPiece(the_new_place).getTeamColor() ==
+                    canAddMove = true;
+                    theNewPlace = new ChessPosition(2, 7);
+                    theNewMove = new ChessMove(myPosition.clone(), theNewPlace.clone(), null);
+                    if (board.getPiece(theNewPlace) != null && board.getPiece(myPosition) != null) {
+                        if (board.getPiece(theNewPlace).getTeamColor() ==
                                 board.getPiece(myPosition).getTeamColor()) {
-                            can_add_move = false;
+                            canAddMove = false;
                         }
                     }
-                    if (can_add_move) {
-                        chess_moves.add(the_new_move.clone());
+                    if (canAddMove) {
+                        chessMoves.add(theNewMove.clone());
                     }
-                    can_add_move = true;
-                    the_new_place = new ChessPosition(2, 8);
-                    the_new_move = new ChessMove(myPosition.clone(), the_new_place.clone(), null);
-                    if (board.getPiece(the_new_place) != null && board.getPiece(myPosition) != null) {
-                        if (board.getPiece(the_new_place).getTeamColor() ==
+                    canAddMove = true;
+                    theNewPlace = new ChessPosition(2, 8);
+                    theNewMove = new ChessMove(myPosition.clone(), theNewPlace.clone(), null);
+                    if (board.getPiece(theNewPlace) != null && board.getPiece(myPosition) != null) {
+                        if (board.getPiece(theNewPlace).getTeamColor() ==
                                 board.getPiece(myPosition).getTeamColor()) {
-                            can_add_move = false;
+                            canAddMove = false;
                         }
                     }
-                    if (can_add_move) {
-                        chess_moves.add(the_new_move.clone());
+                    if (canAddMove) {
+                        chessMoves.add(theNewMove.clone());
                     }
-                    can_add_move = true;
+                    canAddMove = true;
                 }
-                if (that_column > 1 && that_column < 8) {
-                    the_new_place = new ChessPosition(1, that_column - 1);
-                    the_new_move = new ChessMove(myPosition.clone(), the_new_place.clone(), null);
-                    if (board.getPiece(the_new_place) != null && board.getPiece(myPosition) != null) {
-                        if (board.getPiece(the_new_place).getTeamColor() ==
+                if (thatColumn > 1 && thatColumn < 8) {
+                    theNewPlace = new ChessPosition(1, thatColumn - 1);
+                    theNewMove = new ChessMove(myPosition.clone(), theNewPlace.clone(), null);
+                    if (board.getPiece(theNewPlace) != null && board.getPiece(myPosition) != null) {
+                        if (board.getPiece(theNewPlace).getTeamColor() ==
                                 board.getPiece(myPosition).getTeamColor()) {
-                            can_add_move = false;
+                            canAddMove = false;
                         }
                     }
-                    if (can_add_move) {
-                        chess_moves.add(the_new_move.clone());
+                    if (canAddMove) {
+                        chessMoves.add(theNewMove.clone());
                     }
-                    can_add_move = true;
-                    the_new_place = new ChessPosition(2, that_column - 1);
-                    the_new_move = new ChessMove(myPosition.clone(), the_new_place.clone(), null);
-                    if (board.getPiece(the_new_place) != null && board.getPiece(myPosition) != null) {
-                        if (board.getPiece(the_new_place).getTeamColor() ==
+                    canAddMove = true;
+                    theNewPlace = new ChessPosition(2, thatColumn - 1);
+                    theNewMove = new ChessMove(myPosition.clone(), theNewPlace.clone(), null);
+                    if (board.getPiece(theNewPlace) != null && board.getPiece(myPosition) != null) {
+                        if (board.getPiece(theNewPlace).getTeamColor() ==
                                 board.getPiece(myPosition).getTeamColor()) {
-                            can_add_move = false;
+                            canAddMove = false;
                         }
                     }
-                    if (can_add_move) {
-                        chess_moves.add(the_new_move.clone());
+                    if (canAddMove) {
+                        chessMoves.add(theNewMove.clone());
                     }
-                    can_add_move = true;
-                    the_new_place = new ChessPosition(2, that_column);
-                    the_new_move = new ChessMove(myPosition.clone(), the_new_place.clone(), null);
-                    if (board.getPiece(the_new_place) != null && board.getPiece(myPosition) != null) {
-                        if (board.getPiece(the_new_place).getTeamColor() ==
+                    canAddMove = true;
+                    theNewPlace = new ChessPosition(2, thatColumn);
+                    theNewMove = new ChessMove(myPosition.clone(), theNewPlace.clone(), null);
+                    if (board.getPiece(theNewPlace) != null && board.getPiece(myPosition) != null) {
+                        if (board.getPiece(theNewPlace).getTeamColor() ==
                                 board.getPiece(myPosition).getTeamColor()) {
-                            can_add_move = false;
+                            canAddMove = false;
                         }
                     }
-                    if (can_add_move) {
-                        chess_moves.add(the_new_move.clone());
+                    if (canAddMove) {
+                        chessMoves.add(theNewMove.clone());
                     }
-                    can_add_move = true;
-                    the_new_place = new ChessPosition(2, that_column + 1);
-                    the_new_move = new ChessMove(myPosition.clone(), the_new_place.clone(), null);
-                    if (board.getPiece(the_new_place) != null && board.getPiece(myPosition) != null) {
-                        if (board.getPiece(the_new_place).getTeamColor() ==
+                    canAddMove = true;
+                    theNewPlace = new ChessPosition(2, thatColumn + 1);
+                    theNewMove = new ChessMove(myPosition.clone(), theNewPlace.clone(), null);
+                    if (board.getPiece(theNewPlace) != null && board.getPiece(myPosition) != null) {
+                        if (board.getPiece(theNewPlace).getTeamColor() ==
                                 board.getPiece(myPosition).getTeamColor()) {
-                            can_add_move = false;
+                            canAddMove = false;
                         }
                     }
-                    if (can_add_move) {
-                        chess_moves.add(the_new_move.clone());
+                    if (canAddMove) {
+                        chessMoves.add(theNewMove.clone());
                     }
-                    can_add_move = true;
-                    the_new_place = new ChessPosition(1, that_column + 1);
-                    the_new_move = new ChessMove(myPosition.clone(), the_new_place.clone(), null);
-                    if (board.getPiece(the_new_place) != null && board.getPiece(myPosition) != null) {
-                        if (board.getPiece(the_new_place).getTeamColor() ==
+                    canAddMove = true;
+                    theNewPlace = new ChessPosition(1, thatColumn + 1);
+                    theNewMove = new ChessMove(myPosition.clone(), theNewPlace.clone(), null);
+                    if (board.getPiece(theNewPlace) != null && board.getPiece(myPosition) != null) {
+                        if (board.getPiece(theNewPlace).getTeamColor() ==
                                 board.getPiece(myPosition).getTeamColor()) {
-                            can_add_move = false;
+                            canAddMove = false;
                         }
                     }
-                    if (can_add_move) {
-                        chess_moves.add(the_new_move.clone());
+                    if (canAddMove) {
+                        chessMoves.add(theNewMove.clone());
                     }
-                    can_add_move = true;
-                }
-            }
-            if (that_row == 8) {
-                if (that_column == 1) {
-                    the_new_place = new ChessPosition(8, 2);
-                    the_new_move = new ChessMove(myPosition.clone(), the_new_place.clone(), null);
-                    if (board.getPiece(the_new_place) != null && board.getPiece(myPosition) != null) {
-                        if (board.getPiece(the_new_place).getTeamColor() ==
-                                board.getPiece(myPosition).getTeamColor()) {
-                            can_add_move = false;
-                        }
-                    }
-                    if (can_add_move) {
-                        chess_moves.add(the_new_move.clone());
-                    }
-                    can_add_move = true;
-                    the_new_place = new ChessPosition(7, 2);
-                    the_new_move = new ChessMove(myPosition.clone(), the_new_place.clone(), null);
-                    if (board.getPiece(the_new_place) != null && board.getPiece(myPosition) != null) {
-                        if (board.getPiece(the_new_place).getTeamColor() ==
-                                board.getPiece(myPosition).getTeamColor()) {
-                            can_add_move = false;
-                        }
-                    }
-                    if (can_add_move) {
-                        chess_moves.add(the_new_move.clone());
-                    }
-                    can_add_move = true;
-                    the_new_place = new ChessPosition(7, 1);
-                    the_new_move = new ChessMove(myPosition.clone(), the_new_place.clone(), null);
-                    if (board.getPiece(the_new_place) != null && board.getPiece(myPosition) != null) {
-                        if (board.getPiece(the_new_place).getTeamColor() ==
-                                board.getPiece(myPosition).getTeamColor()) {
-                            can_add_move = false;
-                        }
-                    }
-                    if (can_add_move) {
-                        chess_moves.add(the_new_move.clone());
-                    }
-                    can_add_move = true;
-                }
-                if (that_column == 8) {
-                    the_new_place = new ChessPosition(8, 7);
-                    the_new_move = new ChessMove(myPosition.clone(), the_new_place.clone(), null);
-                    if (board.getPiece(the_new_place) != null && board.getPiece(myPosition) != null) {
-                        if (board.getPiece(the_new_place).getTeamColor() ==
-                                board.getPiece(myPosition).getTeamColor()) {
-                            can_add_move = false;
-                        }
-                    }
-                    if (can_add_move) {
-                        chess_moves.add(the_new_move.clone());
-                    }
-                    can_add_move = true;
-                    the_new_place = new ChessPosition(7, 7);
-                    the_new_move = new ChessMove(myPosition.clone(), the_new_place.clone(), null);
-                    if (board.getPiece(the_new_place) != null && board.getPiece(myPosition) != null) {
-                        if (board.getPiece(the_new_place).getTeamColor() ==
-                                board.getPiece(myPosition).getTeamColor()) {
-                            can_add_move = false;
-                        }
-                    }
-                    if (can_add_move) {
-                        chess_moves.add(the_new_move.clone());
-                    }
-                    can_add_move = true;
-                    the_new_place = new ChessPosition(7, 8);
-                    the_new_move = new ChessMove(myPosition.clone(), the_new_place.clone(), null);
-                    if (board.getPiece(the_new_place) != null && board.getPiece(myPosition) != null) {
-                        if (board.getPiece(the_new_place).getTeamColor() ==
-                                board.getPiece(myPosition).getTeamColor()) {
-                            can_add_move = false;
-                        }
-                    }
-                    if (can_add_move) {
-                        chess_moves.add(the_new_move.clone());
-                    }
-                    can_add_move = true;
-                }
-                if (that_column > 1 && that_column < 8) {
-                    the_new_place = new ChessPosition(8, that_column - 1);
-                    the_new_move = new ChessMove(myPosition.clone(), the_new_place.clone(), null);
-                    if (board.getPiece(the_new_place) != null && board.getPiece(myPosition) != null) {
-                        if (board.getPiece(the_new_place).getTeamColor() ==
-                                board.getPiece(myPosition).getTeamColor()) {
-                            can_add_move = false;
-                        }
-                    }
-                    if (can_add_move) {
-                        chess_moves.add(the_new_move.clone());
-                    }
-                    can_add_move = true;
-                    the_new_place = new ChessPosition(7, that_column - 1);
-                    the_new_move = new ChessMove(myPosition.clone(), the_new_place.clone(), null);
-                    if (board.getPiece(the_new_place) != null && board.getPiece(myPosition) != null) {
-                        if (board.getPiece(the_new_place).getTeamColor() ==
-                                board.getPiece(myPosition).getTeamColor()) {
-                            can_add_move = false;
-                        }
-                    }
-                    if (can_add_move) {
-                        chess_moves.add(the_new_move.clone());
-                    }
-                    can_add_move = true;
-                    the_new_place = new ChessPosition(7, that_column);
-                    the_new_move = new ChessMove(myPosition.clone(), the_new_place.clone(), null);
-                    if (board.getPiece(the_new_place) != null && board.getPiece(myPosition) != null) {
-                        if (board.getPiece(the_new_place).getTeamColor() ==
-                                board.getPiece(myPosition).getTeamColor()) {
-                            can_add_move = false;
-                        }
-                    }
-                    if (can_add_move) {
-                        chess_moves.add(the_new_move.clone());
-                    }
-                    can_add_move = true;
-                    the_new_place = new ChessPosition(7, that_column + 1);
-                    the_new_move = new ChessMove(myPosition.clone(), the_new_place.clone(), null);
-                    if (board.getPiece(the_new_place) != null && board.getPiece(myPosition) != null) {
-                        if (board.getPiece(the_new_place).getTeamColor() ==
-                                board.getPiece(myPosition).getTeamColor()) {
-                            can_add_move = false;
-                        }
-                    }
-                    if (can_add_move) {
-                        chess_moves.add(the_new_move.clone());
-                    }
-                    can_add_move = true;
-                    the_new_place = new ChessPosition(8, that_column + 1);
-                    the_new_move = new ChessMove(myPosition.clone(), the_new_place.clone(), null);
-                    if (board.getPiece(the_new_place) != null && board.getPiece(myPosition) != null) {
-                        if (board.getPiece(the_new_place).getTeamColor() ==
-                                board.getPiece(myPosition).getTeamColor()) {
-                            can_add_move = false;
-                        }
-                    }
-                    if (can_add_move) {
-                        chess_moves.add(the_new_move.clone());
-                    }
-                    can_add_move = true;
+                    canAddMove = true;
                 }
             }
-            if (that_row > 1 && that_row < 8) {
-                if (that_column == 1) {
-                    the_new_place = new ChessPosition(that_row + 1, 1);
-                    the_new_move = new ChessMove(myPosition.clone(), the_new_place.clone(), null);
-                    if (board.getPiece(the_new_place) != null && board.getPiece(myPosition) != null) {
-                        if (board.getPiece(the_new_place).getTeamColor() ==
+            if (thatRow == 8) {
+                if (thatColumn == 1) {
+                    theNewPlace = new ChessPosition(8, 2);
+                    theNewMove = new ChessMove(myPosition.clone(), theNewPlace.clone(), null);
+                    if (board.getPiece(theNewPlace) != null && board.getPiece(myPosition) != null) {
+                        if (board.getPiece(theNewPlace).getTeamColor() ==
                                 board.getPiece(myPosition).getTeamColor()) {
-                            can_add_move = false;
+                            canAddMove = false;
                         }
                     }
-                    if (can_add_move) {
-                        chess_moves.add(the_new_move.clone());
+                    if (canAddMove) {
+                        chessMoves.add(theNewMove.clone());
                     }
-                    can_add_move = true;
-                    the_new_place = new ChessPosition(that_row + 1, 2);
-                    the_new_move = new ChessMove(myPosition.clone(), the_new_place.clone(), null);
-                    if (board.getPiece(the_new_place) != null && board.getPiece(myPosition) != null) {
-                        if (board.getPiece(the_new_place).getTeamColor() ==
+                    canAddMove = true;
+                    theNewPlace = new ChessPosition(7, 2);
+                    theNewMove = new ChessMove(myPosition.clone(), theNewPlace.clone(), null);
+                    if (board.getPiece(theNewPlace) != null && board.getPiece(myPosition) != null) {
+                        if (board.getPiece(theNewPlace).getTeamColor() ==
                                 board.getPiece(myPosition).getTeamColor()) {
-                            can_add_move = false;
+                            canAddMove = false;
                         }
                     }
-                    if (can_add_move) {
-                        chess_moves.add(the_new_move.clone());
+                    if (canAddMove) {
+                        chessMoves.add(theNewMove.clone());
                     }
-                    can_add_move = true;
-                    the_new_place = new ChessPosition(that_row, 2);
-                    the_new_move = new ChessMove(myPosition.clone(), the_new_place.clone(), null);
-                    if (board.getPiece(the_new_place) != null && board.getPiece(myPosition) != null) {
-                        if (board.getPiece(the_new_place).getTeamColor() ==
+                    canAddMove = true;
+                    theNewPlace = new ChessPosition(7, 1);
+                    theNewMove = new ChessMove(myPosition.clone(), theNewPlace.clone(), null);
+                    if (board.getPiece(theNewPlace) != null && board.getPiece(myPosition) != null) {
+                        if (board.getPiece(theNewPlace).getTeamColor() ==
                                 board.getPiece(myPosition).getTeamColor()) {
-                            can_add_move = false;
+                            canAddMove = false;
                         }
                     }
-                    if (can_add_move) {
-                        chess_moves.add(the_new_move.clone());
+                    if (canAddMove) {
+                        chessMoves.add(theNewMove.clone());
                     }
-                    can_add_move = true;
-                    the_new_place = new ChessPosition(that_row - 1, 2);
-                    the_new_move = new ChessMove(myPosition.clone(), the_new_place.clone(), null);
-                    if (board.getPiece(the_new_place) != null && board.getPiece(myPosition) != null) {
-                        if (board.getPiece(the_new_place).getTeamColor() ==
-                                board.getPiece(myPosition).getTeamColor()) {
-                            can_add_move = false;
-                        }
-                    }
-                    if (can_add_move) {
-                        chess_moves.add(the_new_move.clone());
-                    }
-                    can_add_move = true;
-                    the_new_place = new ChessPosition(that_row - 1, 1);
-                    the_new_move = new ChessMove(myPosition.clone(), the_new_place.clone(), null);
-                    if (board.getPiece(the_new_place) != null && board.getPiece(myPosition) != null) {
-                        if (board.getPiece(the_new_place).getTeamColor() ==
-                                board.getPiece(myPosition).getTeamColor()) {
-                            can_add_move = false;
-                        }
-                    }
-                    if (can_add_move) {
-                        chess_moves.add(the_new_move.clone());
-                    }
-                    can_add_move = true;
+                    canAddMove = true;
                 }
-                if (that_column == 8) {
-                    the_new_place = new ChessPosition(that_row + 1, 8);
-                    the_new_move = new ChessMove(myPosition.clone(), the_new_place.clone(), null);
-                    if (board.getPiece(the_new_place) != null && board.getPiece(myPosition) != null) {
-                        if (board.getPiece(the_new_place).getTeamColor() ==
+                if (thatColumn == 8) {
+                    theNewPlace = new ChessPosition(8, 7);
+                    theNewMove = new ChessMove(myPosition.clone(), theNewPlace.clone(), null);
+                    if (board.getPiece(theNewPlace) != null && board.getPiece(myPosition) != null) {
+                        if (board.getPiece(theNewPlace).getTeamColor() ==
                                 board.getPiece(myPosition).getTeamColor()) {
-                            can_add_move = false;
+                            canAddMove = false;
                         }
                     }
-                    if (can_add_move) {
-                        chess_moves.add(the_new_move.clone());
+                    if (canAddMove) {
+                        chessMoves.add(theNewMove.clone());
                     }
-                    can_add_move = true;
-                    the_new_place = new ChessPosition(that_row + 1, 7);
-                    the_new_move = new ChessMove(myPosition.clone(), the_new_place.clone(), null);
-                    if (board.getPiece(the_new_place) != null && board.getPiece(myPosition) != null) {
-                        if (board.getPiece(the_new_place).getTeamColor() ==
+                    canAddMove = true;
+                    theNewPlace = new ChessPosition(7, 7);
+                    theNewMove = new ChessMove(myPosition.clone(), theNewPlace.clone(), null);
+                    if (board.getPiece(theNewPlace) != null && board.getPiece(myPosition) != null) {
+                        if (board.getPiece(theNewPlace).getTeamColor() ==
                                 board.getPiece(myPosition).getTeamColor()) {
-                            can_add_move = false;
+                            canAddMove = false;
                         }
                     }
-                    if (can_add_move) {
-                        chess_moves.add(the_new_move.clone());
+                    if (canAddMove) {
+                        chessMoves.add(theNewMove.clone());
                     }
-                    can_add_move = true;
-                    the_new_place = new ChessPosition(that_row, 7);
-                    the_new_move = new ChessMove(myPosition.clone(), the_new_place.clone(), null);
-                    if (board.getPiece(the_new_place) != null && board.getPiece(myPosition) != null) {
-                        if (board.getPiece(the_new_place).getTeamColor() ==
+                    canAddMove = true;
+                    theNewPlace = new ChessPosition(7, 8);
+                    theNewMove = new ChessMove(myPosition.clone(), theNewPlace.clone(), null);
+                    if (board.getPiece(theNewPlace) != null && board.getPiece(myPosition) != null) {
+                        if (board.getPiece(theNewPlace).getTeamColor() ==
                                 board.getPiece(myPosition).getTeamColor()) {
-                            can_add_move = false;
+                            canAddMove = false;
                         }
                     }
-                    if (can_add_move) {
-                        chess_moves.add(the_new_move.clone());
+                    if (canAddMove) {
+                        chessMoves.add(theNewMove.clone());
                     }
-                    can_add_move = true;
-                    the_new_place = new ChessPosition(that_row - 1, 7);
-                    the_new_move = new ChessMove(myPosition.clone(), the_new_place.clone(), null);
-                    if (board.getPiece(the_new_place) != null && board.getPiece(myPosition) != null) {
-                        if (board.getPiece(the_new_place).getTeamColor() ==
-                                board.getPiece(myPosition).getTeamColor()) {
-                            can_add_move = false;
-                        }
-                    }
-                    if (can_add_move) {
-                        chess_moves.add(the_new_move.clone());
-                    }
-                    can_add_move = true;
-                    the_new_place = new ChessPosition(that_row - 1, 8);
-                    the_new_move = new ChessMove(myPosition.clone(), the_new_place.clone(), null);
-                    if (board.getPiece(the_new_place) != null && board.getPiece(myPosition) != null) {
-                        if (board.getPiece(the_new_place).getTeamColor() ==
-                                board.getPiece(myPosition).getTeamColor()) {
-                            can_add_move = false;
-                        }
-                    }
-                    if (can_add_move) {
-                        chess_moves.add(the_new_move.clone());
-                    }
-                    can_add_move = true;
+                    canAddMove = true;
                 }
-                if (that_column > 1 && that_column < 8) {
-                    the_new_place = new ChessPosition(that_row + 1, that_column);
-                    the_new_move = new ChessMove(myPosition.clone(), the_new_place.clone(), null);
-                    if (board.getPiece(the_new_place) != null && board.getPiece(myPosition) != null) {
-                        if (board.getPiece(the_new_place).getTeamColor() ==
+                if (thatColumn > 1 && thatColumn < 8) {
+                    theNewPlace = new ChessPosition(8, thatColumn - 1);
+                    theNewMove = new ChessMove(myPosition.clone(), theNewPlace.clone(), null);
+                    if (board.getPiece(theNewPlace) != null && board.getPiece(myPosition) != null) {
+                        if (board.getPiece(theNewPlace).getTeamColor() ==
                                 board.getPiece(myPosition).getTeamColor()) {
-                            can_add_move = false;
+                            canAddMove = false;
                         }
                     }
-                    if (can_add_move) {
-                        chess_moves.add(the_new_move.clone());
+                    if (canAddMove) {
+                        chessMoves.add(theNewMove.clone());
                     }
-                    can_add_move = true;
-                    the_new_place = new ChessPosition(that_row + 1, that_column + 1);
-                    the_new_move = new ChessMove(myPosition.clone(), the_new_place.clone(), null);
-                    if (board.getPiece(the_new_place) != null && board.getPiece(myPosition) != null) {
-                        if (board.getPiece(the_new_place).getTeamColor() ==
+                    canAddMove = true;
+                    theNewPlace = new ChessPosition(7, thatColumn - 1);
+                    theNewMove = new ChessMove(myPosition.clone(), theNewPlace.clone(), null);
+                    if (board.getPiece(theNewPlace) != null && board.getPiece(myPosition) != null) {
+                        if (board.getPiece(theNewPlace).getTeamColor() ==
                                 board.getPiece(myPosition).getTeamColor()) {
-                            can_add_move = false;
+                            canAddMove = false;
                         }
                     }
-                    if (can_add_move) {
-                        chess_moves.add(the_new_move.clone());
+                    if (canAddMove) {
+                        chessMoves.add(theNewMove.clone());
                     }
-                    can_add_move = true;
-                    the_new_place = new ChessPosition(that_row, that_column + 1);
-                    the_new_move = new ChessMove(myPosition.clone(), the_new_place.clone(), null);
-                    if (board.getPiece(the_new_place) != null && board.getPiece(myPosition) != null) {
-                        if (board.getPiece(the_new_place).getTeamColor() ==
+                    canAddMove = true;
+                    theNewPlace = new ChessPosition(7, thatColumn);
+                    theNewMove = new ChessMove(myPosition.clone(), theNewPlace.clone(), null);
+                    if (board.getPiece(theNewPlace) != null && board.getPiece(myPosition) != null) {
+                        if (board.getPiece(theNewPlace).getTeamColor() ==
                                 board.getPiece(myPosition).getTeamColor()) {
-                            can_add_move = false;
+                            canAddMove = false;
                         }
                     }
-                    if (can_add_move) {
-                        chess_moves.add(the_new_move.clone());
+                    if (canAddMove) {
+                        chessMoves.add(theNewMove.clone());
                     }
-                    can_add_move = true;
-                    the_new_place = new ChessPosition(that_row - 1, that_column + 1);
-                    the_new_move = new ChessMove(myPosition.clone(), the_new_place.clone(), null);
-                    if (board.getPiece(the_new_place) != null && board.getPiece(myPosition) != null) {
-                        if (board.getPiece(the_new_place).getTeamColor() ==
+                    canAddMove = true;
+                    theNewPlace = new ChessPosition(7, thatColumn + 1);
+                    theNewMove = new ChessMove(myPosition.clone(), theNewPlace.clone(), null);
+                    if (board.getPiece(theNewPlace) != null && board.getPiece(myPosition) != null) {
+                        if (board.getPiece(theNewPlace).getTeamColor() ==
                                 board.getPiece(myPosition).getTeamColor()) {
-                            can_add_move = false;
+                            canAddMove = false;
                         }
                     }
-                    if (can_add_move) {
-                        chess_moves.add(the_new_move.clone());
+                    if (canAddMove) {
+                        chessMoves.add(theNewMove.clone());
                     }
-                    can_add_move = true;
-                    the_new_place = new ChessPosition(that_row - 1, that_column);
-                    the_new_move = new ChessMove(myPosition.clone(), the_new_place.clone(), null);
-                    if (board.getPiece(the_new_place) != null && board.getPiece(myPosition) != null) {
-                        if (board.getPiece(the_new_place).getTeamColor() ==
+                    canAddMove = true;
+                    theNewPlace = new ChessPosition(8, thatColumn + 1);
+                    theNewMove = new ChessMove(myPosition.clone(), theNewPlace.clone(), null);
+                    if (board.getPiece(theNewPlace) != null && board.getPiece(myPosition) != null) {
+                        if (board.getPiece(theNewPlace).getTeamColor() ==
                                 board.getPiece(myPosition).getTeamColor()) {
-                            can_add_move = false;
+                            canAddMove = false;
                         }
                     }
-                    if (can_add_move) {
-                        chess_moves.add(the_new_move.clone());
+                    if (canAddMove) {
+                        chessMoves.add(theNewMove.clone());
                     }
-                    can_add_move = true;
-                    the_new_place = new ChessPosition(that_row - 1, that_column - 1);
-                    the_new_move = new ChessMove(myPosition.clone(), the_new_place.clone(), null);
-                    if (board.getPiece(the_new_place) != null && board.getPiece(myPosition) != null) {
-                        if (board.getPiece(the_new_place).getTeamColor() ==
+                    canAddMove = true;
+                }
+            }
+            if (thatRow > 1 && thatRow < 8) {
+                if (thatColumn == 1) {
+                    theNewPlace = new ChessPosition(thatRow + 1, 1);
+                    theNewMove = new ChessMove(myPosition.clone(), theNewPlace.clone(), null);
+                    if (board.getPiece(theNewPlace) != null && board.getPiece(myPosition) != null) {
+                        if (board.getPiece(theNewPlace).getTeamColor() ==
                                 board.getPiece(myPosition).getTeamColor()) {
-                            can_add_move = false;
+                            canAddMove = false;
                         }
                     }
-                    if (can_add_move) {
-                        chess_moves.add(the_new_move.clone());
+                    if (canAddMove) {
+                        chessMoves.add(theNewMove.clone());
                     }
-                    can_add_move = true;
-                    the_new_place = new ChessPosition(that_row, that_column - 1);
-                    the_new_move = new ChessMove(myPosition.clone(), the_new_place.clone(), null);
-                    if (board.getPiece(the_new_place) != null && board.getPiece(myPosition) != null) {
-                        if (board.getPiece(the_new_place).getTeamColor() ==
+                    canAddMove = true;
+                    theNewPlace = new ChessPosition(thatRow + 1, 2);
+                    theNewMove = new ChessMove(myPosition.clone(), theNewPlace.clone(), null);
+                    if (board.getPiece(theNewPlace) != null && board.getPiece(myPosition) != null) {
+                        if (board.getPiece(theNewPlace).getTeamColor() ==
                                 board.getPiece(myPosition).getTeamColor()) {
-                            can_add_move = false;
+                            canAddMove = false;
                         }
                     }
-                    if (can_add_move) {
-                        chess_moves.add(the_new_move.clone());
+                    if (canAddMove) {
+                        chessMoves.add(theNewMove.clone());
                     }
-                    can_add_move = true;
-                    the_new_place = new ChessPosition(that_row + 1, that_column - 1);
-                    the_new_move = new ChessMove(myPosition.clone(), the_new_place.clone(), null);
-                    if (board.getPiece(the_new_place) != null && board.getPiece(myPosition) != null) {
-                        if (board.getPiece(the_new_place).getTeamColor() ==
+                    canAddMove = true;
+                    theNewPlace = new ChessPosition(thatRow, 2);
+                    theNewMove = new ChessMove(myPosition.clone(), theNewPlace.clone(), null);
+                    if (board.getPiece(theNewPlace) != null && board.getPiece(myPosition) != null) {
+                        if (board.getPiece(theNewPlace).getTeamColor() ==
                                 board.getPiece(myPosition).getTeamColor()) {
-                            can_add_move = false;
+                            canAddMove = false;
                         }
                     }
-                    if (can_add_move) {
-                        chess_moves.add(the_new_move.clone());
+                    if (canAddMove) {
+                        chessMoves.add(theNewMove.clone());
                     }
-                    can_add_move = true;
+                    canAddMove = true;
+                    theNewPlace = new ChessPosition(thatRow - 1, 2);
+                    theNewMove = new ChessMove(myPosition.clone(), theNewPlace.clone(), null);
+                    if (board.getPiece(theNewPlace) != null && board.getPiece(myPosition) != null) {
+                        if (board.getPiece(theNewPlace).getTeamColor() ==
+                                board.getPiece(myPosition).getTeamColor()) {
+                            canAddMove = false;
+                        }
+                    }
+                    if (canAddMove) {
+                        chessMoves.add(theNewMove.clone());
+                    }
+                    canAddMove = true;
+                    theNewPlace = new ChessPosition(thatRow - 1, 1);
+                    theNewMove = new ChessMove(myPosition.clone(), theNewPlace.clone(), null);
+                    if (board.getPiece(theNewPlace) != null && board.getPiece(myPosition) != null) {
+                        if (board.getPiece(theNewPlace).getTeamColor() ==
+                                board.getPiece(myPosition).getTeamColor()) {
+                            canAddMove = false;
+                        }
+                    }
+                    if (canAddMove) {
+                        chessMoves.add(theNewMove.clone());
+                    }
+                    canAddMove = true;
+                }
+                if (thatColumn == 8) {
+                    theNewPlace = new ChessPosition(thatRow + 1, 8);
+                    theNewMove = new ChessMove(myPosition.clone(), theNewPlace.clone(), null);
+                    if (board.getPiece(theNewPlace) != null && board.getPiece(myPosition) != null) {
+                        if (board.getPiece(theNewPlace).getTeamColor() ==
+                                board.getPiece(myPosition).getTeamColor()) {
+                            canAddMove = false;
+                        }
+                    }
+                    if (canAddMove) {
+                        chessMoves.add(theNewMove.clone());
+                    }
+                    canAddMove = true;
+                    theNewPlace = new ChessPosition(thatRow + 1, 7);
+                    theNewMove = new ChessMove(myPosition.clone(), theNewPlace.clone(), null);
+                    if (board.getPiece(theNewPlace) != null && board.getPiece(myPosition) != null) {
+                        if (board.getPiece(theNewPlace).getTeamColor() ==
+                                board.getPiece(myPosition).getTeamColor()) {
+                            canAddMove = false;
+                        }
+                    }
+                    if (canAddMove) {
+                        chessMoves.add(theNewMove.clone());
+                    }
+                    canAddMove = true;
+                    theNewPlace = new ChessPosition(thatRow, 7);
+                    theNewMove = new ChessMove(myPosition.clone(), theNewPlace.clone(), null);
+                    if (board.getPiece(theNewPlace) != null && board.getPiece(myPosition) != null) {
+                        if (board.getPiece(theNewPlace).getTeamColor() ==
+                                board.getPiece(myPosition).getTeamColor()) {
+                            canAddMove = false;
+                        }
+                    }
+                    if (canAddMove) {
+                        chessMoves.add(theNewMove.clone());
+                    }
+                    canAddMove = true;
+                    theNewPlace = new ChessPosition(thatRow - 1, 7);
+                    theNewMove = new ChessMove(myPosition.clone(), theNewPlace.clone(), null);
+                    if (board.getPiece(theNewPlace) != null && board.getPiece(myPosition) != null) {
+                        if (board.getPiece(theNewPlace).getTeamColor() ==
+                                board.getPiece(myPosition).getTeamColor()) {
+                            canAddMove = false;
+                        }
+                    }
+                    if (canAddMove) {
+                        chessMoves.add(theNewMove.clone());
+                    }
+                    canAddMove = true;
+                    theNewPlace = new ChessPosition(thatRow - 1, 8);
+                    theNewMove = new ChessMove(myPosition.clone(), theNewPlace.clone(), null);
+                    if (board.getPiece(theNewPlace) != null && board.getPiece(myPosition) != null) {
+                        if (board.getPiece(theNewPlace).getTeamColor() ==
+                                board.getPiece(myPosition).getTeamColor()) {
+                            canAddMove = false;
+                        }
+                    }
+                    if (canAddMove) {
+                        chessMoves.add(theNewMove.clone());
+                    }
+                    canAddMove = true;
+                }
+                if (thatColumn > 1 && thatColumn < 8) {
+                    theNewPlace = new ChessPosition(thatRow + 1, thatColumn);
+                    theNewMove = new ChessMove(myPosition.clone(), theNewPlace.clone(), null);
+                    if (board.getPiece(theNewPlace) != null && board.getPiece(myPosition) != null) {
+                        if (board.getPiece(theNewPlace).getTeamColor() ==
+                                board.getPiece(myPosition).getTeamColor()) {
+                            canAddMove = false;
+                        }
+                    }
+                    if (canAddMove) {
+                        chessMoves.add(theNewMove.clone());
+                    }
+                    canAddMove = true;
+                    theNewPlace = new ChessPosition(thatRow + 1, thatColumn + 1);
+                    theNewMove = new ChessMove(myPosition.clone(), theNewPlace.clone(), null);
+                    if (board.getPiece(theNewPlace) != null && board.getPiece(myPosition) != null) {
+                        if (board.getPiece(theNewPlace).getTeamColor() ==
+                                board.getPiece(myPosition).getTeamColor()) {
+                            canAddMove = false;
+                        }
+                    }
+                    if (canAddMove) {
+                        chessMoves.add(theNewMove.clone());
+                    }
+                    canAddMove = true;
+                    theNewPlace = new ChessPosition(thatRow, thatColumn + 1);
+                    theNewMove = new ChessMove(myPosition.clone(), theNewPlace.clone(), null);
+                    if (board.getPiece(theNewPlace) != null && board.getPiece(myPosition) != null) {
+                        if (board.getPiece(theNewPlace).getTeamColor() ==
+                                board.getPiece(myPosition).getTeamColor()) {
+                            canAddMove = false;
+                        }
+                    }
+                    if (canAddMove) {
+                        chessMoves.add(theNewMove.clone());
+                    }
+                    canAddMove = true;
+                    theNewPlace = new ChessPosition(thatRow - 1, thatColumn + 1);
+                    theNewMove = new ChessMove(myPosition.clone(), theNewPlace.clone(), null);
+                    if (board.getPiece(theNewPlace) != null && board.getPiece(myPosition) != null) {
+                        if (board.getPiece(theNewPlace).getTeamColor() ==
+                                board.getPiece(myPosition).getTeamColor()) {
+                            canAddMove = false;
+                        }
+                    }
+                    if (canAddMove) {
+                        chessMoves.add(theNewMove.clone());
+                    }
+                    canAddMove = true;
+                    theNewPlace = new ChessPosition(thatRow - 1, thatColumn);
+                    theNewMove = new ChessMove(myPosition.clone(), theNewPlace.clone(), null);
+                    if (board.getPiece(theNewPlace) != null && board.getPiece(myPosition) != null) {
+                        if (board.getPiece(theNewPlace).getTeamColor() ==
+                                board.getPiece(myPosition).getTeamColor()) {
+                            canAddMove = false;
+                        }
+                    }
+                    if (canAddMove) {
+                        chessMoves.add(theNewMove.clone());
+                    }
+                    canAddMove = true;
+                    theNewPlace = new ChessPosition(thatRow - 1, thatColumn - 1);
+                    theNewMove = new ChessMove(myPosition.clone(), theNewPlace.clone(), null);
+                    if (board.getPiece(theNewPlace) != null && board.getPiece(myPosition) != null) {
+                        if (board.getPiece(theNewPlace).getTeamColor() ==
+                                board.getPiece(myPosition).getTeamColor()) {
+                            canAddMove = false;
+                        }
+                    }
+                    if (canAddMove) {
+                        chessMoves.add(theNewMove.clone());
+                    }
+                    canAddMove = true;
+                    theNewPlace = new ChessPosition(thatRow, thatColumn - 1);
+                    theNewMove = new ChessMove(myPosition.clone(), theNewPlace.clone(), null);
+                    if (board.getPiece(theNewPlace) != null && board.getPiece(myPosition) != null) {
+                        if (board.getPiece(theNewPlace).getTeamColor() ==
+                                board.getPiece(myPosition).getTeamColor()) {
+                            canAddMove = false;
+                        }
+                    }
+                    if (canAddMove) {
+                        chessMoves.add(theNewMove.clone());
+                    }
+                    canAddMove = true;
+                    theNewPlace = new ChessPosition(thatRow + 1, thatColumn - 1);
+                    theNewMove = new ChessMove(myPosition.clone(), theNewPlace.clone(), null);
+                    if (board.getPiece(theNewPlace) != null && board.getPiece(myPosition) != null) {
+                        if (board.getPiece(theNewPlace).getTeamColor() ==
+                                board.getPiece(myPosition).getTeamColor()) {
+                            canAddMove = false;
+                        }
+                    }
+                    if (canAddMove) {
+                        chessMoves.add(theNewMove.clone());
+                    }
+                    canAddMove = true;
                 }
             }
         }
-        //System.out.println("*wwE");
-        //System.out.println(board);
-        //for (ChessMove move: chess_moves) {
-        //    System.out.println(move.getStartPosition().getRow());
-        //    System.out.println(move.getStartPosition().getColumn());
-        //    System.out.println(move.getEndPosition().getRow());
-        //    System.out.println(move.getEndPosition().getColumn());
-        //    System.out.println(move.getPromotionPiece());
-        //}
-        //System.out.println("*wwE");
-        return chess_moves;
+        return chessMoves;
     }
-    public boolean equals(Object compare_with) {
-        if (compare_with == null) {
+    public boolean equals(Object compareWith) {
+        if (compareWith == null) {
             return false;
         }
-        if (compare_with.getClass() != getClass()) {
+        if (compareWith.getClass() != getClass()) {
             return false;
         }
-        ChessPiece my_thing = (ChessPiece) compare_with;
-        return (my_thing.getPieceType() == my_type && my_thing.getTeamColor() == my_color);
+        ChessPiece myThing = (ChessPiece) compareWith;
+        return (myThing.getPieceType() == myType && myThing.getTeamColor() == myColor);
     }
     public int hashCode() {
-        int the_color = 23;
-        int first_phoneme = 63;
-        if (my_type == ChessPiece.PieceType.KING) {
-            first_phoneme = 11;
+        int theColor = 23;
+        int firstPhoneme = 63;
+        if (myType == ChessPiece.PieceType.KING) {
+            firstPhoneme = 11;
         }
-        if (my_type == ChessPiece.PieceType.QUEEN) {
-            first_phoneme = 17;
+        if (myType == ChessPiece.PieceType.QUEEN) {
+            firstPhoneme = 17;
         }
-        if (my_type == ChessPiece.PieceType.BISHOP) {
-            first_phoneme = 2;
+        if (myType == ChessPiece.PieceType.BISHOP) {
+            firstPhoneme = 2;
         }
-        if (my_type == ChessPiece.PieceType.KNIGHT) {
-            first_phoneme = 14;
+        if (myType == ChessPiece.PieceType.KNIGHT) {
+            firstPhoneme = 14;
         }
-        if (my_type == ChessPiece.PieceType.ROOK) {
-            first_phoneme = 18;
+        if (myType == ChessPiece.PieceType.ROOK) {
+            firstPhoneme = 18;
         }
-        if (my_type == ChessPiece.PieceType.PAWN) {
-            first_phoneme = 16;
+        if (myType == ChessPiece.PieceType.PAWN) {
+            firstPhoneme = 16;
         }
-        if (my_color == ChessGame.TeamColor.BLACK) {
-            the_color = 2;
+        if (myColor == ChessGame.TeamColor.BLACK) {
+            theColor = 2;
         }
-        return first_phoneme + the_color;
+        return firstPhoneme + theColor;
     }
     public ChessPiece clone() {
-        ChessPiece cloned_thing = new ChessPiece(my_color, my_type);
-        return cloned_thing;
+        ChessPiece clonedThing = new ChessPiece(myColor, myType);
+        return clonedThing;
     }
 }

@@ -11,18 +11,18 @@ import java.util.Collection;
  */
 public class ChessGame {
 
-    private ChessGame.TeamColor whose_turn_is_it;
-    private ChessBoard the_board = new ChessBoard();
+    private ChessGame.TeamColor whoseTurnIsIt;
+    private ChessBoard theBoard = new ChessBoard();
     public ChessGame() {
-whose_turn_is_it = ChessGame.TeamColor.WHITE;
-the_board.resetBoard();
+whoseTurnIsIt = ChessGame.TeamColor.WHITE;
+theBoard.resetBoard();
     }
 
     /**
      * @return Which team's turn it is
      */
     public TeamColor getTeamTurn() {
-        return whose_turn_is_it;
+        return whoseTurnIsIt;
     }
 
     /**
@@ -31,7 +31,7 @@ the_board.resetBoard();
      * @param team the team whose turn it is
      */
     public void setTeamTurn(TeamColor team) {
-        whose_turn_is_it = team;
+        whoseTurnIsIt = team;
     }
 
     /**
@@ -73,16 +73,16 @@ the_board.resetBoard();
     }
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
         Collection<ChessMove> chess_moves = new ArrayList<>();
-        if (the_board.getPiece(startPosition) == null) {
+        if (theBoard.getPiece(startPosition) == null) {
             return null;
         }
 
-        Collection<ChessMove> possible_chess_moves = the_board.getPiece(startPosition).pieceMoves(the_board, startPosition);
+        Collection<ChessMove> possible_chess_moves = theBoard.getPiece(startPosition).pieceMoves(theBoard, startPosition);
         for (ChessMove move: possible_chess_moves) {
-            ChessBoard my_new_board_thingy = the_board.clone();
+            ChessBoard my_new_board_thingy = theBoard.clone();
             my_new_board_thingy.addPiece(move.getEndPosition(), my_new_board_thingy.getPiece(startPosition));
             my_new_board_thingy.addPiece(startPosition, null);
-            if (!getIsCheck(my_new_board_thingy, the_board.getPiece(startPosition).getTeamColor())) {
+            if (!getIsCheck(my_new_board_thingy, theBoard.getPiece(startPosition).getTeamColor())) {
                 chess_moves.add(move.clone());
             }
         }
@@ -92,8 +92,8 @@ the_board.resetBoard();
         Collection<ChessMove> these_chess_moves = new ArrayList<>();
         for (int i = 0; i < 64; i = i + 1) {
             ChessPosition position_thingy = new ChessPosition((i % 8) + 1, 8 - (i / 8));
-            if (the_board.getPiece(position_thingy) != null) {
-                if (the_board.getPiece(position_thingy).getTeamColor() == teamColor) {
+            if (theBoard.getPiece(position_thingy) != null) {
+                if (theBoard.getPiece(position_thingy).getTeamColor() == teamColor) {
                     Collection<ChessMove> those_chess_moves = validMoves(position_thingy);
                     for (ChessMove move: those_chess_moves) {
                         these_chess_moves.add(move);
@@ -112,13 +112,13 @@ the_board.resetBoard();
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
         InvalidMoveException p = new InvalidMoveException();
-        if (the_board.getPiece(move.getStartPosition()) == null) {
+        if (theBoard.getPiece(move.getStartPosition()) == null) {
             throw p;
         }
-        if (the_board.getPiece(move.getStartPosition()).getTeamColor() != whose_turn_is_it) {
+        if (theBoard.getPiece(move.getStartPosition()).getTeamColor() != whoseTurnIsIt) {
             throw p;
         }
-        Collection<ChessMove> possible_chess_moves = validMovesWithColor(whose_turn_is_it);
+        Collection<ChessMove> possible_chess_moves = validMovesWithColor(whoseTurnIsIt);
         boolean is_bad_move = true;
         for (ChessMove potential_move: possible_chess_moves) {
             if (potential_move.equals(move)) {
@@ -129,11 +129,11 @@ the_board.resetBoard();
         if (is_bad_move) {
             throw p;
         }
-        the_board.addPiece(move.getEndPosition(), the_board.getPiece(move.getStartPosition()));
+        theBoard.addPiece(move.getEndPosition(), theBoard.getPiece(move.getStartPosition()));
         if (move.getPromotionPiece() != null) {
-            the_board.addPiece(move.getEndPosition(), new ChessPiece(whose_turn_is_it, move.getPromotionPiece()));
+            theBoard.addPiece(move.getEndPosition(), new ChessPiece(whoseTurnIsIt, move.getPromotionPiece()));
         }
-        the_board.addPiece(move.getStartPosition(), null);
+        theBoard.addPiece(move.getStartPosition(), null);
         if (getTeamTurn() == ChessGame.TeamColor.WHITE) {
             setTeamTurn(ChessGame.TeamColor.BLACK);
         }
@@ -149,7 +149,7 @@ the_board.resetBoard();
      * @return True if the specified team is in check
      */
     public boolean isInCheck(TeamColor teamColor) {
-        return getIsCheck(the_board, teamColor);
+        return getIsCheck(theBoard, teamColor);
     }
 
     /**
@@ -179,7 +179,7 @@ the_board.resetBoard();
      * @param board the new board to use
      */
     public void setBoard(ChessBoard board) {
-        the_board = board.clone();
+        theBoard = board.clone();
     }
 
     /**
@@ -188,12 +188,12 @@ the_board.resetBoard();
      * @return the chessboard
      */
     public ChessBoard getBoard() {
-        return the_board.clone();
+        return theBoard.clone();
     }
     public ChessGame clone() {
         ChessGame cg = new ChessGame();
-        cg.setTeamTurn(whose_turn_is_it);
-        cg.setBoard(the_board);
+        cg.setTeamTurn(whoseTurnIsIt);
+        cg.setBoard(theBoard);
         return cg;
     }
     public boolean equals(Object compare_with) {
@@ -204,14 +204,14 @@ the_board.resetBoard();
             return false;
         }
         ChessGame my_thing = (ChessGame) compare_with;
-        if (my_thing.getTeamTurn() != whose_turn_is_it) {
+        if (my_thing.getTeamTurn() != whoseTurnIsIt) {
             return false;
         }
-        return my_thing.getBoard().equals(the_board);
+        return my_thing.getBoard().equals(theBoard);
     }
     public int hashCode() {
-        int i = the_board.hashCode();
-        if (whose_turn_is_it == ChessGame.TeamColor.WHITE) {
+        int i = theBoard.hashCode();
+        if (whoseTurnIsIt == ChessGame.TeamColor.WHITE) {
             if (i == 2147483646) {
                 return -2147483613;
             }

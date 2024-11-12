@@ -27,10 +27,10 @@ public class DataAccess implements DatabaseAccess {
         }
         return null;
     }
-    public void CreateUser(UserData userData) {
+    public void createUser(UserData userData) {
         user_data_values.add(userData);
     }
-    public void CreateAuth(AuthData authData) {
+    public void createAuth(AuthData authData) {
         auth_data_values.add(authData);
     }
     public AuthData getAuth(String authToken) {
@@ -44,25 +44,25 @@ public class DataAccess implements DatabaseAccess {
     public void deleteAuth(AuthData ad) {
         auth_data_values.remove(ad);
     }
-    public void clear_thing() {
+    public void clearThing() {
         user_data_values = new ArrayList<>();
         game_data_values = new GameDataSet();
         auth_data_values = new ArrayList<>();
     }
-    public int add_game(String game_name) {
+    public int addGame(String game_name) {
         int i = game_data_values.mySize() + 1;
         game_data_values.addGame(new GameData(i, null, null, game_name, null));
         return i;
     }
-    public Collection<GameData> get_all_games() {
+    public Collection<GameData> getAllGames() {
         Collection<GameData> all_my_games = new ArrayList<>();
         for (int i = 1; i < 1 + game_data_values.mySize(); i = i + 1) {
             all_my_games.add(game_data_values.getGame(i));
         }
         return all_my_games;
     }
-    public boolean join_game_thingy(int game_id, ChessGame.TeamColor game_color, String my_auth_data) {
-        if (!check_for_game_existence(game_id)) {
+    public boolean joinGameThingy(int game_id, ChessGame.TeamColor game_color, String my_auth_data) {
+        if (!checkForGameExistence(game_id)) {
             return false;
         }
         GameData gd = game_data_values.getGame(game_id);
@@ -82,7 +82,7 @@ public class DataAccess implements DatabaseAccess {
         return true;
     }
 
-    public boolean check_for_game_existence(int game_id) {
+    public boolean checkForGameExistence(int game_id) {
         if (game_id < 1 || game_id > game_data_values.mySize()) {
             return false;
         }
