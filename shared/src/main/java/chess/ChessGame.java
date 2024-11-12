@@ -118,9 +118,9 @@ theBoard.resetBoard();
         if (theBoard.getPiece(move.getStartPosition()).getTeamColor() != whoseTurnIsIt) {
             throw p;
         }
-        Collection<ChessMove> possible_chess_moves = validMovesWithColor(whoseTurnIsIt);
+        Collection<ChessMove> possibleChessMoves = validMovesWithColor(whoseTurnIsIt);
         boolean isBadMove = true;
-        for (ChessMove potentialMove: possible_chess_moves) {
+        for (ChessMove potentialMove: possibleChessMoves) {
             if (potentialMove.equals(move)) {
                 isBadMove = false;
                 break;

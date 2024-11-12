@@ -74,8 +74,8 @@ public class Server {
             return myThingJson;
     }
     private String loginUser(Request req, Response res) {
-        var new_thing = new Gson().fromJson(req.body(), LoginData.class);
-        AuthData didItWork = theService.login(new_thing.username(), new_thing.password());
+        var frommedJson = new Gson().fromJson(req.body(), LoginData.class);
+        AuthData didItWork = theService.login(frommedJson.username(), frommedJson.password());
         if (didItWork == null) {
             res.status(401);
             var thingToSerialize = Map.of("message", "Error: unauthorized");
@@ -172,9 +172,9 @@ public class Server {
             return thingSerializerJson;
         }
         else {
-            res.status(401);
             var thingToSerialize = Map.of("message", "Error: unauthorized");
             var thingSerializer = new Gson();
+            res.status(401);
             var thingJson = thingSerializer.toJson(thingToSerialize);
             return thingJson;
         }
