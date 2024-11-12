@@ -36,9 +36,9 @@ public class Server {
     private String addUser(Request req, Response res) {
             var registerRequest = new Gson().fromJson(req.body(), UserData.class);
             if (registerRequest.username() == null) {
-                res.status(400);
-                var thingToSerialize = Map.of("message", "Error: bad request");
                 var thingSerializer = new Gson();
+                var thingToSerialize = Map.of("message", "Error: bad request");
+                res.status(400);
                 var thingJson = thingSerializer.toJson(thingToSerialize);
                 return thingJson;
             }
