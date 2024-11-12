@@ -1221,10 +1221,10 @@ public class ChessBoard {
             ChessPosition myChessPosition = new ChessPosition((i % 8) + 1, (i / 8) + 1);
             ChessPiece thatChessPiece = myThing.getPiece(myChessPosition);
             ChessPiece thisChessPiece = this.getPiece(myChessPosition);
-            if (thisChessPiece == null && thatChessPiece != null) {
-                return false;
+            if (thisChessPiece == null) {
+                return thatChessPiece == null;
             }
-            else if (thatChessPiece == null && thisChessPiece != null) {
+            else if (thatChessPiece == null) {
                 return false;
             }
             else if (thatChessPiece.equals(thisChessPiece) == false) {

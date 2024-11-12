@@ -212,39 +212,6 @@ theBoard.resetBoard();
     public int hashCode() {
         int i = theBoard.hashCode();
         if (whoseTurnIsIt == ChessGame.TeamColor.WHITE) {
-            if (i == 2147483646) {
-                return -2147483613;
-            }
-            if (i == 2147483647) {
-                return -2147483612;
-            }
-            if (i == -2147483648) {
-                return -2147483611;
-            }
-            if (i == -2147483647) {
-                return -2147483610;
-            }
-            if (i == -2147483646) {
-                return -2147483609;
-            }
-            if (i == 2147483613) {
-                return -2147483646;
-            }
-            if (i == 2147483612) {
-                return -2147483647;
-            }
-            if (i == 2147483611) {
-                return -2147483648;
-            }
-            if (i == 2147483610) {
-                return 2147483647;
-            }
-            if (i == 2147483609) {
-                return 2147483646;
-            }
-            if (i > 2147483611) {
-                return (i - 2147483629) - 2147483630;
-            }
             return i + 37;
         }
         return i;
