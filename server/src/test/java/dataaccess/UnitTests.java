@@ -16,22 +16,6 @@ public class UnitTests {
     UserData kasparov;
     UserData kramnik;
     UserData anand;
-    //Server sv;
-
-    //private static TestUser eU;
-
-    //private static TestUser nU;
-
-    //private static TestUser kasparov;
-    //private static TestUser kramnik;
-    //private static TestUser anand;
-
-    //private static TestCreateRequest cR;
-
-    //private static TestServerFacade sF;
-    //private static Server sv;
-
-    //private String eA;
 
     @AfterAll
     static void stopServer() {
@@ -41,21 +25,7 @@ public class UnitTests {
     @BeforeAll
     public static void init() {
 
-        //sv = new Server();
-        //var port = sv.run(0);
-        //System.out.println("PORT " + port);
 
-        //sF = new TestServerFacade("localhost", Integer.toString(port));
-
-        //eU = new TestUser("Person", "Hash This!", "pErSoN");
-
-        //nU = new TestUser("chess", "mr_chess", "Chess!!!");
-
-        //kasparov = new TestUser("Garry Kasparov", "garry_kasparov", "kasparov@kasparov.kasparov");
-        //kramnik = new TestUser("Vladimir Kramnik", "vladimir_kramnik", "kramnik@kramnik.kramnik");
-        //anand = new TestUser("Viswanathan Anand", "viswanathan_anand", "anand@anand.anand");
-
-        //cR = new TestCreateRequest("testGame");
     }
 
     @BeforeEach
@@ -64,11 +34,7 @@ public class UnitTests {
         kasparov = new UserData("Garry Kasparov", "garry_kasparov", "kasparov@kasparov.kasparov");
         kramnik = new UserData("Vladimir Kramnik", "vladimir_kramnik", "kramnik@kramnik.kramnik");
         anand = new UserData("Viswanathan Anand", "viswanathan_anand", "anand@anand.anand");
-    //sF.clear();
-        //TestAuthResult garryKasparov = sF.register(kasparov);
-        //TestAuthResult vladimirKramnik = sF.register(kramnik);
-        //TestAuthResult viswanathanAnand = sF.register(anand);
-        //eA = garryKasparov.getAuthToken();
+
     }
 
     @AfterEach
@@ -76,62 +42,8 @@ public class UnitTests {
         sqlThing.clearThing();
     }
 
-    //@Test
-    //@Order(1)
-    //@DisplayName("Static Files")
-    //public void staticFiles() throws Exception {
-    //    String htmlFromServer = sF.file("/").replaceAll("\r", "");
-    //    Assertions.assertEquals(HttpURLConnection.HTTP_OK, sF.getStatusCode(),
-    //            "Bad");
-    //    Assertions.assertNotNull(htmlFromServer, "Bad");
-    //    //Assertions.assertTrue(htmlFromServer.contains("CHESS! YAY! LET'S PLAY"));
-    //    Assertions.assertTrue(htmlFromServer.contains("CS 240 Chess Server Web API"));
-    //}
-
-    //@Test
-    //@Order(2)
-    //@DisplayName("Garry Kasparov Logs In")
-    //public void kasparovLogin() {
-        //TestAuthResult lR = sF.login(kasparov);
-        //assertHttpOk(lR);
-        //Assertions.assertEquals(kasparov.getUsername(), lR.getUsername(),
-        //                "Response did not give the same username as user");
-        //Assertions.assertNotNull(lR.getAuthToken(), "This doesn't look like Kasparov");
-        //Assertions.assertEquals(kasparov.getUsername(), lR.getUsername(),
-        //        "Response did not give the same username as user");
-        //Assertions.assertNotNull(lR.getAuthToken(), "Response did not return authentication String");
-    //}
-    //@Test
-    //@Order(3)
-    //@DisplayName("Garry Kasparov Logs In with Wrong Password")
-    //public void loginWrongPassword() {
-    //    //TestAuthResult lR = sF.login(new TestUser("Garry Kasparov", "gArRy-kAsPaRoV"));
-    //    //assertHttpUnauthorized(lR);
-    //    //assertAuthFieldsMissing(lR);
-    //    Assertions.a
-    //}
-
-    //@Test
-    //@Order(4)
-    //@DisplayName("Creating the game")
-    //public void create_game() {
-    //    TestCreateResult lR = sF.createGame(cR, "Kasparov is the champ!");
-    //}
-    //@Test
-    //@Order(5)
-    //@DisplayName("Joining the game")
-    //public void join_game() {
-    //    TestResult lR = sF.joinPlayer(null, "Here comes Kramnik");
-    //}
-    //@Test
-    //@Order(6)
-    //@DisplayName("Anand wants to butt in")
-    //public void steal_game() {
-    //    TestResult lR = sF.joinPlayer(null, "Anand will steal the game");
-    //}
-
-    private GameData gameAtInteger(Collection<GameData> game_data, int i) {
-        for (GameData gD: game_data) {
+    private GameData gameAtInteger(Collection<GameData> gameData, int i) {
+        for (GameData gD: gameData) {
             if (gD.gameID() == i) {
                 return gD;
             }
@@ -282,13 +194,13 @@ public class UnitTests {
         sqlThing.addGame("CHESS! YAY! LET'S PLAY");
         sqlThing.addGame("CS 240 Chess Server Web API");
         sqlThing.addGame("World Championship");
-        Collection<GameData> my_games = sqlThing.getAllGames();
-        Collection<GameData> the_actual = new ArrayList<>();
-        the_actual.add(new GameData(1, null, null, "CHESS! YAY! LET'S PLAY", null));
-        the_actual.add(new GameData(2, null, null, "CS 240 Chess Server Web API", null));
-        the_actual.add(new GameData(3, null, null, "World Championship", null));
+        Collection<GameData> myGames = sqlThing.getAllGames();
+        Collection<GameData> theActual = new ArrayList<>();
+        theActual.add(new GameData(1, null, null, "CHESS! YAY! LET'S PLAY", null));
+        theActual.add(new GameData(2, null, null, "CS 240 Chess Server Web API", null));
+        theActual.add(new GameData(3, null, null, "World Championship", null));
         for (int i = 1; i < 4; i = i + 1) {
-            Assertions.assertEquals(gameAtInteger(the_actual, i).gameName(), gameAtInteger(my_games, i).gameName());
+            Assertions.assertEquals(gameAtInteger(theActual, i).gameName(), gameAtInteger(myGames, i).gameName());
         }
     }
     @Test
@@ -299,13 +211,13 @@ public class UnitTests {
             sqlThing.addGame("CS 240 Chess Server Web API");
             sqlThing.addGame("World Championship");
         }
-        Collection<GameData> my_games = sqlThing.getAllGames();
-        Collection<GameData> the_actual = new ArrayList<>();
-        the_actual.add(new GameData(1, null, null, "CHESS! YAY! LET'S PLAY", null));
-        the_actual.add(new GameData(2, null, null, "CS 240 Chess Server Web API", null));
-        the_actual.add(new GameData(3, null, null, "World Championship", null));
+        Collection<GameData> myGames = sqlThing.getAllGames();
+        Collection<GameData> theActual = new ArrayList<>();
+        theActual.add(new GameData(1, null, null, "CHESS! YAY! LET'S PLAY", null));
+        theActual.add(new GameData(2, null, null, "CS 240 Chess Server Web API", null));
+        theActual.add(new GameData(3, null, null, "World Championship", null));
         for (int i = 1; i < 4; i = i + 1) {
-            Assertions.assertNull(gameAtInteger(my_games, i));
+            Assertions.assertNull(gameAtInteger(myGames, i));
         }
     }
     @Test
@@ -317,8 +229,8 @@ public class UnitTests {
         sqlThing.createUser(kramnik);
         sqlThing.createAuth(new AuthData("vladimir", kramnik.username()));
         sqlThing.joinGameThingy(1, ChessGame.TeamColor.WHITE, "vladimir");
-        Collection<GameData> my_games = sqlThing.getAllGames();
-        Assertions.assertEquals(gameAtInteger(my_games, 1).whiteUsername(), kramnik.username());
+        Collection<GameData> myGames = sqlThing.getAllGames();
+        Assertions.assertEquals(gameAtInteger(myGames, 1).whiteUsername(), kramnik.username());
     }
     @Test
     @DisplayName("First Join Game Failed")
@@ -327,8 +239,8 @@ public class UnitTests {
         sqlThing.addGame("CS 240 Chess Server Web API");
         sqlThing.addGame("World Championship");
         sqlThing.joinGameThingy(1, ChessGame.TeamColor.WHITE, "vladimir");
-        Collection<GameData> my_games = sqlThing.getAllGames();
-        Assertions.assertNull(gameAtInteger(my_games, 1).whiteUsername());
+        Collection<GameData> myGames = sqlThing.getAllGames();
+        Assertions.assertNull(gameAtInteger(myGames, 1).whiteUsername());
     }
     @Test
     @DisplayName("Second Join Game Passed")
@@ -344,8 +256,8 @@ public class UnitTests {
         sqlThing.createAuth(new AuthData("viswanathan", anand.username()));
         sqlThing.joinGameThingy(1, ChessGame.TeamColor.WHITE, "vladimir");
         sqlThing.joinGameThingy(1, ChessGame.TeamColor.BLACK, "garry");
-        Collection<GameData> my_games = sqlThing.getAllGames();
-        Assertions.assertEquals(gameAtInteger(my_games, 1).blackUsername(), kasparov.username());
+        Collection<GameData> myGames = sqlThing.getAllGames();
+        Assertions.assertEquals(gameAtInteger(myGames, 1).blackUsername(), kasparov.username());
     }
     @Test
     @DisplayName("Second Join Game Failed")
@@ -361,9 +273,9 @@ public class UnitTests {
         sqlThing.createAuth(new AuthData("viswanathan", anand.username()));
         sqlThing.joinGameThingy(1, ChessGame.TeamColor.BLACK, "vladimir");
         sqlThing.joinGameThingy(1, ChessGame.TeamColor.BLACK, "garry");
-        Collection<GameData> my_games = sqlThing.getAllGames();
-        Assertions.assertNull(gameAtInteger(my_games, 1).whiteUsername());
-        Assertions.assertEquals(gameAtInteger(my_games, 1).blackUsername(), kramnik.username());
+        Collection<GameData> dataCollection = sqlThing.getAllGames();
+        Assertions.assertNull(gameAtInteger(dataCollection, 1).whiteUsername());
+        Assertions.assertEquals(gameAtInteger(dataCollection, 1).blackUsername(), kramnik.username());
     }
     @Test
     @DisplayName("First Game Existence Check Passed")
@@ -381,7 +293,7 @@ public class UnitTests {
     }
     @Test
     @DisplayName("Second Game Existence Check Passed")
-    public void SecondGameExistenceCheckPassed() throws DataAccessException {
+    public void secondGameExistenceCheckPassed() throws DataAccessException {
         sqlThing.addGame("CHESS! YAY! LET'S PLAY");
         sqlThing.addGame("CS 240 Chess Server Web API");
         sqlThing.addGame("World Championship");

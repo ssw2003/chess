@@ -17,7 +17,7 @@ public class ChessMove {
         myEndPosition = endPosition.clone();
         if (promotionPiece == null) {
             myPromotionPiece = null;
-        }else{
+        } else {
             myPromotionPiece = promotionPiece;
         }
     }
@@ -55,23 +55,23 @@ public class ChessMove {
         if (compareWith.getClass() != getClass()) {
             return false;
         }
-        ChessMove my_thing = (ChessMove) compareWith;
-        if (my_thing.getStartPosition().hashCode() != myStartPosition.hashCode()) {
+        ChessMove myThing = (ChessMove) compareWith;
+        if (myThing.getStartPosition().hashCode() != myStartPosition.hashCode()) {
             return false;
         }
-        if (my_thing.getEndPosition().hashCode() != myEndPosition.hashCode()) {
+        if (myThing.getEndPosition().hashCode() != myEndPosition.hashCode()) {
             return false;
         }
         if (myPromotionPiece == null) {
-            if (null == my_thing.getPromotionPiece()) {
+            if (null == myThing.getPromotionPiece()) {
                 return true;
             }
             return false;
         }
-        if (null == my_thing.getPromotionPiece()) {
+        if (null == myThing.getPromotionPiece()) {
             return false;
         }
-        if (myPromotionPiece != my_thing.getPromotionPiece()) {
+        if (myPromotionPiece != myThing.getPromotionPiece()) {
             return false;
         }
         return true;
@@ -109,11 +109,11 @@ public class ChessMove {
         return 4096 * i + 64 * j + k;
     }
     public ChessMove clone() {
-        ChessMove cloned_thing = new ChessMove(myStartPosition.clone(), myEndPosition.clone(), null);
+        ChessMove clonedThing = new ChessMove(myStartPosition.clone(), myEndPosition.clone(), null);
         if (myPromotionPiece == null) {
-            return cloned_thing;
+            return clonedThing;
         }
-        cloned_thing = new ChessMove(myStartPosition.clone(), myEndPosition.clone(), myPromotionPiece);
-        return cloned_thing;
+        clonedThing = new ChessMove(myStartPosition.clone(), myEndPosition.clone(), myPromotionPiece);
+        return clonedThing;
     }
 }

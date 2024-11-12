@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 public class Server {
-    Service the_service = new Service();
+    Service theService = new Service();
 
     public int run(int desiredPort) {
         Spark.port(desiredPort);
@@ -34,178 +34,167 @@ public class Server {
         return Spark.port();
     }
     private String addUser(Request req, Response res) {
-        //try {
             var registerRequest = new Gson().fromJson(req.body(), UserData.class);
             if (registerRequest.username() == null) {
                 res.status(400);
-                var thing_to_serialize = Map.of("message", "Error: bad request");
-                var thing_serializer = new Gson();
-                var thing_json = thing_serializer.toJson(thing_to_serialize);
-                return thing_json;
+                var thingToSerialize = Map.of("message", "Error: bad request");
+                var thingSerializer = new Gson();
+                var thingJson = thingSerializer.toJson(thingToSerialize);
+                return thingJson;
             }
             if (registerRequest.password() == null) {
                 res.status(400);
-                var thing_to_serialize = Map.of("message", "Error: bad request");
-                var thing_serializer = new Gson();
-                var thing_json = thing_serializer.toJson(thing_to_serialize);
-                return thing_json;
+                var thingToSerialize = Map.of("message", "Error: bad request");
+                var thingSerializer = new Gson();
+                var thingJson = thingSerializer.toJson(thingToSerialize);
+                return thingJson;
             }
             if (registerRequest.email() == null) {
                 res.status(400);
-                var thing_to_serialize = Map.of("message", "Error: bad request");
-                var thing_serializer = new Gson();
-                var thing_json = thing_serializer.toJson(thing_to_serialize);
-                return thing_json;
+                var stringMap = Map.of("message", "Error: bad request");
+                var thingSerializer = new Gson();
+                var thingJson = thingSerializer.toJson(stringMap);
+                return thingJson;
             }
-            //
-            //return new Gson().toJson(registerRequest);
-            //res = new Response(100);
-            AuthData the_new_auth_data = the_service.register(registerRequest);
+            AuthData theNewAuthData = theService.register(registerRequest);
 
-            if (the_new_auth_data != null) {
+            if (theNewAuthData != null) {
                 res.status(200);
-                //System.out.println(String.join("","200 " ,"{ \"username\":\"", the_new_auth_data.username(), "\", \"authToken\":\"\"", the_new_auth_data.authToken(), "\"\" }"));
-                var thing_to_serialize = Map.of("username", the_new_auth_data.username(), "authToken", the_new_auth_data.authToken());
-                var thing_serializer = new Gson();
-                var thing_json = thing_serializer.toJson(thing_to_serialize);
-                return thing_json;
+                //System.out.println(String.join("","200 " ,"{ \"username\":\"", theNewAuthData.username(), "\", \"authToken\":\"\"", theNewAuthData.authToken(), "\"\" }"));
+                var thingToSerialize = Map.of("username", theNewAuthData.username(), "authToken", theNewAuthData.authToken());
+                var thingSerializer = new Gson();
+                var thingJson = thingSerializer.toJson(thingToSerialize);
+                return thingJson;
             }
 
             res.status(403);
-            var my_thing_to_serialize = Map.of("message", "Error: already taken");
-            var my_thing_serializer = new Gson();
-            var my_thing_json = my_thing_serializer.toJson(my_thing_to_serialize);
-            return my_thing_json;
-            //return """
-            //        {"message": "Hello world"}""";
-
-        //} catch () {
-        //}
-
+            var myThingToSerialize = Map.of("message", "Error: already taken");
+            var myThingSerializer = new Gson();
+            var myThingJson = myThingSerializer.toJson(myThingToSerialize);
+            return myThingJson;
     }
     private String loginUser(Request req, Response res) {
         var new_thing = new Gson().fromJson(req.body(), LoginData.class);
-        AuthData did_it_work = the_service.login(new_thing.username(), new_thing.password());
-        if (did_it_work == null) {
+        AuthData didItWork = theService.login(new_thing.username(), new_thing.password());
+        if (didItWork == null) {
             res.status(401);
-            var thing_to_serialize = Map.of("message", "Error: unauthorized");
-            var thing_serializer = new Gson();
-            var thing_json = thing_serializer.toJson(thing_to_serialize);
-            return thing_json;
+            var thingToSerialize = Map.of("message", "Error: unauthorized");
+            var thingSerializer = new Gson();
+            var thingJson = thingSerializer.toJson(thingToSerialize);
+            return thingJson;
         }
         else {
             res.status(200);
-            var thing_to_serialize = Map.of("username", did_it_work.username(), "authToken", did_it_work.authToken());
-            var thing_serializer = new Gson();
-            var thing_json = thing_serializer.toJson(thing_to_serialize);
-            return thing_json;
+            var stringStringMap = Map.of("username", didItWork.username(), "authToken", didItWork.authToken());
+            var thingSerializer = new Gson();
+            var thingJson = thingSerializer.toJson(stringStringMap);
+            return thingJson;
         }
     }
     private String logoutUser(Request req, Response res) {
-        var new_thing = new Gson().fromJson(req.body(), String.class);
-        String my_auth_data = req.headers("authorization"); //req.attribute("Authorization");
-        if (the_service.logout(my_auth_data)) {
+        var newThing = new Gson().fromJson(req.body(), String.class);
+        String myAuthData = req.headers("authorization"); //req.attribute("Authorization");
+        if (theService.logout(myAuthData)) {
             res.status(200);
-            var thing_to_serialize = Map.of();
-            var thing_serializer = new Gson();
-            var thing_json = thing_serializer.toJson(thing_to_serialize);
-            return thing_json;
+            var objectObjectMap = Map.of();
+            var thingSerializer = new Gson();
+            var thingJson = thingSerializer.toJson(objectObjectMap);
+            return thingJson;
         }
         else {
             res.status(401);
-            var thing_to_serialize = Map.of("message", "Error: unauthorized");
-            var thing_serializer = new Gson();
-            var thing_json = thing_serializer.toJson(thing_to_serialize);
-            return thing_json;
+            var stringMap = Map.of("message", "Error: unauthorized");
+            var thingSerializer = new Gson();
+            var thingJson = thingSerializer.toJson(stringMap);
+            return thingJson;
         }
     }
     private String clearApplication(Request req, Response res) {
-        //var new_thing = new Gson().fromJson(req.body(), UserData.class);
-        the_service.clearThing();
+        theService.clearThing();
         res.status(200);
-        var thing_to_serialize = Map.of();
-        var thing_serializer = new Gson();
-        var thing_json = thing_serializer.toJson(thing_to_serialize);
-        return thing_json;
+        var objectObjectMap = Map.of();
+        var thingSerializer = new Gson();
+        var thingJson = thingSerializer.toJson(objectObjectMap);
+        return thingJson;
     }
     private String joinGame(Request req, Response res) {
-        var new_thing = new Gson().fromJson(req.body(), PlayerColorGameNumber.class);
-        String my_auth_data = req.headers("authorization");
+        var newThing = new Gson().fromJson(req.body(), PlayerColorGameNumber.class);
+        String myAuthData = req.headers("authorization");
 
-        if (!the_service.checkFor(my_auth_data)) {
+        if (!theService.checkFor(myAuthData)) {
             res.status(401);
-            var the_thing_to_serialize = Map.of("message", "Error: unauthorized");
-            var the_thing_serializer = new Gson();
-            var the_thing_json = the_thing_serializer.toJson(the_thing_to_serialize);
-            return the_thing_json;
+            var stringStringMap = Map.of("message", "Error: unauthorized");
+            var thingSerializer = new Gson();
+            var theThingJson = thingSerializer.toJson(stringStringMap);
+            return theThingJson;
         }
-        if (new_thing.playerColor() != ChessGame.TeamColor.WHITE &&
-        new_thing.playerColor() != ChessGame.TeamColor.BLACK) {
+        if (newThing.playerColor() != ChessGame.TeamColor.WHITE &&
+        newThing.playerColor() != ChessGame.TeamColor.BLACK) {
             res.status(400);
-            var the_thing_to_serialize = Map.of("message", "Error: bad request");
-            var the_thing_serializer = new Gson();
-            var the_thing_json = the_thing_serializer.toJson(the_thing_to_serialize);
-            return the_thing_json;
+            var theThingToSerialize = Map.of("message", "Error: bad request");
+            var thingSerializer = new Gson();
+            var theThingJson = thingSerializer.toJson(theThingToSerialize);
+            return theThingJson;
         }
-        if (!the_service.checkForGameExistence(new_thing.gameID())) {
+        if (!theService.checkForGameExistence(newThing.gameID())) {
             res.status(400);
-            var the_thing_to_serialize = Map.of("message", "Error: bad request");
-            var the_thing_serializer = new Gson();
-            var the_thing_json = the_thing_serializer.toJson(the_thing_to_serialize);
-            return the_thing_json;
+            var stringMap = Map.of("message", "Error: bad request");
+            var thingSerializer = new Gson();
+            var thingSerializerJson = thingSerializer.toJson(stringMap);
+            return thingSerializerJson;
         }
-        if (the_service.joinGameThingy(new_thing.gameID(), new_thing.playerColor(), my_auth_data)) {
+        if (theService.joinGameThingy(newThing.gameID(), newThing.playerColor(), myAuthData)) {
             res.status(200);
-            var the_thing_to_serialize = Map.of();
-            var the_thing_serializer = new Gson();
-            var the_thing_json = the_thing_serializer.toJson(the_thing_to_serialize);
-            return the_thing_json;
+            var objectObjectMap = Map.of();
+            var thingSerializer = new Gson();
+            var thingSerializerJson = thingSerializer.toJson(objectObjectMap);
+            return thingSerializerJson;
         }
         res.status(403);
-        var thing_to_serialize = Map.of("message", "Error: already taken");
-        var thing_serializer = new Gson();
-        var thing_json = thing_serializer.toJson(thing_to_serialize);
-        return thing_json;
+        var thingToSerialize = Map.of("message", "Error: already taken");
+        var thingSerializer = new Gson();
+        var thingJson = thingSerializer.toJson(thingToSerialize);
+        return thingJson;
     }
     private String listGames(Request req, Response res) {
-        String my_auth_data = req.headers("authorization");
-        if (the_service.checkFor(my_auth_data)) {
+        String myAuthData = req.headers("authorization");
+        if (theService.checkFor(myAuthData)) {
             res.status(200);
-            Collection<GameData> game_data_values = the_service.getAllGames();
-            Collection<GameMetadata> new_maps = new ArrayList<>();
-            for (GameData gd: game_data_values) {
+            Collection<GameData> gameData = theService.getAllGames();
+            Collection<GameMetadata> arrayList = new ArrayList<>();
+            for (GameData gd: gameData) {
                 GameMetadata gm = new GameMetadata(gd.gameID(), gd.whiteUsername(), gd.blackUsername(), gd.gameName());
-                new_maps.add(gm);
+                arrayList.add(gm);
             }
-            var thing_to_serialize = Map.of("games", new_maps);
-            var thing_serializer = new Gson();
-            var thing_json = thing_serializer.toJson(thing_to_serialize);
-            return thing_json;
+            var thingToSerialize = Map.of("games", arrayList);
+            var thingSerializer = new Gson();
+            var thingSerializerJson = thingSerializer.toJson(thingToSerialize);
+            return thingSerializerJson;
         }
         else {
             res.status(401);
-            var thing_to_serialize = Map.of("message", "Error: unauthorized");
-            var thing_serializer = new Gson();
-            var thing_json = thing_serializer.toJson(thing_to_serialize);
-            return thing_json;
+            var thingToSerialize = Map.of("message", "Error: unauthorized");
+            var thingSerializer = new Gson();
+            var thingJson = thingSerializer.toJson(thingToSerialize);
+            return thingJson;
         }
     }
     private String createGame(Request req, Response res) {
-        GameName new_thing = new Gson().fromJson(req.body(), GameName.class);
-        String my_auth_data = req.headers("authorization"); //req.attribute("Authorization");
-        if (the_service.checkFor(my_auth_data)) {
+        GameName gameName = new Gson().fromJson(req.body(), GameName.class);
+        String myAuthData = req.headers("authorization"); //req.attribute("Authorization");
+        if (theService.checkFor(myAuthData)) {
             res.status(200);
-            var thing_to_serialize = Map.of("gameID", the_service.addGame(new_thing.gameName()));
-            var thing_serializer = new Gson();
-            var thing_json = thing_serializer.toJson(thing_to_serialize);
-            return thing_json;
+            var integerMap = Map.of("gameID", theService.addGame(gameName.gameName()));
+            var thingSerializer = new Gson();
+            var thingJson = thingSerializer.toJson(integerMap);
+            return thingJson;
         }
         else {
             res.status(401);
-            var thing_to_serialize = Map.of("message", "Error: unauthorized");
-            var thing_serializer = new Gson();
-            var thing_json = thing_serializer.toJson(thing_to_serialize);
-            return thing_json;
+            var stringMap = Map.of("message", "Error: unauthorized");
+            var thingSerializer = new Gson();
+            var thingSerializerJson = thingSerializer.toJson(stringMap);
+            return thingSerializerJson;
         }
     }
 

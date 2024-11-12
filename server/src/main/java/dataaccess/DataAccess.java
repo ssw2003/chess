@@ -9,32 +9,32 @@ import server.UserData;
 import java.util.*;
 
 public class DataAccess implements DatabaseAccess {
-    Collection<UserData> user_data_values = new ArrayList<>();
-    GameDataSet game_data_values = new GameDataSet();
-    Collection<AuthData> auth_data_values = new ArrayList<>();
+    Collection<UserData> userDataValues = new ArrayList<>();
+    GameDataSet gameDataValues = new GameDataSet();
+    Collection<AuthData> authDataValues = new ArrayList<>();
 
     public DataAccess() {
-        game_data_values = new GameDataSet();
+        gameDataValues = new GameDataSet();
     }
     public String generateAuthToken() {
         return UUID.randomUUID().toString();
     }
-    public UserData getUser(String potential_username) {
-        for (UserData p: user_data_values) {
-            if (p.username().equals(potential_username)) {
+    public UserData getUser(String potentialUsername) {
+        for (UserData p: userDataValues) {
+            if (p.username().equals(potentialUsername)) {
                 return p;
             }
         }
         return null;
     }
     public void createUser(UserData userData) {
-        user_data_values.add(userData);
+        userDataValues.add(userData);
     }
     public void createAuth(AuthData authData) {
-        auth_data_values.add(authData);
+        authDataValues.add(authData);
     }
     public AuthData getAuth(String authToken) {
-        for (AuthData p: auth_data_values) {
+        for (AuthData p: authDataValues) {
             if (p.authToken().equals(authToken)) {
                 return p;
             }
@@ -42,48 +42,48 @@ public class DataAccess implements DatabaseAccess {
         return null;
     }
     public void deleteAuth(AuthData ad) {
-        auth_data_values.remove(ad);
+        authDataValues.remove(ad);
     }
     public void clearThing() {
-        user_data_values = new ArrayList<>();
-        game_data_values = new GameDataSet();
-        auth_data_values = new ArrayList<>();
+        userDataValues = new ArrayList<>();
+        gameDataValues = new GameDataSet();
+        authDataValues = new ArrayList<>();
     }
-    public int addGame(String game_name) {
-        int i = game_data_values.mySize() + 1;
-        game_data_values.addGame(new GameData(i, null, null, game_name, null));
+    public int addGame(String gameName) {
+        int i = gameDataValues.mySize() + 1;
+        gameDataValues.addGame(new GameData(i, null, null, gameName, null));
         return i;
     }
     public Collection<GameData> getAllGames() {
-        Collection<GameData> all_my_games = new ArrayList<>();
-        for (int i = 1; i < 1 + game_data_values.mySize(); i = i + 1) {
-            all_my_games.add(game_data_values.getGame(i));
+        Collection<GameData> allMyGames = new ArrayList<>();
+        for (int i = 1; i < 1 + gameDataValues.mySize(); i = i + 1) {
+            allMyGames.add(gameDataValues.getGame(i));
         }
-        return all_my_games;
+        return allMyGames;
     }
-    public boolean joinGameThingy(int game_id, ChessGame.TeamColor game_color, String my_auth_data) {
-        if (!checkForGameExistence(game_id)) {
+    public boolean joinGameThingy(int gameId, ChessGame.TeamColor gameColor, String myAuthData) {
+        if (!checkForGameExistence(gameId)) {
             return false;
         }
-        GameData gd = game_data_values.getGame(game_id);
-        if (game_color == ChessGame.TeamColor.WHITE) {
+        GameData gd = gameDataValues.getGame(gameId);
+        if (gameColor == ChessGame.TeamColor.WHITE) {
             if (gd.whiteUsername() != null) {
                 return false;
             }
-            gd = new GameData(gd.gameID(), getAuth(my_auth_data).username(), gd.blackUsername(), gd.gameName(), gd.game());
+            gd = new GameData(gd.gameID(), getAuth(myAuthData).username(), gd.blackUsername(), gd.gameName(), gd.game());
         }
-        if (game_color == ChessGame.TeamColor.BLACK) {
+        if (gameColor == ChessGame.TeamColor.BLACK) {
             if (gd.blackUsername() != null) {
                 return false;
             }
-            gd = new GameData(gd.gameID(), gd.whiteUsername(), getAuth(my_auth_data).username(), gd.gameName(), gd.game());
+            gd = new GameData(gd.gameID(), gd.whiteUsername(), getAuth(myAuthData).username(), gd.gameName(), gd.game());
         }
-        game_data_values.changeGame(game_id, gd);
+        gameDataValues.changeGame(gameId, gd);
         return true;
     }
 
-    public boolean checkForGameExistence(int game_id) {
-        if (game_id < 1 || game_id > game_data_values.mySize()) {
+    public boolean checkForGameExistence(int gameId) {
+        if (gameId < 1 || gameId > gameDataValues.mySize()) {
             return false;
         }
         return true;

@@ -10,10 +10,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 public class Service {
-    DatabaseAccess data_access = new DataAccess();
+    DatabaseAccess dataAccess = new DataAccess();
     public Service() {
         try {
-            data_access = new SQLThing();
+            dataAccess = new SQLThing();
         } catch (Exception s) {
             //System.out.println(s.getMessage());
             String t = s.getMessage();
@@ -21,7 +21,7 @@ public class Service {
     }
     private String generateAuthToken() {
         try {
-            return data_access.generateAuthToken();
+            return dataAccess.generateAuthToken();
         } catch (DataAccessException e) {
             //System.out.println(e.getMessage());
             return null;
@@ -29,11 +29,11 @@ public class Service {
     }
     public AuthData register(UserData req) {
         try {
-            if (data_access.getUser(req.username()) == null) {
-                data_access.createUser(req);
-                AuthData the_auth_data = new AuthData(generateAuthToken(), req.username());
-                data_access.createAuth(the_auth_data);
-                return the_auth_data;
+            if (dataAccess.getUser(req.username()) == null) {
+                dataAccess.createUser(req);
+                AuthData theAuthData = new AuthData(generateAuthToken(), req.username());
+                dataAccess.createAuth(theAuthData);
+                return theAuthData;
             }
             return null;
         } catch (Exception e) {
@@ -43,11 +43,11 @@ public class Service {
     }
     public AuthData login(String u, String p) {
         try {
-            UserData get_my_user = data_access.getUser(u);
-            if (get_my_user != null) {
-                if (BCrypt.checkpw(p, get_my_user.password())) {
+            UserData getMyUser = dataAccess.getUser(u);
+            if (getMyUser != null) {
+                if (BCrypt.checkpw(p, getMyUser.password())) {
                     AuthData at = new AuthData(generateAuthToken(), u);
-                    data_access.createAuth(at);
+                    dataAccess.createAuth(at);
                     return at;
                 }
             }
@@ -59,9 +59,9 @@ public class Service {
     }
     public boolean logout(String ad) {
         try {
-            AuthData get_my_user = data_access.getAuth(ad);
-            if (get_my_user != null) {
-                data_access.deleteAuth(get_my_user);
+            AuthData getMyUser = dataAccess.getAuth(ad);
+            if (getMyUser != null) {
+                dataAccess.deleteAuth(getMyUser);
                 return true;
             }
             return false;
@@ -72,8 +72,8 @@ public class Service {
     }
     public boolean checkFor(String ad) {
         try {
-            AuthData get_my_user = data_access.getAuth(ad);
-            if (get_my_user != null) {
+            AuthData getMyUser = dataAccess.getAuth(ad);
+            if (getMyUser != null) {
                 return true;
             }
             return false;
@@ -84,33 +84,33 @@ public class Service {
     }
     public void clearThing() {
         try {
-            data_access.clearThing();
+            dataAccess.clearThing();
         } catch (DataAccessException e) {
             //System.out.println(e.getMessage());
             return;
         }
     }
-    public int addGame(String game_name) {
+    public int addGame(String gameName) {
         try {
-            return data_access.addGame(game_name);
+            return dataAccess.addGame(gameName);
         } catch (DataAccessException e) {
             //System.out.println(e.getMessage());
             return 0;
         }
     }
-    public boolean joinGameThingy(int game_id, ChessGame.TeamColor game_color, String my_auth_data) {
+    public boolean joinGameThingy(int gameId, ChessGame.TeamColor gameColor, String myAuthData) {
         try {
 
-            return data_access.joinGameThingy(game_id, game_color, my_auth_data);
+            return dataAccess.joinGameThingy(gameId, gameColor, myAuthData);
 
         } catch (DataAccessException e) {
             //System.out.println(e.getMessage());
             return false;
         }
     }
-    public boolean checkForGameExistence(int game_id) {
+    public boolean checkForGameExistence(int gameId) {
         try {
-            return data_access.checkForGameExistence(game_id);
+            return dataAccess.checkForGameExistence(gameId);
         } catch (DataAccessException e) {
             //System.out.println(e.getMessage());
             return false;
@@ -118,7 +118,7 @@ public class Service {
     }
     public Collection<GameData> getAllGames() {
         try {
-            return data_access.getAllGames();
+            return dataAccess.getAllGames();
         } catch (DataAccessException e) {
             //System.out.println(e.getMessage());
             return new ArrayList<>();

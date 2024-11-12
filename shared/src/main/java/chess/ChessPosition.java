@@ -31,18 +31,18 @@ public class ChessPosition {
         return this.myColumn;
     }
 
-    public boolean equals(Object compare_with) {
-        if (compare_with == null) {
+    public boolean equals(Object compareWith) {
+        if (compareWith == null) {
             return false;
         }
-        if (compare_with.getClass() != getClass()) {
+        if (compareWith.getClass() != getClass()) {
             return false;
         }
-        ChessPosition my_thing = (ChessPosition) compare_with;
-        if (my_thing.getRow() != myRow) {
+        ChessPosition myThing = (ChessPosition) compareWith;
+        if (myThing.getRow() != myRow) {
             return false;
         }
-        if (my_thing.getColumn() != myColumn) {
+        if (myThing.getColumn() != myColumn) {
             return false;
         }
         return true;
@@ -51,7 +51,7 @@ public class ChessPosition {
         return myRow * 8 + myColumn;
     }
     public ChessPosition clone() {
-        ChessPosition cloned_thing = new ChessPosition(myRow, myColumn);
-        return cloned_thing;
+        ChessPosition clonedThing = new ChessPosition(myRow, myColumn);
+        return clonedThing;
     }
 }

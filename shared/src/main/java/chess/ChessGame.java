@@ -49,19 +49,19 @@ theBoard.resetBoard();
     //  * @return Set of valid moves for requested piece, or null if no piece at
     //  * startPosition
     //  */
-    private boolean getIsCheck(ChessBoard that_board, ChessGame.TeamColor their_color) {
+    private boolean getIsCheck(ChessBoard thatBoard, ChessGame.TeamColor theirColor) {
         for (int i = 0; i < 64; i = i + 1) {
-            ChessPosition new_place = new ChessPosition(1 + (i % 8), 8 - (i / 8));
-            ChessPiece new_piece = that_board.getPiece(new_place);
-            Collection<ChessMove> new_moves = new ArrayList<>();
-            if (new_piece != null) {
-                if (new_piece.getTeamColor() != their_color) {
-                    new_moves = new_piece.pieceMoves(that_board, new_place);
-                    for (ChessMove move: new_moves) {
-                        new_piece = that_board.getPiece(move.getEndPosition());
-                        if (new_piece != null) {
-                            if (new_piece.getTeamColor() == their_color &&
-                            new_piece.getPieceType() == ChessPiece.PieceType.KING) {
+            ChessPosition newPlace = new ChessPosition(1 + (i % 8), 8 - (i / 8));
+            ChessPiece newPiece = thatBoard.getPiece(newPlace);
+            Collection<ChessMove> newMoves = new ArrayList<>();
+            if (newPiece != null) {
+                if (newPiece.getTeamColor() != theirColor) {
+                    newMoves = newPiece.pieceMoves(thatBoard, newPlace);
+                    for (ChessMove move: newMoves) {
+                        newPiece = thatBoard.getPiece(move.getEndPosition());
+                        if (newPiece != null) {
+                            if (newPiece.getTeamColor() == theirColor &&
+                            newPiece.getPieceType() == ChessPiece.PieceType.KING) {
                                 return true;
                             }
                         }
@@ -72,36 +72,36 @@ theBoard.resetBoard();
         return false;
     }
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
-        Collection<ChessMove> chess_moves = new ArrayList<>();
+        Collection<ChessMove> chessMoves = new ArrayList<>();
         if (theBoard.getPiece(startPosition) == null) {
             return null;
         }
 
-        Collection<ChessMove> possible_chess_moves = theBoard.getPiece(startPosition).pieceMoves(theBoard, startPosition);
-        for (ChessMove move: possible_chess_moves) {
-            ChessBoard my_new_board_thingy = theBoard.clone();
-            my_new_board_thingy.addPiece(move.getEndPosition(), my_new_board_thingy.getPiece(startPosition));
-            my_new_board_thingy.addPiece(startPosition, null);
-            if (!getIsCheck(my_new_board_thingy, theBoard.getPiece(startPosition).getTeamColor())) {
-                chess_moves.add(move.clone());
+        Collection<ChessMove> possibleChessMoves = theBoard.getPiece(startPosition).pieceMoves(theBoard, startPosition);
+        for (ChessMove move: possibleChessMoves) {
+            ChessBoard myNewBoardThingy = theBoard.clone();
+            myNewBoardThingy.addPiece(move.getEndPosition(), myNewBoardThingy.getPiece(startPosition));
+            myNewBoardThingy.addPiece(startPosition, null);
+            if (!getIsCheck(myNewBoardThingy, theBoard.getPiece(startPosition).getTeamColor())) {
+                chessMoves.add(move.clone());
             }
         }
-        return chess_moves;
+        return chessMoves;
     }
     private Collection<ChessMove> validMovesWithColor(ChessGame.TeamColor teamColor) {
-        Collection<ChessMove> these_chess_moves = new ArrayList<>();
+        Collection<ChessMove> theseChessMoves = new ArrayList<>();
         for (int i = 0; i < 64; i = i + 1) {
-            ChessPosition position_thingy = new ChessPosition((i % 8) + 1, 8 - (i / 8));
-            if (theBoard.getPiece(position_thingy) != null) {
-                if (theBoard.getPiece(position_thingy).getTeamColor() == teamColor) {
-                    Collection<ChessMove> those_chess_moves = validMoves(position_thingy);
-                    for (ChessMove move: those_chess_moves) {
-                        these_chess_moves.add(move);
+            ChessPosition positionThingy = new ChessPosition((i % 8) + 1, 8 - (i / 8));
+            if (theBoard.getPiece(positionThingy) != null) {
+                if (theBoard.getPiece(positionThingy).getTeamColor() == teamColor) {
+                    Collection<ChessMove> thoseChessMoves = validMoves(positionThingy);
+                    for (ChessMove move: thoseChessMoves) {
+                        theseChessMoves.add(move);
                     }
                 }
             }
         }
-        return these_chess_moves;
+        return theseChessMoves;
     }
 
     /**
@@ -119,14 +119,14 @@ theBoard.resetBoard();
             throw p;
         }
         Collection<ChessMove> possible_chess_moves = validMovesWithColor(whoseTurnIsIt);
-        boolean is_bad_move = true;
-        for (ChessMove potential_move: possible_chess_moves) {
-            if (potential_move.equals(move)) {
-                is_bad_move = false;
+        boolean isBadMove = true;
+        for (ChessMove potentialMove: possible_chess_moves) {
+            if (potentialMove.equals(move)) {
+                isBadMove = false;
                 break;
             }
         }
-        if (is_bad_move) {
+        if (isBadMove) {
             throw p;
         }
         theBoard.addPiece(move.getEndPosition(), theBoard.getPiece(move.getStartPosition()));
@@ -196,18 +196,18 @@ theBoard.resetBoard();
         cg.setBoard(theBoard);
         return cg;
     }
-    public boolean equals(Object compare_with) {
-        if (compare_with == null) {
+    public boolean equals(Object compareWith) {
+        if (compareWith == null) {
             return false;
         }
-        if (compare_with.getClass() != getClass()) {
+        if (compareWith.getClass() != getClass()) {
             return false;
         }
-        ChessGame my_thing = (ChessGame) compare_with;
-        if (my_thing.getTeamTurn() != whoseTurnIsIt) {
+        ChessGame myThing = (ChessGame) compareWith;
+        if (myThing.getTeamTurn() != whoseTurnIsIt) {
             return false;
         }
-        return my_thing.getBoard().equals(theBoard);
+        return myThing.getBoard().equals(theBoard);
     }
     public int hashCode() {
         int i = theBoard.hashCode();

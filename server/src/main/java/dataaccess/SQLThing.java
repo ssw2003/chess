@@ -20,7 +20,7 @@ public class SQLThing implements DatabaseAccess {
     }
     private void startDatabase() throws DataAccessException {
         DatabaseManager.createDatabase();
-        try (var potential_connection = DatabaseManager.getConnection()) {
+        try (var potentialConnection = DatabaseManager.getConnection()) {
             for (var s: UserDataTable) {
                 try (var ps = DatabaseManager.getConnection().prepareStatement(s)) {
                     ps.executeUpdate();
@@ -72,10 +72,10 @@ public class SQLThing implements DatabaseAccess {
     }
 
     @Override
-    public UserData getUser(String potential_username) throws DataAccessException {
+    public UserData getUser(String potentialUsername) throws DataAccessException {
         try (var cn = DatabaseManager.getConnection();
         var ps = cn.prepareStatement("SELECT username, password, email FROM user_data WHERE username=?")) {
-            ps.setString(1, potential_username);
+            ps.setString(1, potentialUsername);
             try (var v = ps.executeQuery()) {
                 while (v.next()) {
                     var un = v.getString("username");
@@ -168,20 +168,17 @@ public class SQLThing implements DatabaseAccess {
     }
 
     @Override
-    public int addGame(String game_name) throws DataAccessException {
+    public int addGame(String gameName) throws DataAccessException {
 
         try (var cn = DatabaseManager.getConnection();
              var ps = cn.prepareStatement("INSERT INTO game_data (game_name) VALUES (?)", Statement.RETURN_GENERATED_KEYS)) {
-            ps.setString(1, game_name);
+            ps.setString(1, gameName);
             ps.executeUpdate();
             var j = ps.getGeneratedKeys();
             var i = 0;
             if (j.next()) {
                 i = j.getInt(1);
             }
-            //var j = new Gson().toJson(game_name);
-            //ps.executeUpdate(j);
-            //var i = ps.executeUpdate(j);
             return i;
         } catch (SQLException dae) {
             throw new DataAccessException(dae.getMessage());
@@ -190,7 +187,7 @@ public class SQLThing implements DatabaseAccess {
 
     @Override
     public Collection<GameData> getAllGames() throws DataAccessException {
-        var all_games = new ArrayList<GameData>();
+        var allGames = new ArrayList<GameData>();
         try (var cn = DatabaseManager.getConnection();
              var ps = cn.prepareStatement("SELECT game_id, white_username, black_username, game_name, game FROM game_data")) {
             try (var v = ps.executeQuery()) {
@@ -201,29 +198,29 @@ public class SQLThing implements DatabaseAccess {
                     var gn = v.getString("game_name");
                     var g = v.getString("game");
                     var gameRequest = new Gson().fromJson(g, ChessGame.class);
-                    all_games.add(new GameData(gid, wu, bu, gn, gameRequest));
+                    allGames.add(new GameData(gid, wu, bu, gn, gameRequest));
                 }
             }
         } catch (SQLException dae) {
             throw new DataAccessException(dae.getMessage());
         }
-        return all_games;
+        return allGames;
     }
 
     @Override
-    public boolean joinGameThingy(int game_id, ChessGame.TeamColor game_color, String my_auth_data) throws DataAccessException {
+    public boolean joinGameThingy(int gameId, ChessGame.TeamColor gameColor, String myAuthData) throws DataAccessException {
         try {
-            if (getAuth(my_auth_data) == null) {
+            if (getAuth(myAuthData) == null) {
                 return false;
             }
         } catch (DataAccessException s){
             throw new DataAccessException(s.getMessage());
         }
 
-        if (game_color == ChessGame.TeamColor.WHITE) {
+        if (gameColor == ChessGame.TeamColor.WHITE) {
             try (var cn = DatabaseManager.getConnection();
                  var ps = cn.prepareStatement("SELECT white_username FROM game_data WHERE game_id=?")) {
-                ps.setInt(1, game_id);
+                ps.setInt(1, gameId);
                 try (var v = ps.executeQuery()) {
                     if (v.next()) {
                         if (v.getString("white_username") != null) {
@@ -236,8 +233,8 @@ public class SQLThing implements DatabaseAccess {
             }
             try (var cn = DatabaseManager.getConnection();
                  var ps = cn.prepareStatement("UPDATE game_data SET white_username=? WHERE game_id=?")) {
-                ps.setString(1, getAuth(my_auth_data).username());
-                ps.setInt(2, game_id);
+                ps.setString(1, getAuth(myAuthData).username());
+                ps.setInt(2, gameId);
                 ps.executeUpdate();
                 return true;
             } catch (SQLException dae) {
@@ -247,7 +244,7 @@ public class SQLThing implements DatabaseAccess {
         else {
             try (var cn = DatabaseManager.getConnection();
                  var ps = cn.prepareStatement("SELECT black_username FROM game_data WHERE game_id=?")) {
-                ps.setInt(1, game_id);
+                ps.setInt(1, gameId);
                 try (var v = ps.executeQuery()) {
                     if (v.next()) {
                         if (v.getString("black_username") != null) {
@@ -260,8 +257,8 @@ public class SQLThing implements DatabaseAccess {
             }
             try (var cn = DatabaseManager.getConnection();
                  var ps = cn.prepareStatement("UPDATE game_data SET black_username=? WHERE game_id=?")) {
-                ps.setString(1, getAuth(my_auth_data).username());
-                ps.setInt(2, game_id);
+                ps.setString(1, getAuth(myAuthData).username());
+                ps.setInt(2, gameId);
                 ps.executeUpdate();
                 return true;
             } catch (SQLException dae) {
@@ -271,10 +268,10 @@ public class SQLThing implements DatabaseAccess {
     }
 
     @Override
-    public boolean checkForGameExistence(int game_id) throws DataAccessException {
+    public boolean checkForGameExistence(int gameId) throws DataAccessException {
         try (var cn = DatabaseManager.getConnection();
              var ps = cn.prepareStatement("SELECT game_id FROM game_data WHERE game_id=?")) {
-            ps.setInt(1, game_id);
+            ps.setInt(1, gameId);
             try (var v = ps.executeQuery()) {
                 if (v.next()) {
                     return true;
