@@ -1,104 +1,141 @@
-package java.dataaccess;
+package dataaccess;
+
 import org.junit.jupiter.api.*;
-import passoff.model.*;
-import passoff.server.TestServerFacade;
+import server.AuthData;
 import server.Server;
-import java.net.HttpURLConnection;
-import java.util.Locale;
+import server.UserData;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class UnitTests {
 
-    private static TestUser eU;
+    SQLThing sqlThing;
+    UserData kasparov;
+    UserData kramnik;
+    UserData anand;
+    //Server sv;
 
-    private static TestUser nU;
+    //private static TestUser eU;
 
-    private static TestUser kasparov;
-    private static TestUser kramnik;
-    private static TestUser anand;
+    //private static TestUser nU;
 
-    private static TestCreateRequest cR;
+    //private static TestUser kasparov;
+    //private static TestUser kramnik;
+    //private static TestUser anand;
 
-    private static TestServerFacade sF;
-    private static Server sv;
+    //private static TestCreateRequest cR;
 
-    private String eA;
+    //private static TestServerFacade sF;
+    //private static Server sv;
+
+    //private String eA;
 
     @AfterAll
     static void stopServer() {
-        sv.stop();
+        //sv.stop();
     }
 
     @BeforeAll
     public static void init() {
-        sv = new Server();
-        var port = sv.run(0);
-        System.out.println("PORT " + port);
 
-        sF = new TestServerFacade("localhost", Integer.toString(port));
+        //sv = new Server();
+        //var port = sv.run(0);
+        //System.out.println("PORT " + port);
 
-        eU = new TestUser("Person", "Hash This!", "pErSoN");
+        //sF = new TestServerFacade("localhost", Integer.toString(port));
 
-        nU = new TestUser("chess", "mr_chess", "Chess!!!");
+        //eU = new TestUser("Person", "Hash This!", "pErSoN");
 
-        kasparov = new TestUser("Garry Kasparov", "garry_kasparov", "kasparov@kasparov.kasparov");
-        kramnik = new TestUser("Vladimir Kramnik", "vladimir_kramnik", "kramnik@kramnik.kramnik");
-        anand = new TestUser("Viswanathan Anand", "viswanathan_anand", "anand@anand.anand");
+        //nU = new TestUser("chess", "mr_chess", "Chess!!!");
 
-        cR = new TestCreateRequest("testGame");
+        //kasparov = new TestUser("Garry Kasparov", "garry_kasparov", "kasparov@kasparov.kasparov");
+        //kramnik = new TestUser("Vladimir Kramnik", "vladimir_kramnik", "kramnik@kramnik.kramnik");
+        //anand = new TestUser("Viswanathan Anand", "viswanathan_anand", "anand@anand.anand");
+
+        //cR = new TestCreateRequest("testGame");
     }
 
     @BeforeEach
-    public void setup() {
-        sF.clear();
-        TestAuthResult garryKasparov = sF.register(kasparov);
-        TestAuthResult vladimirKramnik = sF.register(kramnik);
-        TestAuthResult viswanathanAnand = sF.register(anand);
-        eA = garryKasparov.getAuthToken();
+    public void setup() throws DataAccessException {
+        sqlThing = new SQLThing();
+        kasparov = new UserData("Garry Kasparov", "garry_kasparov", "kasparov@kasparov.kasparov");
+        kramnik = new UserData("Vladimir Kramnik", "vladimir_kramnik", "kramnik@kramnik.kramnik");
+        anand = new UserData("Viswanathan Anand", "viswanathan_anand", "anand@anand.anand");
+    //sF.clear();
+        //TestAuthResult garryKasparov = sF.register(kasparov);
+        //TestAuthResult vladimirKramnik = sF.register(kramnik);
+        //TestAuthResult viswanathanAnand = sF.register(anand);
+        //eA = garryKasparov.getAuthToken();
     }
 
-    @Test
-    @Order(1)
-    @DisplayName("Static Files")
-    public void staticFiles() throws Exception {
-        String htmlFromServer = sF.file("/").replaceAll("\r", "");
-        Assertions.assertEquals(HttpURLConnection.HTTP_OK, sF.getStatusCode(),
-                "Bad");
-        Assertions.assertNotNull(htmlFromServer, "Bad");
-        Assertions.assertTrue(htmlFromServer.contains("CHESS! YAY! LET'S PLAY"));
-    }
+    //@Test
+    //@Order(1)
+    //@DisplayName("Static Files")
+    //public void staticFiles() throws Exception {
+    //    String htmlFromServer = sF.file("/").replaceAll("\r", "");
+    //    Assertions.assertEquals(HttpURLConnection.HTTP_OK, sF.getStatusCode(),
+    //            "Bad");
+    //    Assertions.assertNotNull(htmlFromServer, "Bad");
+    //    //Assertions.assertTrue(htmlFromServer.contains("CHESS! YAY! LET'S PLAY"));
+    //    Assertions.assertTrue(htmlFromServer.contains("CS 240 Chess Server Web API"));
+    //}
 
-    @Test
-    @Order(2)
-    @DisplayName("Kasparov is coming")
-    public void wellGarryIsComing() {
-        TestAuthResult lR = sF.login(kasparov);
-        Assertions.assertEquals(HttpURLConnection.HTTP_OK, sF.getStatusCode(),
-                "Bad");
-        Assertions.assertFalse(lR.getMessage() != null &&
-                        lR.getMessage().toLowerCase(Locale.ROOT).contains("error"),
-                "Bad");
-        Assertions.assertEquals(kasparov.getUsername(), lR.getUsername(),
-                "This doesn't look like Kasparov");
-        Assertions.assertNotNull(lR.getAuthToken(), "This doesn't look like Kasparov");
-    }
+    //@Test
+    //@Order(2)
+    //@DisplayName("Garry Kasparov Logs In")
+    //public void kasparovLogin() {
+        //TestAuthResult lR = sF.login(kasparov);
+        //assertHttpOk(lR);
+        //Assertions.assertEquals(kasparov.getUsername(), lR.getUsername(),
+        //                "Response did not give the same username as user");
+        //Assertions.assertNotNull(lR.getAuthToken(), "This doesn't look like Kasparov");
+        //Assertions.assertEquals(kasparov.getUsername(), lR.getUsername(),
+        //        "Response did not give the same username as user");
+        //Assertions.assertNotNull(lR.getAuthToken(), "Response did not return authentication String");
+    //}
+    //@Test
+    //@Order(3)
+    //@DisplayName("Garry Kasparov Logs In with Wrong Password")
+    //public void loginWrongPassword() {
+    //    //TestAuthResult lR = sF.login(new TestUser("Garry Kasparov", "gArRy-kAsPaRoV"));
+    //    //assertHttpUnauthorized(lR);
+    //    //assertAuthFieldsMissing(lR);
+    //    Assertions.a
+    //}
 
+    //@Test
+    //@Order(4)
+    //@DisplayName("Creating the game")
+    //public void create_game() {
+    //    TestCreateResult lR = sF.createGame(cR, "Kasparov is the champ!");
+    //}
+    //@Test
+    //@Order(5)
+    //@DisplayName("Joining the game")
+    //public void join_game() {
+    //    TestResult lR = sF.joinPlayer(null, "Here comes Kramnik");
+    //}
+    //@Test
+    //@Order(6)
+    //@DisplayName("Anand wants to butt in")
+    //public void steal_game() {
+    //    TestResult lR = sF.joinPlayer(null, "Anand will steal the game");
+    //}
     @Test
-    @Order(3)
-    @DisplayName("Creating the game")
-    public void create_game() {
-        TestCreateResult lR = sF.createGame(cR, "Kasparov is the champ!");
+    @DisplayName("Auth Tokens")
+    public void AuthTokens() throws DataAccessException {
+        String s = sqlThing.generateAuthToken();
+        Assertions.assertNotNull(s);
+        Assertions.assertTrue(s.length() >= 32);
     }
     @Test
-    @Order(4)
-    @DisplayName("Joining the game")
-    public void join_game() {
-        TestResult lR = sF.joinPlayer(null, "Here comes Kramnik");
+    @DisplayName("Kramnik Auth Tokens Passed")
+    public void KramnikAuthTokensPassed() throws DataAccessException {
+        AuthData authData = new AuthData("kRaMnIk", kramnik.username());
+        sqlThing.CreateAuth(authData);
     }
     @Test
-    @Order(5)
-    @DisplayName("Anand wants to butt in")
-    public void steal_game() {
-        TestResult lR = sF.joinPlayer(null, "Anand will steal the game");
+    @DisplayName("Get Kasparov From Database")
+    public void GetKasparovFromDatabase() throws DataAccessException {
+        //sv.
     }
 
 }
