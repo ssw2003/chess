@@ -293,4 +293,28 @@ public class ChessPiece {
         ChessPiece clonedThing = new ChessPiece(myColor, myType);
         return clonedThing;
     }
+    public String toString() {
+        int i = 0;
+        if (this.getPieceType() == PieceType.PAWN) {
+            i = 5;
+        }
+        if (this.getPieceType() == PieceType.QUEEN) {
+            i = 1;
+        }
+        if (this.getPieceType() == PieceType.ROOK) {
+            i = 2;
+        }
+        if (this.getPieceType() == PieceType.KNIGHT) {
+            i = 3;
+        }
+        if (this.getPieceType() == PieceType.BISHOP) {
+            i = 4;
+        }
+        if (this.getTeamColor() == ChessGame.TeamColor.BLACK) {
+            i = i + 6;
+        }
+        String[] s = new String[12];
+        s = new String[]{ "♔", "♕", "♗", "♘", "♖", "♙", "♚", "♛", "♝", "♞", "♜", "♟" };
+        return s[i];
+    }
 }
