@@ -1,5 +1,7 @@
 package server;
 
+import model.GameData;
+
 import java.util.ArrayList;
 import java.util.Collection;
 

@@ -3,9 +3,9 @@ package dataaccess;
 import chess.ChessGame;
 import com.google.gson.Gson;
 import org.mindrot.jbcrypt.BCrypt;
-import server.AuthData;
-import server.GameData;
-import server.UserData;
+import model.AuthData;
+import model.GameData;
+import model.UserData;
 
 import java.sql.SQLException;
 import java.sql.Statement;

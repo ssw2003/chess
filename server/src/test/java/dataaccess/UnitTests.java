@@ -2,9 +2,9 @@ package dataaccess;
 
 import chess.ChessGame;
 import org.junit.jupiter.api.*;
-import server.AuthData;
-import server.GameData;
-import server.UserData;
+import model.AuthData;
+import model.GameData;
+import model.UserData;
 
 import java.util.ArrayList;
 import java.util.Collection;

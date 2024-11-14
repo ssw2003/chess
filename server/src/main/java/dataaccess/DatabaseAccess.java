@@ -2,9 +2,9 @@ package dataaccess;
 import java.util.Collection;
 
 import chess.ChessGame;
-import server.AuthData;
-import server.GameData;
-import server.UserData;
+import model.AuthData;
+import model.GameData;
+import model.UserData;
 
 public interface DatabaseAccess {
     public String generateAuthToken() throws DataAccessException;

@@ -4,6 +4,9 @@ import dataaccess.DataAccess;
 import dataaccess.DataAccessException;
 import dataaccess.DatabaseAccess;
 import dataaccess.SQLThing;
+import model.AuthData;
+import model.GameData;
+import model.UserData;
 import org.mindrot.jbcrypt.BCrypt;
 
 import java.util.ArrayList;

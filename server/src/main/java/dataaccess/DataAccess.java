@@ -1,10 +1,10 @@
 package dataaccess;
 
 import chess.ChessGame;
-import server.AuthData;
-import server.GameData;
+import model.AuthData;
+import model.GameData;
 import server.GameDataSet;
-import server.UserData;
+import model.UserData;
 
 import java.util.*;
 

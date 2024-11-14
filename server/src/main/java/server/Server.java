@@ -2,6 +2,7 @@ package server;
 
 import chess.ChessGame;
 import com.google.gson.Gson;
+import model.*;
 import spark.*;
 
 import java.util.Map;
