@@ -38,11 +38,8 @@ public class ServerFacade {
             body.write(rD.getBytes());
         }
     }
-    private <T> T requestSomethingBody(String post, String path, Object item, Class<T> res) {
+    private <T> T requestSomethingBody(HttpURLConnection cn, String path, Object item, Class<T> res) {
         try {
-            URL newUrl = (new URI(path)).toURL();
-            HttpURLConnection cn = (HttpURLConnection) newUrl.openConnection();
-            cn.setRequestMethod(post);
             cn.setDoOutput(true);
             writeToBody(cn, item);
             cn.connect();
@@ -56,30 +53,56 @@ public class ServerFacade {
             throw new RuntimeException(e);
         }
     }
-    private String readFromHeader(HttpURLConnection cn) throws IOException {
-        if (cn.getContentLength() >= 0) {
-            return null;
-        }
-        String res = null;
-        res = cn.getHeaderField();
-        if (res == null) {
-            throw new RuntimeException();
-        }
-        return res;
+    private void setHeader(HttpURLConnection cn, String newHeader) {
+        cn.addRequestProperty("authorization", newHeader);
     }
     public AuthData addUser(UserData uD) {
-        return this.requestSomethingBody("POST", url + "/user", uD, AuthData.class);
+        HttpURLConnection cn;
+        try {
+            URL newUrl = (new URI(url + "/user")).toURL();
+            cn = (HttpURLConnection) newUrl.openConnection();
+            cn.setRequestMethod("POST");
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        return this.requestSomethingBody(cn, url + "/user", uD, AuthData.class);
     }
     public AuthData loginUser(LoginData lD) {
-        return this.requestSomethingBody("POST", url + "/session", lD, AuthData.class);
+        HttpURLConnection cn;
+        try {
+            URL newUrl = (new URI(url + "/session")).toURL();
+            cn = (HttpURLConnection) newUrl.openConnection();
+            cn.setRequestMethod("POST");
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        return this.requestSomethingBody(cn, url + "/session", lD, AuthData.class);
     }
-    public String logoutUser(String aT) {
-        return this.requestSomethingBody("DELETE", url + "/session", aT, String.class);
+    public void logoutUser(String aT) {
+        HttpURLConnection cn;
+        try {
+            URL newUrl = (new URI(url + "/session")).toURL();
+            cn = (HttpURLConnection) newUrl.openConnection();
+            cn.setRequestMethod("DELETE");
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        this.setHeader(cn, aT);
     }
-    public int createGame(GameName gN) {
+    public int createGame(GameName gN, String aT) {
+        HttpURLConnection cn;
+        try {
+            URL newUrl = (new URI(url + "/session")).toURL();
+            cn = (HttpURLConnection) newUrl.openConnection();
+            cn.setRequestMethod("POST");
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        this.setHeader(url + "/game", aT);
         return this.requestSomethingBody("POST", url + "/game", gN, int.class);
     }
-    public String joinGame(PlayerColorGameNumber uD) {
+    public String joinGame(PlayerColorGameNumber uD, String aT) {
+        this.setHeader(url + "/game", aT);
         return this.requestSomethingBody("PUT", url + "/game", uD, String.class);
     }
     //public Collection<GameMetadata> listGames(PlayerColorGameNumber uD) {
