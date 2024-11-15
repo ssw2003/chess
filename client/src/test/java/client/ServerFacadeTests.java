@@ -1,6 +1,7 @@
 package client;
 
 import facade.ServerFacade;
+import model.AuthData;
 import model.UserData;
 import org.junit.jupiter.api.*;
 import server.Server;
@@ -25,6 +26,11 @@ public class ServerFacadeTests {
         myUser = new UserData("chess_player", "chess", "chess champ");
     }
 
+    //@AfterEach
+    //public void endTest() {
+    //    sF.
+    //}
+
     @AfterAll
     static void stopServer() {
         server.stop();
@@ -38,7 +44,8 @@ public class ServerFacadeTests {
 
     @Test
     public void testAddUser() {
-        sF.addUser(myUser);
+            AuthData aD = sF.addUser(myUser);
+            Assertions.assertTrue(aD.authToken().equals(aD.authToken()));
     }
 
 }
