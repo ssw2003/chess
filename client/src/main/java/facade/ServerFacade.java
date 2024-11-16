@@ -9,6 +9,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.*;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
 
@@ -24,7 +25,8 @@ public class ServerFacade {
         T res = null;
         try (InputStream rB = cn.getInputStream()) {
             InputStreamReader inputStreamReader = new InputStreamReader(rB);
-            res = new Gson().fromJson(inputStreamReader, cT);
+            String body = new String(rB.readAllBytes());
+            res = new Gson().fromJson(body, cT);
         }
         return res;
     }
@@ -46,14 +48,19 @@ public class ServerFacade {
             var gc = cn.getResponseCode();
             int cngc = gc;
             if (gc / 100 != 2) {
-                throw new IOException(cngc + "");
+                String body = new String(cn.getErrorStream().readAllBytes());
+                if (body.charAt(0) == '{') {
+                    Map map = new Gson().fromJson(body, Map.class);
+                    throw new IOException(cngc + (String)map.get("message"));
+                }
+                throw new IOException(cngc + body);
             }
             return readFromBody(cn, res);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
-    void requestSomethingBody(HttpURLConnection cn, String path, Object item) {
+    private void requestSomethingBody(HttpURLConnection cn, String path, Object item) {
         try {
             //cn.connect();
             cn.setDoOutput(true);
@@ -102,6 +109,7 @@ public class ServerFacade {
             throw new RuntimeException(e);
         }
         this.setHeader(cn, aT);
+        requestSomethingBody(cn, url + "/session", null, Map.class);
     }
     public int createGame(GameName gN, String aT) {
         HttpURLConnection cn;
@@ -113,9 +121,10 @@ public class ServerFacade {
             throw new RuntimeException(e);
         }
         this.setHeader(cn, aT);
-        return this.requestSomethingBody(cn, url + "/game", gN, int.class);
+        GameInteger r = this.requestSomethingBody(cn, url + "/game", gN, GameInteger.class);
+        return r.gameID();
     }
-    public String joinGame(PlayerColorGameNumber uD, String aT) {
+    public void joinGame(PlayerColorGameNumber uD, String aT) {
         HttpURLConnection cn;
         try {
             URL newUrl = (new URI(url + "/game")).toURL();
@@ -125,9 +134,9 @@ public class ServerFacade {
             throw new RuntimeException(e);
         }
         this.setHeader(cn, aT);
-        return this.requestSomethingBody(cn, url + "/game", uD, String.class);
+        this.requestSomethingBody(cn, url + "/game", uD, Map.class);
     }
-    public Collection<GameMetadata> listGames(PlayerColorGameNumber uD) {
+    public Collection<GameMetadata> listGames(String aT) {
         HttpURLConnection cn;
         try {
             URL newUrl = (new URI(url + "/game")).toURL();
@@ -136,7 +145,9 @@ public class ServerFacade {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-        return this.requestSomethingBody(cn, url + "/game", uD, Collection.class);
+        setHeader(cn, aT);
+        ListGamesResult lGR = this.requestSomethingBody(cn, url + "/game", null, ListGamesResult.class);
+        return lGR.games();
     }
     public void clearThing() {
         HttpURLConnection cn;
