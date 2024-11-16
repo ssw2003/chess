@@ -139,18 +139,18 @@ public class ServerFacadeTests {
     public void testList() {
         AuthData aD = sF.addUser(myUser);
         int i = sF.createGame(new GameName("World's greatest Game"), aD.authToken());
-        Collection<GameMetadata> desiredGames = new ArrayList<>();
-        desiredGames.add(new GameMetadata(i, null, null, "World's greatest Game"));
-        Collection<GameMetadata> games = sF.listGames(aD.authToken());
+        Collection<GameData> desiredGames = new ArrayList<>();
+        desiredGames.add(new GameData(i, null, null, "World's greatest Game", null));
+        Collection<GameData> games = sF.listGames(aD.authToken());
         Assertions.assertTrue(games.equals(desiredGames));
     }
     @Test
     public void failedList() {
         AuthData aD = sF.addUser(myUser);
         int i = sF.createGame(new GameName("World's greatest Game"), aD.authToken());
-        Collection<GameMetadata> desiredGames = new ArrayList<>();
-        desiredGames.add(new GameMetadata(i, null, null, "World's greatest Game"));
-        Collection<GameMetadata> games = new ArrayList<>();
+        Collection<GameData> desiredGames = new ArrayList<>();
+        desiredGames.add(new GameData(i, null, null, "World's greatest Game", null));
+        Collection<GameData> games = new ArrayList<>();
         boolean didntGetGames = false;
         try {
             games = sF.listGames(aD.authToken() + "goofy");
@@ -164,9 +164,9 @@ public class ServerFacadeTests {
     public void testCreate() {
         AuthData aD = sF.addUser(myUser);
         int i = sF.createGame(new GameName("World's greatest Game"), aD.authToken());
-        Collection<GameMetadata> games = new ArrayList<>();
-        games.add(new GameMetadata(i, null, null, "World's greatest Game"));
-        Collection<GameMetadata> desiredGames = sF.listGames(aD.authToken());
+        Collection<GameData> games = new ArrayList<>();
+        games.add(new GameData(i, null, null, "World's greatest Game", null));
+        Collection<GameData> desiredGames = sF.listGames(aD.authToken());
         Assertions.assertTrue(desiredGames.equals(games));
     }
     @Test
@@ -178,8 +178,8 @@ public class ServerFacadeTests {
         } catch (Exception e) {
             i = 0;
         }
-        Collection<GameMetadata> games = new ArrayList<>();
-        Collection<GameMetadata> desiredGames = sF.listGames(aD.authToken());
+        Collection<GameData> games = new ArrayList<>();
+        Collection<GameData> desiredGames = sF.listGames(aD.authToken());
         Assertions.assertEquals(0, i);
         Assertions.assertEquals(desiredGames, games);
     }

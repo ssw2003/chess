@@ -136,7 +136,7 @@ public class ServerFacade {
         this.setHeader(cn, aT);
         this.requestSomethingBody(cn, url + "/game", uD, Map.class);
     }
-    public Collection<GameMetadata> listGames(String aT) {
+    public Collection<GameData> listGames(String aT) {
         HttpURLConnection cn;
         try {
             URL newUrl = (new URI(url + "/game")).toURL();

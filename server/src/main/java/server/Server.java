@@ -166,7 +166,7 @@ public class Server {
                 GameMetadata gm = new GameMetadata(gd.gameID(), gd.whiteUsername(), gd.blackUsername(), gd.gameName());
                 arrayList.add(gm);
             }
-            var thingToSerialize = Map.of("games", arrayList);
+            var thingToSerialize = Map.of("games", gameData);
             var thingSerializer = new Gson();
             var thingSerializerJson = thingSerializer.toJson(thingToSerialize);
             return thingSerializerJson;
