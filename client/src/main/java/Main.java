@@ -9,10 +9,6 @@ import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
-        //URI uri;
-        //try {
-        //    uri = new URI("http://localhost:8080");
-        //} catch (URISyntaxException e) {}
         var piece = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.PAWN);
         boolean inGameAsWhite = false;
         boolean inGameAsBlack = false;
@@ -29,20 +25,15 @@ public class Main {
         while (!status.equals("Quit")) {
             lastCommand = getInString();
             if (status.equals("Not Logged In") && lastCommand.equals("Register")) {
-                System.out.println("Username:");
-                String username = getInString();
-                System.out.println("Password:");
-                String password = getInString();
-                System.out.println("Email:");
-                String email = getInString();
+                String username = getInString("Username:");
+                String password = getInString("Password:");
+                String email = getInString("Email:");
                 aD = sF.addUser(new UserData(username, password, email));
                 status = "Merely Logged In";
                 lastCommand = "Help";
             } else if (status.equals("Not Logged In") && lastCommand.equals("Login")) {
-                System.out.println("Username:");
-                String username = getInString();
-                System.out.println("Password:");
-                String password = getInString();
+                String username = getInString("Username:");
+                String password = getInString("Password:");
                 aD = sF.loginUser(new LoginData(username, password));
                 status = "Merely Logged In";
                 lastCommand = "Help";
@@ -63,31 +54,27 @@ public class Main {
                 }
             } else if (status.equals("Merely Logged In") && lastCommand.equals("Create Game")) {
                 String gameName = "";
-                System.out.println("Game Name:");
-                gameName = getInString();
+                gameName = getInString("Game Name:");
                 sF.createGame(new GameName(gameName), aD.authToken());
                 lastCommand = "Help";
             } else if (status.equals("Merely Logged In") && lastCommand.equals("Observe Game")) {
-                System.out.println("Game Number:");
-                String myString = getInString();
-                int gameNumber = getInInt(myString);
+                int gameNumber = getInInt(getInString("Game Number:"));
                 whichGameIn = gameNumber;
                 inGameAsWhite = true;
                 inGameAsBlack = true;
                 lastCommand = "Help";
             } else if (status.equals("Merely Logged In") && lastCommand.equals("Play Game")) {
-                System.out.println("Game Number:");
-                String myString = getInString();
-                int gameNumber = getInInt(myString);
-                System.out.println("Color:");
-                String color = getInString();
-                if (Objects.equals(color, "WHITE") || Objects.equals(color, "White") || Objects.equals(color, "white") || Objects.equals(color, "W") || Objects.equals(color, "w")) {
+                int gameNumber = getInInt(getInString("Game Number:"));
+                String color = getInString("Color:");
+                if (Objects.equals(color, "WHITE") || Objects.equals(color, "White") || Objects.equals(color, "white")
+                        || Objects.equals(color, "W") || Objects.equals(color, "w")) {
                     sF.joinGame(new PlayerColorGameNumber(ChessGame.TeamColor.WHITE, gameNumber), aD.authToken());
                     whichGameIn = gameNumber;
                     inGameAsWhite = true;
                     inGameAsBlack = false;
                 }
-                else if (Objects.equals(color, "BLACK") || Objects.equals(color, "Black") || Objects.equals(color, "black") || Objects.equals(color, "B") || Objects.equals(color, "b")) {
+                else if (Objects.equals(color, "BLACK") || Objects.equals(color, "Black") || Objects.equals(color, "black")
+                        || Objects.equals(color, "B") || Objects.equals(color, "b")) {
                     sF.joinGame(new PlayerColorGameNumber(ChessGame.TeamColor.BLACK, gameNumber), aD.authToken());
                     whichGameIn = gameNumber;
                     inGameAsBlack = true;
@@ -219,6 +206,11 @@ public class Main {
         System.out.print(EscapeSequences.RESET_TEXT_COLOR);
     }
     static String getInString() {
+        Scanner scanner = new Scanner(System.in);
+        return scanner.nextLine();
+    }
+    static String getInString(String s) {
+        System.out.println(s);
         Scanner scanner = new Scanner(System.in);
         return scanner.nextLine();
     }
