@@ -50,7 +50,8 @@ public class Main {
                 lastCommand = "Help";
                 Collection<GameData> cGM = sF.listGames(aD.authToken());
                 for (GameData gMD: cGM) {
-                    System.out.println(gMD.gameID() + ". " + gMD.gameName() + ", white = " + gMD.whiteUsername() + ", black = " + gMD.blackUsername());
+                    String outPrint = gMD.gameID() + ". " + gMD.gameName() + ", white = ";
+                    System.out.println(outPrint + gMD.whiteUsername() + ", black = " + gMD.blackUsername());
                 }
             } else if (status.equals("Merely Logged In") && lastCommand.equals("Create Game")) {
                 String gameName = "";
