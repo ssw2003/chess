@@ -50,7 +50,7 @@ public class Main {
                 lastCommand = "Help";
                 Collection<GameData> cGM = sF.listGames(aD.authToken());
                 for (GameData gMD: cGM) {
-                    System.out.println(gMD.gameID() + gMD.gameName() + gMD.whiteUsername() + gMD.blackUsername());
+                    System.out.println(gMD.gameID() + ". " + gMD.gameName() + ", white = " + gMD.whiteUsername() + ", black = " + gMD.blackUsername());
                 }
             } else if (status.equals("Merely Logged In") && lastCommand.equals("Create Game")) {
                 String gameName = "";
@@ -148,62 +148,65 @@ public class Main {
             newGame = reverseBoard(newGame);
         }
         if (isWhite) {
+            System.out.print(EscapeSequences.SET_TEXT_COLOR_MAGENTA);
+            System.out.print(EscapeSequences.SET_BG_COLOR_YELLOW);
+            System.out.print(" abcdefgh ");
             System.out.print(EscapeSequences.RESET_BG_COLOR);
             System.out.print(EscapeSequences.RESET_TEXT_COLOR);
-            System.out.printf(" abcdefgh ");
-            System.out.print(EscapeSequences.RESET_BG_COLOR);
-            System.out.print(EscapeSequences.RESET_TEXT_COLOR);
-            System.out.printf("\n");
+            System.out.print("\n");
             for (int i = 0; i < 8; i++) {
                 String myString = "";
                 System.out.print(EscapeSequences.SET_TEXT_COLOR_MAGENTA);
                 System.out.print(EscapeSequences.SET_BG_COLOR_YELLOW);
-                System.out.printf("" + (8 - i));
+                System.out.print("" + (8 - i));
                 printRow(newGame, 8 - i);
                 System.out.print(EscapeSequences.SET_TEXT_COLOR_MAGENTA);
                 System.out.print(EscapeSequences.SET_BG_COLOR_YELLOW);
-                System.out.printf("" + (8 - i));
+                System.out.print("" + (8 - i));
                 System.out.print(EscapeSequences.RESET_BG_COLOR);
                 System.out.print(EscapeSequences.RESET_TEXT_COLOR);
-                System.out.printf("\n");
+                System.out.print("\n");
             }
+            System.out.print(EscapeSequences.SET_TEXT_COLOR_MAGENTA);
+            System.out.print(EscapeSequences.SET_BG_COLOR_YELLOW);
+            System.out.print(" abcdefgh ");
             System.out.print(EscapeSequences.RESET_BG_COLOR);
             System.out.print(EscapeSequences.RESET_TEXT_COLOR);
-            System.out.printf(" abcdefgh ");
-            System.out.print(EscapeSequences.RESET_BG_COLOR);
-            System.out.print(EscapeSequences.RESET_TEXT_COLOR);
-            System.out.printf("\n");
+            System.out.print("\n");
         }
         else {
+            System.out.print(EscapeSequences.SET_TEXT_COLOR_MAGENTA);
+            System.out.print(EscapeSequences.SET_BG_COLOR_YELLOW);
+            System.out.print(" hgfedcba ");
             System.out.print(EscapeSequences.RESET_BG_COLOR);
             System.out.print(EscapeSequences.RESET_TEXT_COLOR);
-            System.out.printf(" hgfedcba ");
-            System.out.print(EscapeSequences.RESET_BG_COLOR);
-            System.out.print(EscapeSequences.RESET_TEXT_COLOR);
-            System.out.printf("\n");
+            System.out.print("\n");
             for (int i = 0; i < 8; i++) {
                 String myString = "";
                 System.out.print(EscapeSequences.SET_TEXT_COLOR_MAGENTA);
                 System.out.print(EscapeSequences.SET_BG_COLOR_YELLOW);
-                System.out.printf("" + (1 + i));
+                System.out.print("" + (1 + i));
                 printRow(newGame, 1 + i);
                 System.out.print(EscapeSequences.SET_TEXT_COLOR_MAGENTA);
                 System.out.print(EscapeSequences.SET_BG_COLOR_YELLOW);
-                System.out.printf("" + (1 + i));
+                System.out.print("" + (1 + i));
                 System.out.print(EscapeSequences.RESET_BG_COLOR);
                 System.out.print(EscapeSequences.RESET_TEXT_COLOR);
-                System.out.printf("\n");
+                System.out.print("\n");
             }
+            System.out.print(EscapeSequences.SET_TEXT_COLOR_MAGENTA);
+            System.out.print(EscapeSequences.SET_BG_COLOR_YELLOW);
+            System.out.print(" hgfedcba ");
             System.out.print(EscapeSequences.RESET_BG_COLOR);
             System.out.print(EscapeSequences.RESET_TEXT_COLOR);
-            System.out.printf(" hgfedcba ");
-            System.out.print(EscapeSequences.RESET_BG_COLOR);
-            System.out.print(EscapeSequences.RESET_TEXT_COLOR);
-            System.out.printf("\n");
+            System.out.print("\n");
             //System.p
         }
         System.out.print(EscapeSequences.RESET_BG_COLOR);
         System.out.print(EscapeSequences.RESET_TEXT_COLOR);
+        if (isWhite) {
+            System.out.println("\n");
+        }
     }
     static String getInString() {
         Scanner scanner = new Scanner(System.in);
@@ -254,7 +257,7 @@ public class Main {
             }
             ChessPiece cP = cB.getPiece(new ChessPosition(row, i));
             if (cP == null) {
-                System.out.printf(" ");
+                System.out.print(" ");
             } else if (cP.getTeamColor() == ChessGame.TeamColor.WHITE) {
                 System.out.print(EscapeSequences.SET_TEXT_COLOR_GREEN);
             } else {
@@ -262,19 +265,20 @@ public class Main {
             }
             if (cP != null) {
                 if (cP.getPieceType() == ChessPiece.PieceType.KING) {
-                    System.out.printf("K");
+                    System.out.print("K");
                 } else if (cP.getPieceType() == ChessPiece.PieceType.KNIGHT) {
-                    System.out.printf("N");
+                    System.out.print("N");
                 } else if (cP.getPieceType() == ChessPiece.PieceType.BISHOP) {
-                    System.out.printf("B");
+                    System.out.print("B");
                 } else if (cP.getPieceType() == ChessPiece.PieceType.ROOK) {
-                    System.out.printf("R");
+                    System.out.print("R");
                 } else if (cP.getPieceType() == ChessPiece.PieceType.QUEEN) {
-                    System.out.printf("Q");
+                    System.out.print("Q");
                 } else {
-                    System.out.printf("P");
+                    System.out.print("P");
                 }
             }
+            isWhiteSquare = !isWhiteSquare;
         }
     }
 }
