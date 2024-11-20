@@ -62,10 +62,7 @@ public class Main {
                 } catch (Exception e) {
                     System.out.println(printIn("Invalid or misspelled auth token"));
                 }
-                for (GameData gMD: cGM) {
-                    String outPrint = gMD.gameName() + ", white = ";
-                    System.out.println(outPrint + gMD.whiteUsername() + ", black = " + gMD.blackUsername());
-                }
+                listOutGames(cGM);
             } else if (status.equals("Merely Logged In") && lastCommand.equals("Create Game")) {
                 String gameName = getInString("Game Name:");
                 if (gameNumber(gameName, sF.listGames(aD.authToken())) == 0) {
@@ -98,8 +95,10 @@ public class Main {
             } else {
                 status = stringThing(lastCommand);
             }
-            GameData gD = gameMetaData(sF.listGames(aD.authToken()), whichGameIn);
-            drawBoard(gD, inGameAsWhite, inGameAsBlack);
+            if (whichGameIn != 0) {
+                drawBoard(gameMetaData(sF.listGames(aD.authToken()), whichGameIn), inGameAsWhite, inGameAsBlack);
+                printIn();
+            }
             whichGameIn = 0;
             inGameAsWhite = false;
             inGameAsBlack = false;
@@ -189,7 +188,7 @@ public class Main {
                 System.out.print(EscapeSequences.SET_TEXT_COLOR_MAGENTA);
                 System.out.print(EscapeSequences.SET_BG_COLOR_YELLOW);
                 System.out.print("" + (1 + i));
-                printRow(newGame, 1 + i);
+                printRow(newGame, 8 - i);
                 System.out.print(EscapeSequences.SET_TEXT_COLOR_MAGENTA);
                 System.out.print(EscapeSequences.SET_BG_COLOR_YELLOW);
                 System.out.print("" + (1 + i));
@@ -211,12 +210,11 @@ public class Main {
         }
     }
     static void drawBoard(GameData game, boolean a, boolean b) {
-        if (game == null) {
-            int i = 0;
-        } else if (a || b) {
-            drawBoard(game.game(), true);
-            drawBoard(game.game(), false);
-            printIn();
+        if (game != null) {
+            if (a || b) {
+                drawBoard(game.game(), true);
+                drawBoard(game.game(), false);
+            }
         }
     }
     static String getInString() {
@@ -328,5 +326,17 @@ public class Main {
             throw new RuntimeException("");
         }
         return i;
+    }
+    static void listOutGames(Collection<GameData> cGM) {
+        boolean didWeList = false;
+        for (GameData gMD: cGM) {
+            didWeList = true;
+            String outPrint = gMD.gameName() + ", white = ";
+            System.out.println(outPrint + gMD.whiteUsername() + ", black = " + gMD.blackUsername());
+        }
+        if (!didWeList) {
+            System.out.println("Empty");
+        }
+        printIn();
     }
 }
