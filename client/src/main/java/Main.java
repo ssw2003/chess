@@ -85,11 +85,11 @@ public class Main {
                 }
                 lastCommand = "Help";
             } else if (status.equals("Merely Logged In") && lastCommand.equals("Play Game")) {
-                whichGameIn = gameNumber(getInString("Game Name:"), sF.listGames(aD.authToken()));
                 try {
-                    String color = getInString(whichGameIn);
-                    sF.joinGame(new PlayerColorGameNumber(chessGameTeamColor(color), whichGameIn), aD.authToken());
-                    inGameAsWhite = chessGameTeamColor(color) == ChessGame.TeamColor.WHITE;
+                    whichGameIn = nonzeroValue(gameNumber(getInString("Game Name:"), sF.listGames(aD.authToken())));
+                    ChessGame.TeamColor color = chessGameTeamColor(getInString(whichGameIn));
+                    sF.joinGame(new PlayerColorGameNumber(color, whichGameIn), aD.authToken());
+                    inGameAsWhite = color == ChessGame.TeamColor.WHITE;
                     inGameAsBlack = !inGameAsWhite;
                 } catch (Exception e) {
                     System.out.println(printIn("Try to join again"));
@@ -104,12 +104,7 @@ public class Main {
                     inGameAsWhite = false;
                     inGameAsBlack = false;
                 }
-                if (inGameAsWhite) {
-                    drawBoard(gD.game(), true);
-                }
-                if (inGameAsBlack) {
-                    drawBoard(gD.game(), false);
-                }
+                drawBoard(gD.game(), inGameAsWhite, inGameAsBlack);
             }
             whichGameIn = 0;
             inGameAsWhite = false;
@@ -155,7 +150,6 @@ public class Main {
     static void drawBoard(ChessGame game, boolean isWhite) {
         ChessBoard newGame = new ChessBoard();
         newGame.resetBoard();
-        //newGame.r
         if (game != null) {
             newGame = game.clone().getBoard();
         }
@@ -215,12 +209,19 @@ public class Main {
             System.out.print(EscapeSequences.RESET_BG_COLOR);
             System.out.print(EscapeSequences.RESET_TEXT_COLOR);
             System.out.print("\n");
-            //System.p
         }
         System.out.print(EscapeSequences.RESET_BG_COLOR);
         System.out.print(EscapeSequences.RESET_TEXT_COLOR);
         if (isWhite) {
             System.out.println("\n");
+        }
+    }
+    static void drawBoard(ChessGame game, boolean isWhite, boolean isBlack) {
+        if (isWhite) {
+            drawBoard(game, true);
+        }
+        if (isBlack) {
+            drawBoard(game, false);
         }
     }
     static String getInString() {
