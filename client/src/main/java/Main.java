@@ -20,7 +20,6 @@ public class Main {
         String status = "Not Logged In";
         String lastCommand = "Help";
         printHelp();
-        int inGameAs = 0;
         while (!status.equals("Quit")) {
             lastCommand = getInString();
             if (status.equals("Not Logged In") && lastCommand.equals("Register")) {
@@ -69,11 +68,11 @@ public class Main {
                 }
             } else if (status.equals("Merely Logged In") && lastCommand.equals("Create Game")) {
                 String gameName = getInString("Game Name:");
-                try {
+                if (gameNumber(gameName, sF.listGames(aD.authToken())) == 0) {
                     sF.createGame(new GameName(gameName), aD.authToken());
                     printIn();
-                } catch (Exception e) {
-                    System.out.println(printIn("Invalid"));
+                } else {
+                    System.out.println(printIn("Taken"));
                 }
                 lastCommand = "Help";
             } else if (status.equals("Merely Logged In") && lastCommand.equals("Observe Game")) {
@@ -87,26 +86,13 @@ public class Main {
                 }
                 lastCommand = "Help";
             } else if (status.equals("Merely Logged In") && lastCommand.equals("Play Game")) {
+                whichGameIn = gameNumber(getInString("Game Name:"), sF.listGames(aD.authToken()));
                 try {
-                    whichGameIn = gameNumber(getInString("Game Name:"), sF.listGames(aD.authToken()));
+                    String color = getInString("Color:", whichGameIn);
+                    sF.joinGame(new PlayerColorGameNumber(chessGameTeamColor(color), whichGameIn), aD.authToken());
+                    inGameAsWhite = chessGameTeamColor(color) == ChessGame.TeamColor.WHITE;
+                    inGameAsBlack = !inGameAsWhite;
                 } catch (Exception e) {
-                    whichGameIn = 0;
-                }
-                String color = "";
-                if (whichGameIn != 0) {
-                    color = getInString("Color:");
-                }
-                if (color.equals("WHITE") || color.equals("White") || color.equals("white") || color.equals("W") || color.equals("w")) {
-                    sF.joinGame(new PlayerColorGameNumber(ChessGame.TeamColor.WHITE, whichGameIn), aD.authToken());
-                    inGameAsWhite = true;
-                    inGameAsBlack = false;
-                }
-                else if (color.equals("BLACK") || color.equals("Black") || color.equals("black") || color.equals("B") || color.equals("b")) {
-                    sF.joinGame(new PlayerColorGameNumber(ChessGame.TeamColor.BLACK, whichGameIn), aD.authToken());
-                    inGameAsBlack = true;
-                    inGameAsWhite = false;
-                }
-                else {
                     System.out.println(printIn("Try to join again"));
                 }
                 lastCommand = "Help";
@@ -247,6 +233,14 @@ public class Main {
         Scanner scanner = new Scanner(System.in);
         return scanner.nextLine();
     }
+    static String getInString(String s, int i) {
+        if (i == 0) {
+            throw new RuntimeException("");
+        }
+        System.out.println(s);
+        Scanner scanner = new Scanner(System.in);
+        return scanner.nextLine();
+    }
     static ChessBoard reverseBoard(ChessBoard cB) {
         ChessBoard nB = new ChessBoard();
         nB.resetBoard();
@@ -324,5 +318,14 @@ public class Main {
             }
         }
         return 0;
+    }
+    static ChessGame.TeamColor chessGameTeamColor(String s) {
+        if (s.equals("WHITE") || s.equals("White") || s.equals("white") || s.equals("W") || s.equals("w")) {
+            return ChessGame.TeamColor.WHITE;
+        }
+        if (s.equals("BLACK") || s.equals("Black") || s.equals("black") || s.equals("B") || s.equals("b")) {
+            return ChessGame.TeamColor.BLACK;
+        }
+        throw new RuntimeException("");
     }
 }
