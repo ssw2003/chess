@@ -216,6 +216,7 @@ public class Main {
         } else if (a || b) {
             drawBoard(game.game(), true);
             drawBoard(game.game(), false);
+            printIn();
         }
     }
     static String getInString() {
