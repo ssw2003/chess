@@ -98,14 +98,8 @@ public class Main {
             } else {
                 status = stringThing(lastCommand);
             }
-            if (whichGameIn != 0) {
-                GameData gD = gameMetaData(sF.listGames(aD.authToken()), whichGameIn);
-                if (gD == null) {
-                    inGameAsWhite = false;
-                    inGameAsBlack = false;
-                }
-                drawBoard(gD.game(), inGameAsWhite, inGameAsBlack);
-            }
+            GameData gD = gameMetaData(sF.listGames(aD.authToken()), whichGameIn);
+            drawBoard(gD, inGameAsWhite, inGameAsBlack);
             whichGameIn = 0;
             inGameAsWhite = false;
             inGameAsBlack = false;
@@ -216,10 +210,12 @@ public class Main {
             System.out.println("\n");
         }
     }
-    static void drawBoard(ChessGame game, boolean a, boolean b) {
-        if (a || b) {
-            drawBoard(game, true);
-            drawBoard(game, false);
+    static void drawBoard(GameData game, boolean a, boolean b) {
+        if (game == null) {
+            int i = 0;
+        } else if (a || b) {
+            drawBoard(game.game(), true);
+            drawBoard(game.game(), false);
         }
     }
     static String getInString() {
@@ -263,9 +259,9 @@ public class Main {
             if (cP == null) {
                 System.out.print(" ");
             } else if (cP.getTeamColor() == ChessGame.TeamColor.WHITE) {
-                System.out.print(EscapeSequences.SET_TEXT_COLOR_GREEN);
-            } else {
                 System.out.print(EscapeSequences.SET_TEXT_COLOR_BLUE);
+            } else {
+                System.out.print(EscapeSequences.SET_TEXT_COLOR_BLACK);
             }
             if (cP != null) {
                 if (cP.getPieceType() == ChessPiece.PieceType.KING) {
