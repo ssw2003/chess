@@ -63,7 +63,7 @@ public class Main {
                     System.out.println(printIn("Invalid or misspelled auth token"));
                 }
                 for (GameData gMD: cGM) {
-                    String outPrint = gMD.gameID() + ". " + gMD.gameName() + ", white = ";
+                    String outPrint = gMD.gameName() + ", white = ";
                     System.out.println(outPrint + gMD.whiteUsername() + ", black = " + gMD.blackUsername());
                 }
             } else if (status.equals("Merely Logged In") && lastCommand.equals("Create Game")) {
@@ -216,11 +216,9 @@ public class Main {
             System.out.println("\n");
         }
     }
-    static void drawBoard(ChessGame game, boolean isWhite, boolean isBlack) {
-        if (isWhite) {
+    static void drawBoard(ChessGame game, boolean a, boolean b) {
+        if (a || b) {
             drawBoard(game, true);
-        }
-        if (isBlack) {
             drawBoard(game, false);
         }
     }
