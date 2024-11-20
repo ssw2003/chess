@@ -253,24 +253,6 @@ public class Main {
         }
         return nB.clone();
     }
-    static int getInInt(String sc) {
-        for (int i = 0; i < sc.length(); i++) {
-            if (sc.charAt(i) < '0' || sc.charAt(i) > '9') {
-                return 0;
-            }
-        }
-        if (sc.isEmpty()) {
-            return 0;
-        }
-        if (sc.charAt(0) == '0') {
-            return 0;
-        }
-        int j = 0;
-        for (int i = 0; i < sc.length(); i++) {
-            j = j * 10 + (sc.charAt(i) - '0');
-        }
-        return j;
-    }
     static void printRow(ChessBoard cB, int row) {
         boolean isWhiteSquare = (row % 2 == 0);
         for (int i = 1; i < 9; i = i + 1 ) {
