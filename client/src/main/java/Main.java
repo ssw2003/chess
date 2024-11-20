@@ -3,6 +3,7 @@ import facade.ServerFacade;
 import model.*;
 import ui.EscapeSequences;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Objects;
 import java.util.Scanner;
@@ -18,24 +19,26 @@ public class Main {
         ServerFacade sF = new ServerFacade("http://localhost:8080");
         String status = "Not Logged In";
         String lastCommand = "Help";
-        int statusInt = 0;
-        System.out.println("Help         Information about actions");
-        System.out.println("Login        Entering information");
-        System.out.println("Quit         Exit this");
-        System.out.println("Register     Registering yourself");
+        printHelp();
         while (!status.equals("Quit")) {
             lastCommand = getInString();
             if (status.equals("Not Logged In") && lastCommand.equals("Register")) {
                 try {
                     aD = sF.addUser(new UserData(getInString("Username:"), getInString("Password:"), getInString("Email:")));
                     status = "Merely Logged In";
+                    printIn();
                 } catch (Exception e) {
-                    int w = 0;
+                    System.out.println(printHelp("Invalid user information"));
                 }
                 lastCommand = "Help";
             } else if (status.equals("Not Logged In") && lastCommand.equals("Login")) {
-                aD = sF.loginUser(new LoginData(getInString("Username:"), getInString("Password:")));
-                status = "Merely Logged In";
+                try {
+                    aD = sF.loginUser(new LoginData(getInString("Username:"), getInString("Password:")));
+                    status = "Merely Logged In";
+                    printIn();
+                } catch (Exception e) {
+                    System.out.println(printHelp("Invalid or misspelled user information"));
+                }
                 lastCommand = "Help";
             } else if (status.equals("Not Logged In") && lastCommand.equals("Quit")) {
                 break;
@@ -43,44 +46,63 @@ public class Main {
                 status = stringReturn(lastCommand);
                 lastCommand = "Help";
             } else if (status.equals("Merely Logged In") && lastCommand.equals("Logout")) {
-                status = "Not Logged In";
                 lastCommand = "Help";
-                sF.logoutUser(aD.authToken());;
+                try {
+                    sF.logoutUser(aD.authToken());;
+                    status = "Not Logged In";
+                    printHelp();
+                } catch (Exception e) {
+                    System.out.println(printIn("Invalid or misspelled auth token"));
+                }
             } else if (status.equals("Merely Logged In") && lastCommand.equals("List Games")) {
                 lastCommand = "Help";
-                Collection<GameData> cGM = sF.listGames(aD.authToken());
+                Collection<GameData> cGM = new ArrayList<>();
+                try {
+                    cGM = sF.listGames(aD.authToken());
+                } catch (Exception e) {
+                    System.out.println(printIn("Invalid or misspelled auth token"));
+                }
                 for (GameData gMD: cGM) {
                     String outPrint = gMD.gameID() + ". " + gMD.gameName() + ", white = ";
                     System.out.println(outPrint + gMD.whiteUsername() + ", black = " + gMD.blackUsername());
                 }
             } else if (status.equals("Merely Logged In") && lastCommand.equals("Create Game")) {
-                String gameName = "";
-                gameName = getInString("Game Name:");
-                sF.createGame(new GameName(gameName), aD.authToken());
+                String gameName = getInString("Game Name:");
+                try {
+                    sF.createGame(new GameName(gameName), aD.authToken());
+                    printIn();
+                } catch (Exception e) {
+                    System.out.println(printIn("Invalid"));
+                }
                 lastCommand = "Help";
             } else if (status.equals("Merely Logged In") && lastCommand.equals("Observe Game")) {
-                int gameNumber = getInInt(getInString("Game Number:"));
-                whichGameIn = gameNumber;
-                inGameAsWhite = true;
-                inGameAsBlack = true;
+                whichGameIn = gameNumber(getInString("Game Name:"), sF.listGames(aD.authToken()));
+                if (whichGameIn == 0) {
+                    System.out.println(printIn("Invalid Game Name"));
+                }
+                else {
+                    inGameAsWhite = true;
+                    inGameAsBlack = true;
+                }
                 lastCommand = "Help";
             } else if (status.equals("Merely Logged In") && lastCommand.equals("Play Game")) {
-                int gameNumber = getInInt(getInString("Game Number:"));
-                String color = getInString("Color:");
+                whichGameIn = gameNumber(getInString("Game Name:"), sF.listGames(aD.authToken()));
+                String color = "";
+                if (whichGameIn != 0) {
+                    color = getInString("Color:");
+                }
                 if (color.equals("WHITE") || color.equals("White") || color.equals("white") || color.equals("W") || color.equals("w")) {
-                    sF.joinGame(new PlayerColorGameNumber(ChessGame.TeamColor.WHITE, gameNumber), aD.authToken());
-                    whichGameIn = gameNumber;
+                    sF.joinGame(new PlayerColorGameNumber(ChessGame.TeamColor.WHITE, whichGameIn), aD.authToken());
                     inGameAsWhite = true;
                     inGameAsBlack = false;
                 }
                 else if (color.equals("BLACK") || color.equals("Black") || color.equals("black") || color.equals("B") || color.equals("b")) {
-                    sF.joinGame(new PlayerColorGameNumber(ChessGame.TeamColor.BLACK, gameNumber), aD.authToken());
-                    whichGameIn = gameNumber;
+                    sF.joinGame(new PlayerColorGameNumber(ChessGame.TeamColor.BLACK, whichGameIn), aD.authToken());
                     inGameAsBlack = true;
                     inGameAsWhite = false;
                 }
                 else {
-                    System.out.println("Try to join again");
+                    System.out.println(printIn("Try to join again"));
                 }
                 lastCommand = "Help";
             } else {
@@ -122,6 +144,8 @@ public class Main {
         System.out.println("Login        Entering information");
         System.out.println("Quit         Exit this");
         System.out.println("Register     Registering yourself");
+        System.out.println("");
+        System.out.println("Enter command");
         return "Not Logged In";
     }
     static String stringThing(String lastCommand) {
@@ -134,6 +158,8 @@ public class Main {
         System.out.println("List Games   Get all games");
         System.out.println("Observe Game Sit in on a game");
         System.out.println("Play Game    Play in a game");
+        System.out.println("");
+        System.out.println("Enter command");
         return "Merely Logged In";
     }
     static void drawBoard(ChessGame game, boolean isWhite) {
@@ -279,5 +305,37 @@ public class Main {
             }
             isWhiteSquare = !isWhiteSquare;
         }
+    }
+    static void printHelp() {
+        System.out.println("Help         Information about actions\nLogin        Entering information");
+        System.out.println("Quit         Exit this\nRegister     Registering yourself\n\nEnter command");
+    }
+    static String printHelp(String s) {
+        String t = s + "\nHelp         Information abou";
+        t = t + "t actions\nLogin        Entering infor";
+        t = t + "mation\nQuit         Exit this\nRegist";
+        t = t + "er     Registering yourself\n\nEnter c";
+        return t + "ommand";
+    }
+    static String printIn(String s) {
+        String t = s + "\nHelp         Information abou";
+        t = t + "t actions\nLogout       Log yourself o";
+        t = t + "ut\nCreate Game  Create a new game\nLi";
+        t = t + "st Games   Get all games\nObserve Game";
+        t = t + " Sit in on a game\nPlay Game    Play i";
+        return t + "n a game\n\nEnter command";
+    }
+    static void printIn() {
+        System.out.println("Help         Information about actions\nLogout       Log yourself out");
+        System.out.println("Create Game  Create a new game\nList Games   Get all games\nObserve Game Sit in on a game");
+        System.out.println("Play Game    Play in a game\n\nEnter command");
+    }
+    static int gameNumber(String s, Collection<GameData> gD) {
+        for (GameData gMD: gD) {
+            if (gMD.gameName().equals(s)) {
+                return gMD.gameID();
+            }
+        }
+        return 0;
     }
 }
