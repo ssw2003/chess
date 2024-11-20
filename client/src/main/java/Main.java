@@ -20,6 +20,7 @@ public class Main {
         String status = "Not Logged In";
         String lastCommand = "Help";
         printHelp();
+        int inGameAs = 0;
         while (!status.equals("Quit")) {
             lastCommand = getInString();
             if (status.equals("Not Logged In") && lastCommand.equals("Register")) {
@@ -86,7 +87,11 @@ public class Main {
                 }
                 lastCommand = "Help";
             } else if (status.equals("Merely Logged In") && lastCommand.equals("Play Game")) {
-                whichGameIn = gameNumber(getInString("Game Name:"), sF.listGames(aD.authToken()));
+                try {
+                    whichGameIn = gameNumber(getInString("Game Name:"), sF.listGames(aD.authToken()));
+                } catch (Exception e) {
+                    whichGameIn = 0;
+                }
                 String color = "";
                 if (whichGameIn != 0) {
                     color = getInString("Color:");
