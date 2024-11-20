@@ -76,13 +76,12 @@ public class Main {
                 }
                 lastCommand = "Help";
             } else if (status.equals("Merely Logged In") && lastCommand.equals("Observe Game")) {
-                whichGameIn = gameNumber(getInString("Game Name:"), sF.listGames(aD.authToken()));
-                if (whichGameIn == 0) {
-                    System.out.println(printIn("Invalid Game Name"));
-                }
-                else {
+                try {
+                    whichGameIn = nonzeroValue(gameNumber(getInString("Game Name:"), sF.listGames(aD.authToken())));
                     inGameAsWhite = true;
                     inGameAsBlack = true;
+                } catch (Exception e) {
+                    System.out.println(printIn("Invalid Game Name"));
                 }
                 lastCommand = "Help";
             } else if (status.equals("Merely Logged In") && lastCommand.equals("Play Game")) {
@@ -327,5 +326,11 @@ public class Main {
             return ChessGame.TeamColor.BLACK;
         }
         throw new RuntimeException("");
+    }
+    static int nonzeroValue(int i) {
+        if (i == 0) {
+            throw new RuntimeException("");
+        }
+        return i;
     }
 }
