@@ -18,6 +18,7 @@ public class Main {
         ServerFacade sF = new ServerFacade("http://localhost:8080");
         String status = "Not Logged In";
         String lastCommand = "Help";
+        int statusInt = 0;
         System.out.println("Help         Information about actions");
         System.out.println("Login        Entering information");
         System.out.println("Quit         Exit this");
@@ -25,16 +26,15 @@ public class Main {
         while (!status.equals("Quit")) {
             lastCommand = getInString();
             if (status.equals("Not Logged In") && lastCommand.equals("Register")) {
-                String username = getInString("Username:");
-                String password = getInString("Password:");
-                String email = getInString("Email:");
-                aD = sF.addUser(new UserData(username, password, email));
-                status = "Merely Logged In";
+                try {
+                    aD = sF.addUser(new UserData(getInString("Username:"), getInString("Password:"), getInString("Email:")));
+                    status = "Merely Logged In";
+                } catch (Exception e) {
+                    int w = 0;
+                }
                 lastCommand = "Help";
             } else if (status.equals("Not Logged In") && lastCommand.equals("Login")) {
-                String username = getInString("Username:");
-                String password = getInString("Password:");
-                aD = sF.loginUser(new LoginData(username, password));
+                aD = sF.loginUser(new LoginData(getInString("Username:"), getInString("Password:")));
                 status = "Merely Logged In";
                 lastCommand = "Help";
             } else if (status.equals("Not Logged In") && lastCommand.equals("Quit")) {
@@ -67,15 +67,13 @@ public class Main {
             } else if (status.equals("Merely Logged In") && lastCommand.equals("Play Game")) {
                 int gameNumber = getInInt(getInString("Game Number:"));
                 String color = getInString("Color:");
-                if (Objects.equals(color, "WHITE") || Objects.equals(color, "White") || Objects.equals(color, "white")
-                        || Objects.equals(color, "W") || Objects.equals(color, "w")) {
+                if (color.equals("WHITE") || color.equals("White") || color.equals("white") || color.equals("W") || color.equals("w")) {
                     sF.joinGame(new PlayerColorGameNumber(ChessGame.TeamColor.WHITE, gameNumber), aD.authToken());
                     whichGameIn = gameNumber;
                     inGameAsWhite = true;
                     inGameAsBlack = false;
                 }
-                else if (Objects.equals(color, "BLACK") || Objects.equals(color, "Black") || Objects.equals(color, "black")
-                        || Objects.equals(color, "B") || Objects.equals(color, "b")) {
+                else if (color.equals("BLACK") || color.equals("Black") || color.equals("black") || color.equals("B") || color.equals("b")) {
                     sF.joinGame(new PlayerColorGameNumber(ChessGame.TeamColor.BLACK, gameNumber), aD.authToken());
                     whichGameIn = gameNumber;
                     inGameAsBlack = true;

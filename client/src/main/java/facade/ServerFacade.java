@@ -42,7 +42,6 @@ public class ServerFacade {
     }
     private <T> T requestSomethingBody(HttpURLConnection cn, String path, Object item, Class<T> res) {
         try {
-            //cn.connect();
             cn.setDoOutput(true);
             writeToBody(cn, item);
             var gc = cn.getResponseCode();
@@ -62,7 +61,6 @@ public class ServerFacade {
     }
     private void requestSomethingBody(HttpURLConnection cn, String path, Object item) {
         try {
-            //cn.connect();
             cn.setDoOutput(true);
             writeToBody(cn, item);
             var gc = cn.getResponseCode();
