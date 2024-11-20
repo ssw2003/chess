@@ -88,7 +88,7 @@ public class Main {
             } else if (status.equals("Merely Logged In") && lastCommand.equals("Play Game")) {
                 whichGameIn = gameNumber(getInString("Game Name:"), sF.listGames(aD.authToken()));
                 try {
-                    String color = getInString("Color:", whichGameIn);
+                    String color = getInString(whichGameIn);
                     sF.joinGame(new PlayerColorGameNumber(chessGameTeamColor(color), whichGameIn), aD.authToken());
                     inGameAsWhite = chessGameTeamColor(color) == ChessGame.TeamColor.WHITE;
                     inGameAsBlack = !inGameAsWhite;
@@ -233,11 +233,11 @@ public class Main {
         Scanner scanner = new Scanner(System.in);
         return scanner.nextLine();
     }
-    static String getInString(String s, int i) {
+    static String getInString(int i) {
         if (i == 0) {
             throw new RuntimeException("");
         }
-        System.out.println(s);
+        System.out.println("Color:");
         Scanner scanner = new Scanner(System.in);
         return scanner.nextLine();
     }
