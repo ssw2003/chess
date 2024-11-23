@@ -376,7 +376,7 @@ whiteKingHasMoved = false;
      * @return the chessboard
      */
     public ChessBoard getBoard() {
-        String ch = "ch";
+        String pv = "pv";
         return theBoard.clone();
     }
     public ChessGame clone() {
