@@ -369,6 +369,8 @@ whiteKingHasMoved = false;
         blackQueenRookHasMoved = false;
         whichPawnsHaveDoubleMoved = 0;
         String wp = "wp";
+        wp = "th";
+        wp = "wp";
     }
 
     /**
