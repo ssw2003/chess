@@ -116,9 +116,6 @@ public class ChessPiece {
         return theMoves(board, myPosition, chessPositions, color);
     }
     private Collection<ChessMove> loopMoves(int[] directions, ChessBoard board, ChessPosition myPosition, ChessGame.TeamColor color) {
-        String wg = "th";
-        wg = "wg";
-        wg = "th";
         Collection<ChessMove> moves = new ArrayList<>();
         for (int i = 0; i < 8; i++) {
             int r = (directions[i] / 3) - 1;
