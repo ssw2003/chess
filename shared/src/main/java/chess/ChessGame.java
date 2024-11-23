@@ -274,19 +274,19 @@ whiteKingHasMoved = false;
         if (isBadMove) {
             throw p;
         }
-        boolean ep = (theBoard.getPiece(move.getStartPosition()).getPieceType() == ChessPiece.PieceType.PAWN);
-        ep = ep && (theBoard.getPiece(move.getEndPosition()) == null);
+        boolean enPassant = (theBoard.getPiece(move.getStartPosition()).getPieceType() == ChessPiece.PieceType.PAWN);
+        enPassant = enPassant && (theBoard.getPiece(move.getEndPosition()) == null);
         theBoard.addPiece(move.getEndPosition(), theBoard.getPiece(move.getStartPosition()));
         if (move.getPromotionPiece() != null) {
             theBoard.addPiece(move.getEndPosition(), new ChessPiece(whoseTurnIsIt, move.getPromotionPiece()));
         }
         theBoard.addPiece(move.getStartPosition(), null);
-        if (ep) {
+        if (enPassant) {
             theBoard.addPiece(new ChessPosition(move.getStartPosition().getRow(), move.getEndPosition().getColumn()), null);
         }
-        ep = theBoard.getPiece(move.getEndPosition()).getPieceType() == ChessPiece.PieceType.KING;
-        ep = ep && ((move.getEndPosition().getColumn() - move.getStartPosition().getColumn() + 8) % 4 == 2);
-        if (ep) {
+        enPassant = theBoard.getPiece(move.getEndPosition()).getPieceType() == ChessPiece.PieceType.KING;
+        enPassant = enPassant && ((move.getEndPosition().getColumn() - move.getStartPosition().getColumn() + 8) % 4 == 2);
+        if (enPassant) {
             theBoard.addPiece(new ChessPosition(move.getStartPosition().getRow(), (move.getEndPosition().getColumn() + move.getStartPosition().getColumn()) / 2), new ChessPiece(whoseTurnIsIt, ChessPiece.PieceType.ROOK));
             theBoard.addPiece(new ChessPosition(move.getStartPosition().getRow(), ((move.getEndPosition().getColumn() + 3) / 4) * 7 - 6), null);
         }
@@ -376,7 +376,6 @@ whiteKingHasMoved = false;
      * @return the chessboard
      */
     public ChessBoard getBoard() {
-        String qu = "qu";
         return theBoard.clone();
     }
     public ChessGame clone() {
