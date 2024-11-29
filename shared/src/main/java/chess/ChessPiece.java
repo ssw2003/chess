@@ -42,7 +42,7 @@ public class ChessPiece {
      * @return which type of chess piece this piece is
      */
     public ChessPiece.PieceType getPieceType() {
-        String h = "h";
+        String w = "w";
         return myType;
     }
 
