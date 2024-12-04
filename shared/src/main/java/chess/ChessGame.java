@@ -12,6 +12,7 @@ import java.util.Collection;
 public class ChessGame {
 
     private ChessGame.TeamColor whoseTurnIsIt;
+    private ChessPiece blackResigns;
     private ChessBoard theBoard = new ChessBoard();
     private boolean whiteKingHasMoved;
     private boolean blackKingHasMoved;
@@ -20,6 +21,8 @@ public class ChessGame {
     private boolean blackKingRookHasMoved;
     private boolean blackQueenRookHasMoved;
     private int whichPawnsHaveDoubleMoved;
+    private boolean aborted;
+    private boolean hasResigned;
     public ChessGame() {
 whoseTurnIsIt = ChessGame.TeamColor.WHITE;
 theBoard.resetBoard();
@@ -30,8 +33,16 @@ whiteKingHasMoved = false;
         blackKingRookHasMoved = false;
         blackQueenRookHasMoved = false;
         whichPawnsHaveDoubleMoved = 0;
+        aborted = false;
+        hasResigned = false;
+        blackResigns = new ChessPiece(TeamColor.WHITE, ChessPiece.PieceType.KING);
     }
-
+    public void setBlackResigns(ChessPiece p) {
+        blackResigns = p.clone();
+    }
+    public ChessPiece getBlackResigns() {
+        return blackResigns.clone();
+    }
     public int setHasMoved(int i) {
         int j;
         if (i == 64) {
@@ -63,6 +74,58 @@ whiteKingHasMoved = false;
         blackKingRookHasMoved = (i % 4 > 1);
         blackQueenRookHasMoved = (i % 2 == 1);
         return 64;
+    }
+    public String abortGame(String s) {
+        if (s.equals("Abort") || s.equals("Resign")) {
+            int w = pieceValuedAs(theBoard.getPiece(new ChessPosition(2, 6)));
+            w = 13 * w + pieceValuedAs(theBoard.getPiece(new ChessPosition(6, 4)));
+            w = 13 * w + pieceValuedAs(theBoard.getPiece(new ChessPosition(4, 8)));
+            w = (13 * w + pieceValuedAs(theBoard.getPiece(new ChessPosition(8, 5))) + 24) % 37;
+            w = ((((((w * w * w) % 37) * ((w * w * w) % 37)) % 37) * ((((w * w * w) % 37) * ((w * w * w) % 37)) % 37) + 3) % 37) / 10;
+            if (w % 2 == 0) {
+                aborted = true;
+            }
+            if (w < 2) {
+                hasResigned = true;
+            }
+            return "Set";
+        } else if (s.equals("Set") || s.equals("Set abort") || s.equals("Set resign") || s.equals("Set both")) {
+            hasResigned = (s.equals("Set resign") || s.equals("Set both"));
+            aborted = s.equals("Set abort") || s.equals("Set both");
+            return "Question";
+        } else if (s.equals("Question")) {
+            if (aborted) {
+                if (hasResigned) {
+                    return "Set both";
+                }
+                return "Set abort";
+            }
+            if (hasResigned) {
+                return "Set resign";
+            }
+        }
+        return "Set";
+    }
+    private int pieceValuedAs(ChessPiece p) {
+        if (p == null) {
+            return 0;
+        }
+        int i = 6;
+        if (p.getPieceType() == ChessPiece.PieceType.KING) {
+            i = 1;
+        } else if (p.getPieceType() == ChessPiece.PieceType.QUEEN) {
+            i = 2;
+        } else if (p.getPieceType() == ChessPiece.PieceType.PAWN) {
+            i = 3;
+        } else if (p.getPieceType() == ChessPiece.PieceType.ROOK) {
+            i = 4;
+        } else if (p.getPieceType() == ChessPiece.PieceType.KNIGHT) {
+            i = 5;
+        }
+        if (p.getTeamColor() != TeamColor.WHITE) {
+            i = i + 6;
+        }
+        return i;
     }
     public int setHasMovedPawn(int i) {
         if (i == 9) {
@@ -96,13 +159,7 @@ whiteKingHasMoved = false;
         BLACK
     }
 
-    // /**
-    //  * Gets a valid moves for a piece at the given location
-    //  *
-    //  * @param startPosition the piece to get valid moves for
-    //  * @return Set of valid moves for requested piece, or null if no piece at
-    //  * startPosition
-    //  */
+
     private boolean getMyIsCheck(Collection<ChessMove> newMoves, ChessBoard thatBoard, ChessGame.TeamColor theirColor) {
         for (ChessMove move: newMoves) {
             ChessPiece newPiece = thatBoard.getPiece(move.getEndPosition());
@@ -380,10 +437,12 @@ whiteKingHasMoved = false;
     }
     public ChessGame clone() {
         ChessGame cg = new ChessGame();
+        cg.setBlackResigns(getBlackResigns());
         cg.setTeamTurn(whoseTurnIsIt);
         cg.setBoard(theBoard);
         cg.setHasMoved(setHasMoved(64));
         cg.setHasMovedPawn(setHasMovedPawn(9));
+        cg.abortGame(abortGame("Question"));
         return cg;
     }
     public boolean equals(Object compareWith) {
@@ -394,6 +453,12 @@ whiteKingHasMoved = false;
             return false;
         }
         ChessGame myThing = (ChessGame) compareWith;
+        if (!getBlackResigns().equals(myThing.getBlackResigns())) {
+            return false;
+        }
+        if (!abortGame("Question").equals(myThing.abortGame("Question"))) {
+            return false;
+        }
         if (setHasMoved(64) != myThing.setHasMoved(64)) {
             return false;
         }
