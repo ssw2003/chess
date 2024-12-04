@@ -140,80 +140,203 @@ public class Main {
         System.out.println("Enter command");
         return "Merely Logged In";
     }
-    static void drawBoard(ChessGame game, boolean isWhite) {
+    static void drawBoard(ChessGame game, boolean isWhite, boolean isObserving) {
         ChessBoard newGame = new ChessBoard();
         newGame.resetBoard();
+        String checkMessaging = "null";
         if (game != null) {
+            if (game.isInCheck(ChessGame.TeamColor.WHITE)) {
+                checkMessaging = "our team in check";
+                if (game.isInCheckmate(ChessGame.TeamColor.WHITE)) {
+                    checkMessaging = "our team in checkmate";
+                }
+            }
+            if (game.isInCheck(ChessGame.TeamColor.BLACK)) {
+                checkMessaging = "their team in check";
+                if (game.isInCheckmate(ChessGame.TeamColor.BLACK)) {
+                    checkMessaging = "their team in checkmate";
+                }
+            }
             newGame = game.clone().getBoard();
         }
         if (!isWhite) {
+            if (checkMessaging.equals("our team in check")) {
+                checkMessaging = "their team in check";
+            } else if (checkMessaging.equals("their team in check")) {
+                checkMessaging = "our team in check";
+            }
+            if (checkMessaging.equals("our team in checkmate")) {
+                checkMessaging = "their team in checkmate";
+            } else if (checkMessaging.equals("their team in checkmate")) {
+                checkMessaging = "our team in checkmate";
+            }
             newGame = reverseBoard(newGame);
         }
-        if (isWhite) {
-            System.out.print(EscapeSequences.SET_TEXT_COLOR_MAGENTA);
-            System.out.print(EscapeSequences.SET_BG_COLOR_YELLOW);
-            System.out.print(" abcdefgh ");
-            System.out.print(EscapeSequences.RESET_BG_COLOR);
-            System.out.print(EscapeSequences.RESET_TEXT_COLOR);
-            System.out.print("\n");
-            for (int i = 0; i < 8; i++) {
-                String myString = "";
-                System.out.print(EscapeSequences.SET_TEXT_COLOR_MAGENTA);
-                System.out.print(EscapeSequences.SET_BG_COLOR_YELLOW);
-                System.out.print("" + (8 - i));
-                printRow(newGame, 8 - i);
-                System.out.print(EscapeSequences.SET_TEXT_COLOR_MAGENTA);
-                System.out.print(EscapeSequences.SET_BG_COLOR_YELLOW);
-                System.out.print("" + (8 - i));
-                System.out.print(EscapeSequences.RESET_BG_COLOR);
-                System.out.print(EscapeSequences.RESET_TEXT_COLOR);
-                System.out.print("\n");
-            }
-            System.out.print(EscapeSequences.SET_TEXT_COLOR_MAGENTA);
-            System.out.print(EscapeSequences.SET_BG_COLOR_YELLOW);
-            System.out.print(" abcdefgh ");
-            System.out.print(EscapeSequences.RESET_BG_COLOR);
-            System.out.print(EscapeSequences.RESET_TEXT_COLOR);
-            System.out.print("\n");
+        String messageColoring = "null";
+        if (checkMessaging.equals("our team in check") || checkMessaging.equals("our team in checkmate")) {
+            messageColoring = "red";
         }
-        else {
-            System.out.print(EscapeSequences.SET_TEXT_COLOR_MAGENTA);
-            System.out.print(EscapeSequences.SET_BG_COLOR_YELLOW);
-            System.out.print(" hgfedcba ");
-            System.out.print(EscapeSequences.RESET_BG_COLOR);
-            System.out.print(EscapeSequences.RESET_TEXT_COLOR);
-            System.out.print("\n");
-            for (int i = 0; i < 8; i++) {
-                String myString = "";
-                System.out.print(EscapeSequences.SET_TEXT_COLOR_MAGENTA);
-                System.out.print(EscapeSequences.SET_BG_COLOR_YELLOW);
-                System.out.print("" + (1 + i));
-                printRow(newGame, 8 - i);
-                System.out.print(EscapeSequences.SET_TEXT_COLOR_MAGENTA);
-                System.out.print(EscapeSequences.SET_BG_COLOR_YELLOW);
-                System.out.print("" + (1 + i));
-                System.out.print(EscapeSequences.RESET_BG_COLOR);
-                System.out.print(EscapeSequences.RESET_TEXT_COLOR);
-                System.out.print("\n");
-            }
-            System.out.print(EscapeSequences.SET_TEXT_COLOR_MAGENTA);
-            System.out.print(EscapeSequences.SET_BG_COLOR_YELLOW);
-            System.out.print(" hgfedcba ");
-            System.out.print(EscapeSequences.RESET_BG_COLOR);
-            System.out.print(EscapeSequences.RESET_TEXT_COLOR);
-            System.out.print("\n");
+        if (checkMessaging.equals("their team in check") || checkMessaging.equals("their team in checkmate")) {
+            messageColoring = "green";
         }
+        if (isObserving && !messageColoring.equals("null")) {
+            messageColoring = "blue";
+        }
+        int bigNumber = 15;
+        if (isObserving) {
+            if (checkMessaging.equals("our team in check")) {
+                checkMessaging = "White's in Check";
+                bigNumber = 7;
+            }
+            if (checkMessaging.equals("our team in checkmate")) {
+                checkMessaging = "Checkmate—Black Wins";
+                bigNumber = 5;
+            }
+            if (checkMessaging.equals("their team in check")) {
+                checkMessaging = "Black's in Check";
+                bigNumber = 7;
+            }
+            if (checkMessaging.equals("their team in checkmate")) {
+                checkMessaging = "Checkmate—White Wins";
+                bigNumber = 5;
+            }
+        }
+        if (checkMessaging.equals("our team in check") || checkMessaging.equals("their team in check")) {
+            checkMessaging = "Check!";
+            bigNumber = 12;
+        }
+        if (checkMessaging.equals("our team in checkmate") || checkMessaging.equals("their team in checkmate")) {
+            checkMessaging = "Checkmate—White Wins";
+            bigNumber = 5;
+            if (messageColoring.equals("red") == isWhite) {
+                checkMessaging = "Checkmate—Black Wins";
+            }
+        }
+        if (checkMessaging.equals("null")) {
+            checkMessaging = "";
+        }
+        String[] chars = new String[38];
+        int i = 0;
+        while (i < 30) {
+            chars[i] = " ";
+            i = i + 1;
+        }
+        i = 0;
+        if (!isWhite) {
+            i = 1;
+        }
+        chars[4 + 21 * i] = "a";
+        chars[7 + 15 * i] = "b";
+        chars[10 + 9 * i] = "c";
+        chars[13 + 3 * i] = "d";
+        chars[16 - 3 * i] = "e";
+        chars[19 - 9 * i] = "f";
+        chars[22 - 15 * i] = "g";
+        chars[25 - 21 * i] = "h";
+        chars[37 - 7 * i] = " 1 ";
+        chars[36 - 5 * i] = " 2 ";
+        chars[35 - 3 * i] = " 3 ";
+        chars[34 - i] = " 4 ";
+        chars[33 + i] = " 5 ";
+        chars[32 + 3 * i] = " 6 ";
+        chars[31 + 5 * i] = " 7 ";
+        chars[30 + 7 * i] = " 8 ";
+        i = 1;
+        while (i < 30) {
+            chars[0] = chars[0] + chars[i];
+            i = i + 1;
+        }
+        i = 8;
+        System.out.print(EscapeSequences.SET_BG_COLOR_YELLOW);
+        System.out.print(EscapeSequences.SET_TEXT_COLOR_MAGENTA);
+        System.out.print(chars[0]);
+        chars[0] = " ";
         System.out.print(EscapeSequences.RESET_BG_COLOR);
         System.out.print(EscapeSequences.RESET_TEXT_COLOR);
-        if (isWhite) {
-            System.out.println("\n");
+        while (i > 0) {
+            System.out.print("\n");
+            System.out.print(EscapeSequences.SET_BG_COLOR_YELLOW);
+            System.out.print(EscapeSequences.SET_TEXT_COLOR_MAGENTA);
+            System.out.print(chars[38 - i]);
+            System.out.print(EscapeSequences.RESET_BG_COLOR);
+            System.out.print(EscapeSequences.RESET_TEXT_COLOR);
+            for (int j = 1; j < 9; j++) {
+                if (i % 2 == j % 2) {
+                    System.out.print(EscapeSequences.SET_BG_COLOR_DARK_GREEN);
+                } else {
+                    System.out.print(EscapeSequences.SET_BG_COLOR_LIGHT_GREY);
+                }
+                if (newGame.getPiece(new ChessPosition(i, j)) == null) {
+                    System.out.print(EscapeSequences.SET_TEXT_COLOR_BLUE);
+                } else if (newGame.getPiece(new ChessPosition(i, j)).getTeamColor() == ChessGame.TeamColor.WHITE) {
+                    System.out.print(EscapeSequences.SET_TEXT_COLOR_BLUE);
+                } else {
+                    System.out.print(EscapeSequences.SET_TEXT_COLOR_BLACK);
+                }
+                if (newGame.getPiece(new ChessPosition(i, j)) == null) {
+                    System.out.print("   ");
+                } else if (newGame.getPiece(new ChessPosition(i, j)).getPieceType() == ChessPiece.PieceType.PAWN) {
+                    System.out.print(" P ");
+                } else if (newGame.getPiece(new ChessPosition(i, j)).getPieceType() == ChessPiece.PieceType.KING) {
+                    System.out.print(" K ");
+                } else if (newGame.getPiece(new ChessPosition(i, j)).getPieceType() == ChessPiece.PieceType.KNIGHT) {
+                    System.out.print(" N ");
+                } else if (newGame.getPiece(new ChessPosition(i, j)).getPieceType() == ChessPiece.PieceType.QUEEN) {
+                    System.out.print(" Q ");
+                } else if (newGame.getPiece(new ChessPosition(i, j)).getPieceType() == ChessPiece.PieceType.BISHOP) {
+                    System.out.print(" B ");
+                } else {
+                    System.out.print(" R ");
+                }
+                System.out.print(EscapeSequences.RESET_BG_COLOR);
+                System.out.print(EscapeSequences.RESET_TEXT_COLOR);
+            }
+            System.out.print(EscapeSequences.SET_BG_COLOR_YELLOW);
+            System.out.print(EscapeSequences.SET_TEXT_COLOR_MAGENTA);
+            System.out.print(chars[38 - i]);
+            System.out.print(EscapeSequences.RESET_BG_COLOR);
+            System.out.print(EscapeSequences.RESET_TEXT_COLOR);
+            i = i - 1;
         }
+        i = bigNumber;
+        chars[30] = "";
+        chars[31] = "";
+        while (i > 0) {
+            i = i - 1;
+            chars[30] = chars[i] + chars[30];
+            chars[31] = chars[31] + chars[29 - i];
+        }
+        System.out.print("\n");
+        System.out.print(EscapeSequences.SET_BG_COLOR_YELLOW);
+        System.out.print(EscapeSequences.SET_TEXT_COLOR_MAGENTA);
+        System.out.print(chars[30]);
+        System.out.print(EscapeSequences.RESET_BG_COLOR);
+        System.out.print(EscapeSequences.RESET_TEXT_COLOR);
+        if (messageColoring.equals("red")) {
+            System.out.print(EscapeSequences.SET_BG_COLOR_RED);
+        } else if (messageColoring.equals("green")) {
+            System.out.print(EscapeSequences.SET_BG_COLOR_GREEN);
+        }  else if (messageColoring.equals("blue")) {
+            System.out.print(EscapeSequences.SET_BG_COLOR_BLUE);
+        }  else {
+            System.out.print(EscapeSequences.SET_BG_COLOR_RED);
+        }
+        System.out.print(EscapeSequences.SET_TEXT_COLOR_WHITE);
+        System.out.print(checkMessaging);
+        System.out.print(EscapeSequences.RESET_BG_COLOR);
+        System.out.print(EscapeSequences.RESET_TEXT_COLOR);
+        System.out.print(EscapeSequences.SET_BG_COLOR_YELLOW);
+        System.out.print(EscapeSequences.SET_TEXT_COLOR_MAGENTA);
+        System.out.print(chars[31]);
+        System.out.print(EscapeSequences.RESET_BG_COLOR);
+        System.out.print(EscapeSequences.RESET_TEXT_COLOR);
+        System.out.print("\n");
     }
     static void drawBoard(GameData game, boolean a, boolean b) {
         if (game != null) {
             if (a || b) {
-                drawBoard(game.game(), true);
-                drawBoard(game.game(), false);
+                drawBoard(game.game(), true, false);
+                drawBoard(game.game(), false, false);
             }
         }
     }
@@ -245,41 +368,7 @@ public class Main {
         }
         return nB.clone();
     }
-    static void printRow(ChessBoard cB, int row) {
-        boolean isWhiteSquare = (row % 2 == 0);
-        for (int i = 1; i < 9; i = i + 1 ) {
-            if (isWhiteSquare) {
-                System.out.print(EscapeSequences.SET_BG_COLOR_LIGHT_GREY);
-            }
-            else {
-                System.out.print(EscapeSequences.SET_BG_COLOR_DARK_GREEN);
-            }
-            ChessPiece cP = cB.getPiece(new ChessPosition(row, i));
-            if (cP == null) {
-                System.out.print(" ");
-            } else if (cP.getTeamColor() == ChessGame.TeamColor.WHITE) {
-                System.out.print(EscapeSequences.SET_TEXT_COLOR_BLUE);
-            } else {
-                System.out.print(EscapeSequences.SET_TEXT_COLOR_BLACK);
-            }
-            if (cP != null) {
-                if (cP.getPieceType() == ChessPiece.PieceType.KING) {
-                    System.out.print("K");
-                } else if (cP.getPieceType() == ChessPiece.PieceType.KNIGHT) {
-                    System.out.print("N");
-                } else if (cP.getPieceType() == ChessPiece.PieceType.BISHOP) {
-                    System.out.print("B");
-                } else if (cP.getPieceType() == ChessPiece.PieceType.ROOK) {
-                    System.out.print("R");
-                } else if (cP.getPieceType() == ChessPiece.PieceType.QUEEN) {
-                    System.out.print("Q");
-                } else {
-                    System.out.print("P");
-                }
-            }
-            isWhiteSquare = !isWhiteSquare;
-        }
-    }
+    
     static void printHelp() {
         System.out.println("Help         Information about actions\nLogin        Entering information");
         System.out.println("Quit         Exit this\nRegister     Registering yourself\n\nEnter command");
