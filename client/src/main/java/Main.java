@@ -253,8 +253,80 @@ public class Main {
             }
         }
         String[] enhancedLabels = new String[90];
+        String[] textingColors = new String[90];
         heights = 0;
         while (heights < 90) {
+            textingColors[heights] = "magenta";
+            heights = heights + 1;
+        }
+        heights = 11;
+        while (heights < 90) {
+            textingColors[heights] = "blue";
+            if (newGame.getPiece(new ChessPosition(9 - heights / 10, heights % 10)) == null) {
+                Void();
+            } else if (newGame.getPiece(new ChessPosition(9 - heights / 10, heights % 10)).getTeamColor() == ChessGame.TeamColor.BLACK) {
+                textingColors[heights] = "black";
+            }
+            heights = heights + 1;
+            if ((heights - 1) % 10 > 7) {
+                heights = heights + 2;
+            }
+        }
+        heights = 0;
+        enhancedLabels[0] = " ";
+        enhancedLabels[9] = " ";
+        while (heights < 8) {
+            enhancedLabels[heights + 1] = labels[heights];
+            heights = heights + 1;
+            enhancedLabels[10 * heights] = "" + heights;
+            if (isWhite) {
+                enhancedLabels[10 * heights] = "" + (9 - heights);
+            }
+            enhancedLabels[10 * heights + 9] = enhancedLabels[10 * heights];
+        }
+        heights = 11;
+        while (heights < 90) {
+            textingColors[heights] = "blue";
+            ChessPiece gP = newGame.getPiece(new ChessPosition(9 - heights / 10, heights % 10));
+            enhancedLabels[heights] = "B";
+            if (gP == null) {
+                enhancedLabels[heights] = " ";
+            } else if (gP.getPieceType() == ChessPiece.PieceType.PAWN) {
+                enhancedLabels[heights] = "P";
+            } else if (gP.getPieceType() == ChessPiece.PieceType.KING) {
+                enhancedLabels[heights] = "K";
+            } else if (gP.getPieceType() == ChessPiece.PieceType.QUEEN) {
+                enhancedLabels[heights] = "Q";
+            } else if (gP.getPieceType() == ChessPiece.PieceType.ROOK) {
+                enhancedLabels[heights] = "R";
+            } else if (gP.getPieceType() == ChessPiece.PieceType.KNIGHT) {
+                enhancedLabels[heights] = "N";
+            }
+            heights = heights + 1;
+            if ((heights - 1) % 10 > 7) {
+                heights = heights + 2;
+            }
+        }
+        heights = 0;
+        while (heights < 90) {
+            if (colorBackGroundsEquals[heights].equals("yellow")) {
+                colorBackGroundsEquals[heights] = EscapeSequences.SET_BG_COLOR_YELLOW;
+            } else if (colorBackGroundsEquals[heights].equals("green")) {
+                colorBackGroundsEquals[heights] = EscapeSequences.SET_BG_COLOR_DARK_GREEN;
+            } else if (colorBackGroundsEquals[heights].equals("gray")) {
+                colorBackGroundsEquals[heights] = EscapeSequences.SET_BG_COLOR_LIGHT_GREY;
+            } else if (colorBackGroundsEquals[heights].equals("magenta")) {
+                colorBackGroundsEquals[heights] = EscapeSequences.SET_BG_COLOR_MAGENTA;
+            } else {
+                colorBackGroundsEquals[heights] = EscapeSequences.SET_BG_COLOR_WHITE;
+            }
+            if (textingColors[heights].equals("magenta")) {
+                textingColors[heights] = EscapeSequences.SET_TEXT_COLOR_MAGENTA;
+            } else if (textingColors[heights].equals("blue")) {
+                textingColors[heights] = EscapeSequences.SET_TEXT_COLOR_BLUE;
+            } else {
+                colorBackGroundsEquals[heights] = EscapeSequences.SET_BG_COLOR_BLACK;
+            }
             heights = heights + 1;
         }
         heights = 13;
@@ -263,12 +335,57 @@ public class Main {
         } else if (boardSize.equals("medium")) {
             heights = 37;
         }
+        int j = 0;
+        int k = 0;
+        String ke = "";
+        int i = 1;
+        while (i < heights % 10) {
+            ke = ke + " ";
+            i = i + 2;
+        }
+        i = 0;
+        while (i < 9) {
+            j = 20;
+            while (j < heights) {
+                k = 10 * i;
+                while (k < 10 * i + 10) {
+                    System.out.print(textingColors[k]);
+                    System.out.print(colorBackGroundsEquals[k]);
+                    System.out.print(ke + ke + " ");
+                    System.out.print(EscapeSequences.RESET_BG_COLOR);
+                    System.out.print(EscapeSequences.RESET_TEXT_COLOR);
+                    k = k + 1;
+                }
+                j = j + 20;
+            }
+            k = 10 * i;
+            while (k < 10 * i + 10) {
+                System.out.print(textingColors[k]);
+                System.out.print(colorBackGroundsEquals[k]);
+                System.out.print(ke + enhancedLabels[k] + ke);
+                System.out.print(EscapeSequences.RESET_BG_COLOR);
+                System.out.print(EscapeSequences.RESET_TEXT_COLOR);
+                k = k + 1;
+            }
+            if (heights > 20) {
+                k = 0;
+                while (k < 10) {
+                    System.out.print(textingColors[10 * i + k]);
+                    System.out.print(colorBackGroundsEquals[10 * i + k]);
+                    System.out.print(ke + ke + " ");
+                    System.out.print(EscapeSequences.RESET_BG_COLOR);
+                    System.out.print(EscapeSequences.RESET_TEXT_COLOR);
+                    k = k + 1;
+                }
+            }
+            i = i + 1;
+        }
     }
     static void drawBoard(GameData game, boolean a, boolean b) {
         if (game != null) {
             if (a || b) {
-                drawBoard(game.game(), true, false);
-                drawBoard(game.game(), false, false);
+                drawBoard(game.game(), true, false, null);
+                drawBoard(game.game(), false, false, null);
             }
         }
     }
