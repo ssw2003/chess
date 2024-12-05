@@ -352,21 +352,23 @@ public class Main {
                     System.out.print(textingColors[k]);
                     System.out.print(colorBackGroundsEquals[k]);
                     System.out.print(ke + ke + " ");
-                    System.out.print(EscapeSequences.RESET_BG_COLOR);
                     System.out.print(EscapeSequences.RESET_TEXT_COLOR);
+                    System.out.print(EscapeSequences.RESET_BG_COLOR);
                     k = k + 1;
                 }
                 j = j + 20;
+                System.out.print("\n");
             }
             k = 10 * i;
             while (k < 10 * i + 10) {
-                System.out.print(textingColors[k]);
                 System.out.print(colorBackGroundsEquals[k]);
+                System.out.print(textingColors[k]);
                 System.out.print(ke + enhancedLabels[k] + ke);
                 System.out.print(EscapeSequences.RESET_BG_COLOR);
                 System.out.print(EscapeSequences.RESET_TEXT_COLOR);
                 k = k + 1;
             }
+            System.out.print("\n");
             if (heights > 20) {
                 k = 0;
                 while (k < 10) {
@@ -379,7 +381,81 @@ public class Main {
                 }
             }
             i = i + 1;
+            System.out.print("\n");
         }
+        bigNumber = ((heights - 3) % 10) * 5 + bigNumber;
+        labels = new String[270];
+        i = 0;
+        while (i < 270) {
+            labels[i] = " ";
+            i = i + 1;
+        }
+        i = 0;
+        while (i < 10) {
+            labels[(heights % 10) * i + ((heights % 10) / 2) + (heights / 20) * 90] = enhancedLabels[i];
+            i = i + 1;
+        }
+        j = (heights / 10) - 1;
+        k = (heights % 10) * 10;
+        i = 0;
+        while (i < j) {
+            ke = "";
+            j = k + 90 * i;
+            while (j > 90 * i) {
+                j = j - 1;
+                ke = labels[j] + ke;
+            }
+            i = i + 1;
+            j = (heights / 10) - 1;
+            System.out.print(EscapeSequences.SET_BG_COLOR_YELLOW);
+            System.out.print(EscapeSequences.SET_TEXT_COLOR_MAGENTA);
+            System.out.print(ke);
+            System.out.print(EscapeSequences.RESET_BG_COLOR);
+            System.out.print(EscapeSequences.RESET_TEXT_COLOR);
+            System.out.print("\n");
+        }
+        i = j * 90;
+        k = k + i - bigNumber;
+        j = j * 90 + bigNumber;
+        ke = "";
+        while (i < j) {
+            ke = ke + labels[i];
+            i = i + 1;
+        }
+        j = k + bigNumber;
+        System.out.print(EscapeSequences.SET_BG_COLOR_YELLOW);
+        System.out.print(EscapeSequences.SET_TEXT_COLOR_MAGENTA);
+        System.out.print(ke);
+        if (i == k) {
+            Void();
+        } else {
+            System.out.print(EscapeSequences.RESET_BG_COLOR);
+            System.out.print(EscapeSequences.RESET_TEXT_COLOR);
+            if (messageColoring.equals("red")) {
+                System.out.print(EscapeSequences.SET_BG_COLOR_RED);
+            } else if (messageColoring.equals("green")) {
+                System.out.print(EscapeSequences.SET_BG_COLOR_GREEN);
+            } else if (messageColoring.equals("blue")) {
+                System.out.print(EscapeSequences.SET_BG_COLOR_BLUE);
+            }
+            if (!messageColoring.equals("null")) {
+                System.out.print(EscapeSequences.SET_TEXT_COLOR_WHITE);
+            }
+            System.out.print(checkMessaging);
+            System.out.print(EscapeSequences.RESET_BG_COLOR);
+            System.out.print(EscapeSequences.RESET_TEXT_COLOR);
+            System.out.print(EscapeSequences.SET_BG_COLOR_YELLOW);
+            System.out.print(EscapeSequences.SET_TEXT_COLOR_MAGENTA);
+        }
+        ke = "";
+        while (k < j) {
+            ke = ke + labels[k];
+            k = k + 1;
+        }
+        System.out.print(ke);
+        System.out.print(EscapeSequences.RESET_BG_COLOR);
+        System.out.print(EscapeSequences.RESET_TEXT_COLOR);
+        System.out.print("\n");
     }
     static void drawBoard(GameData game, boolean a, boolean b) {
         if (game != null) {
