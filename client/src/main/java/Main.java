@@ -140,25 +140,28 @@ public class Main {
         System.out.println("Enter command");
         return "Merely Logged In";
     }
-    static void drawBoard(ChessGame game, boolean isWhite, boolean isObserving, ChessPosition chessPosition) {
+    static void drawBoard(ChessGame yourGame, boolean isWhite, boolean isObserving, ChessPosition theChessPosition) {
         String boardSize = "medium";
         ChessBoard newGame = new ChessBoard();
         newGame.resetBoard();
+        ChessPosition chessPosition = theChessPosition;
         String checkMessaging = "null";
-        if (game != null) {
-            if (game.isInCheck(ChessGame.TeamColor.WHITE)) {
-                checkMessaging = "our team in check";
-                if (game.isInCheckmate(ChessGame.TeamColor.WHITE)) { checkMessaging = "our team in checkmate"; }
-            }
-            if (game.isInCheck(ChessGame.TeamColor.BLACK)) {
-                checkMessaging = "their team in check";
-                if (game.isInCheckmate(ChessGame.TeamColor.BLACK)) { checkMessaging = "their team in checkmate"; }
-            }
-            newGame = game.clone().getBoard();
-            if (!game.abortGame("Question").equals("Set")) {
-                checkMessaging = "White Resigns—Black Wins";
-                if (game.getBlackResigns().getTeamColor() == ChessGame.TeamColor.BLACK) { checkMessaging = "Black Resigns—White Wins"; }
-            }
+        ChessGame game = new ChessGame();
+        if (yourGame != null) {
+            game = yourGame.clone();
+        }
+        if (game.isInCheck(ChessGame.TeamColor.WHITE)) {
+            checkMessaging = "our team in check";
+            if (game.isInCheckmate(ChessGame.TeamColor.WHITE)) { checkMessaging = "our team in checkmate"; }
+        }
+        if (game.isInCheck(ChessGame.TeamColor.BLACK)) {
+            checkMessaging = "their team in check";
+            if (game.isInCheckmate(ChessGame.TeamColor.BLACK)) { checkMessaging = "their team in checkmate"; }
+        }
+        newGame = game.clone().getBoard();
+        if (!game.abortGame("Question").equals("Set")) {
+            checkMessaging = "White Resigns—Black Wins";
+            if (game.getBlackResigns().getTeamColor() == ChessGame.TeamColor.BLACK) { checkMessaging = "Black Resigns—White Wins"; }
         }
         if (!isWhite) {
             if (checkMessaging.equals("our team in check")) {
@@ -172,6 +175,9 @@ public class Main {
                 checkMessaging = "our team in checkmate";
             }
             newGame = reverseBoard(newGame);
+            if (chessPosition != null) {
+                chessPosition = new ChessPosition(9 - chessPosition.getRow(), 9 - chessPosition.getColumn());
+            }
         }
         String messageColoring = "null";
         if (checkMessaging.equals("our team in check") || checkMessaging.equals("our team in checkmate")) { messageColoring = "red"; }
@@ -232,8 +238,23 @@ public class Main {
             }
             heights = heights + 1;
         }
+        if (chessPosition == null) {
+            Void();
+        } else if (newGame.getPiece(chessPosition) == null) {
+            Void();
+        } else {
+            Collection<ChessMove> vM = game.validMoves(theChessPosition);
+            for (ChessMove move: vM) {
+                ChessPosition mv = move.getEndPosition();
+                if (!isWhite) { mv = new ChessPosition(9 - mv.getRow(), 9 - mv.getColumn()); }
+                heights = 90 + mv.getColumn() - mv.getRow() * 10;
+                colorBackGroundsEquals[heights] = "white";
+                if (colorBackGroundsEquals[heights].equals("green")) { colorBackGroundsEquals[heights] = "magenta"; }
+            }
+        }
+        String[] enhancedLabels = new String[90];
         heights = 0;
-        while (heights < 64) {
+        while (heights < 90) {
             heights = heights + 1;
         }
         heights = 13;
@@ -338,5 +359,8 @@ public class Main {
             System.out.println("Empty");
         }
         printIn();
+    }
+    static void Void() {
+        boolean v = false;
     }
 }
