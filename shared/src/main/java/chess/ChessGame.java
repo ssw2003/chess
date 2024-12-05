@@ -10,7 +10,6 @@ import java.util.Collection;
  * signature of the existing methods.
  */
 public class ChessGame {
-
     private ChessGame.TeamColor whoseTurnIsIt;
     private ChessPiece blackResigns;
     private ChessBoard theBoard = new ChessBoard();
@@ -134,14 +133,12 @@ whiteKingHasMoved = false;
         whichPawnsHaveDoubleMoved = i;
         return 9;
     }
-
     /**
      * @return Which team's turn it is
      */
     public TeamColor getTeamTurn() {
         return whoseTurnIsIt;
     }
-
     /**
      * Set's which teams turn it is
      *
@@ -150,7 +147,6 @@ whiteKingHasMoved = false;
     public void setTeamTurn(TeamColor team) {
         whoseTurnIsIt = team;
     }
-
     /**
      * Enum identifying the 2 possible teams in a chess game
      */
@@ -158,8 +154,6 @@ whiteKingHasMoved = false;
         WHITE,
         BLACK
     }
-
-
     private boolean getMyIsCheck(Collection<ChessMove> newMoves, ChessBoard thatBoard, ChessGame.TeamColor theirColor) {
         for (ChessMove move: newMoves) {
             ChessPiece newPiece = thatBoard.getPiece(move.getEndPosition());
@@ -305,7 +299,6 @@ whiteKingHasMoved = false;
         }
         return theseChessMoves;
     }
-
     /**
      * Makes a move in a chess game
      *
@@ -379,7 +372,6 @@ whiteKingHasMoved = false;
             setTeamTurn(ChessGame.TeamColor.WHITE);
         }
     }
-
     /**
      * Determines if the given team is in check
      *
@@ -389,7 +381,6 @@ whiteKingHasMoved = false;
     public boolean isInCheck(TeamColor teamColor) {
         return getIsCheck(theBoard, teamColor);
     }
-
     /**
      * Determines if the given team is in checkmate
      *
@@ -399,7 +390,6 @@ whiteKingHasMoved = false;
     public boolean isInCheckmate(TeamColor teamColor) {
         return isInCheck(teamColor) && validMovesWithColor(teamColor).isEmpty();
     }
-
     /**
      * Determines if the given team is in stalemate, which here is defined as having
      * no valid moves
@@ -410,7 +400,6 @@ whiteKingHasMoved = false;
     public boolean isInStalemate(TeamColor teamColor) {
         return (!isInCheck(teamColor)) && validMovesWithColor(teamColor).isEmpty();
     }
-
     /**
      * Sets this game's chessboard with a given board
      *
@@ -426,7 +415,6 @@ whiteKingHasMoved = false;
         blackQueenRookHasMoved = false;
         whichPawnsHaveDoubleMoved = 0;
     }
-
     /**
      * Gets the current chessboard
      *
