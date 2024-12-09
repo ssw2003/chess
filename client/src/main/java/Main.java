@@ -20,9 +20,54 @@ public class Main {
         String status = "Not Logged In";
         String lastCommand = "HELP";
         DrawingBoardClass drawingBoardClass = new DrawingBoardClass();
+        System.out.println("\n");
         while (!status.equals("Quit")) {
             System.out.println(statusVar(status));
             lastCommand = capitalizeString(getTheirInputs(), true);
+            RequestParse rP = new RequestParse(status, lastCommand);
+            //4,5,6,7,8,9,10,11,12,13
+            if (rP.getInteger() == 0) {
+                Void();
+            } else if (rP.getInteger() == 1) {
+                status = "Quit";
+            } else if (rP.getInteger() == 2) {
+                try {
+                    sF.logoutUser(aD.authToken());;
+                } catch (Exception e) {
+                    System.out.println("Invalid or misspelled auth token");
+                }
+                status = "Not Logged In";
+            } else if (rP.getInteger() == 3) {
+                System.out.println("Game Name:");
+                sF.createGame(new GameName(getTheirInputs()), aD.authToken());
+            } else if (rP.getInteger() == 4) {
+                System.out.println("Games:");
+                Collection<GameData> gD = sF.listGames(aD.authToken());
+                if (gD.isEmpty()) {
+                    System.out.println("  NULL");
+                }
+                printOuts(gD);
+            } else if (rP.getInteger() == 5) {
+                Void();
+            } else if (rP.getInteger() == 6) {
+                Void();
+            } else if (rP.getInteger() == 7) {
+                Void();
+            } else if (rP.getInteger() == 8) {
+                Void();
+            } else if (rP.getInteger() == 9) {
+                Void();
+            } else if (rP.getInteger() == 10) {
+                Void();
+            } else if (rP.getInteger() == 11) {
+                Void();
+            } else if (rP.getInteger() == 12) {
+                Void();
+            } else if (rP.getInteger() == 13) {
+                Void();
+            } else if (rP.getInteger() == 14) {
+                System.out.println("Bad or Misspelled Command\n");
+            }
         }
 //        String status = "Not Logged In";
 //        String lastCommand = "Help";
@@ -268,5 +313,75 @@ public class Main {
             System.out.println("Empty");
         }
         //printIn();
+    }
+    static void Void() {
+        boolean v;
+    }
+    static boolean compareString(String s, String t) {
+        int u = s.hashCode();
+        int v = t.hashCode();
+        if (u != v) {
+            return (u > v);
+        }
+        u = s.length();
+        v = t.length();
+        int i = 0;
+        while (i < u && i < v) {
+            if (s.charAt(i) > t.charAt(i)) {
+                return true;
+            } else if (t.charAt(i) > s.charAt(i)) {
+                return false;
+            }
+            i = i + 1;
+        }
+        if (u != v) {
+            return (u > v);
+        }
+        return true;
+    }
+    static String compareStrings(String s, String t) {
+        boolean cS = compareString(s, t);
+        if (!cS) {
+            return ">";
+        }
+        if (s.equals(t)) {
+            return "=";
+        }
+        return "<";
+    }
+    static GameData gameAt(Collection<GameData> cGM, int i) throws InvalidMoveException {
+        int j = 0;
+        for (GameData gMD: cGM) {
+            j = i;
+            for (GameData gMDS: cGM) {
+                String k = compareStrings(gMDS.gameName(), gMD.gameName());
+                if (k.equals("<")) {
+                    j = j - 1;
+                } else if (k.equals("=") && gMDS.gameID() <= gMD.gameID()) {
+                    j = j - 1;
+                }
+            }
+            if (j == 0) {
+                return gMD;
+            }
+            //String outPrint = gMD.gameName() + ", white = ";
+            //System.out.println(outPrint + gMD.whiteUsername() + ", black = " + gMD.blackUsername());
+        }
+        throw new InvalidMoveException();
+    }
+    static void printOuts(Collection<GameData> cGD) {
+        int varValue = 0;
+        while (varValue < cGD.size()) {
+            varValue++;
+            GameData gA = new GameData(1, "null", "null", "null", new ChessGame());
+            try {
+                gA = gameAt(cGD, varValue);
+            } catch (InvalidMoveException e) {
+                Void();
+            }
+            String s = "  " + varValue + ". " + gA.gameName();
+            s = s + ", white = [" + gA.whiteUsername() + "], black = [" + gA.blackUsername() + "]";
+            System.out.println(s);
+        }
     }
 }
