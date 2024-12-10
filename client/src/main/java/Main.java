@@ -1,12 +1,12 @@
 import chess.*;
+import com.google.gson.Gson;
 import facade.ServerFacade;
 import model.*;
 import ui.EscapeSequences;
+import websocket.commands.MoveMaker;
+import websocket.commands.UserGameCommand;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Objects;
-import java.util.Scanner;
+import java.util.*;
 
 public class Main {
     public static void main(String[] args) {
@@ -22,6 +22,10 @@ public class Main {
         DrawingBoardClass dBC = new DrawingBoardClass();
         System.out.println("\n");
         DrawingBoardClass.Person color = DrawingBoardClass.Person.OBSERVER;
+        MisterClient misterClient = null;
+        try {
+            misterClient = new MisterClient();
+        } catch (Exception e) { Void(); }
         while (!status.equals("Quit")) {
             System.out.println(statusVar(status));
             lastCommand = capitalizeString(getTheirInputs(), true);
@@ -63,13 +67,29 @@ public class Main {
             } else if (rP.getInteger() == 5 || rP.getInteger() == 6) {
                 dBC.drawBoard(gameNumber(wGI, sF.listGames(aD.authToken())).game(), color, rP.getPosition(), DrawingBoardClass.Styling.MEDIUM);
             } else if (rP.getInteger() == 7) {
-                Void();
+                var thingSerializer = new Gson();
+                var thingToSerialize = new MoveMaker(UserGameCommand.CommandType.MAKE_MOVE, aD.authToken(), wGI, rP.getMove());
+                var thingJson = thingSerializer.toJson(thingToSerialize);
+                try {
+                    misterClient.sn(thingJson);
+                } catch (Exception e) { Void(); }
             } else if (rP.getInteger() == 8) {
-                Void();
+                var thingSerializer = new Gson();
+                var thingToSerialize = new UserGameCommand(UserGameCommand.CommandType.RESIGN, aD.authToken(), wGI);
+                var thingJson = thingSerializer.toJson(thingToSerialize);
+                try {
+                    misterClient.sn(thingJson);
+                } catch (Exception e) { Void(); }
             } else if (rP.getInteger() == 9) {
                 wGI = 0;
                 status = "Merely Logged In";
                 color = DrawingBoardClass.Person.OBSERVER;
+                var thingSerializer = new Gson();
+                var thingToSerialize = new UserGameCommand(UserGameCommand.CommandType.LEAVE, aD.authToken(), wGI);
+                var thingJson = thingSerializer.toJson(thingToSerialize);
+                try {
+                    misterClient.sn(thingJson);
+                } catch (Exception e) { Void(); }
             } else if (rP.getInteger() == 13 || rP.getInteger() == 12) {
                 Collection<GameData> gD = sF.listGames(aD.authToken());
                 int i = getTheirIntegerInputs(gD, rP.getInteger() == 12);
@@ -87,6 +107,13 @@ public class Main {
                 if (i % 3 == 1) {
                     color = DrawingBoardClass.Person.BLACK;
                 } else if (i % 3 == 2) { color = DrawingBoardClass.Person.OBSERVER; }
+                try {
+                    var thingSerializer = new Gson();
+                    var thingToSerialize = new UserGameCommand(UserGameCommand.CommandType.CONNECT, aD.authToken(), wGI);
+                    var thingJson = thingSerializer.toJson(thingToSerialize);
+                    i = wGI = nonzeroValue(wGI);
+                    misterClient.sn(thingJson);
+                } catch (Exception e) { Void(); }
             }
         }
 //        String status = "Not Logged In";
