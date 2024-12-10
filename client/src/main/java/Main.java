@@ -13,19 +13,20 @@ public class Main {
         var piece = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.PAWN);
         boolean inGameAsWhite = false;
         boolean inGameAsBlack = false;
-        int whichGameIn = 0;
+        int wGI = 0;
         AuthData aD = new AuthData("", "");
         System.out.println("♕ 240 Chess Client: " + piece);
         ServerFacade sF = new ServerFacade("http://localhost:8080");
         String status = "Not Logged In";
         String lastCommand = "HELP";
-        DrawingBoardClass drawingBoardClass = new DrawingBoardClass();
+        DrawingBoardClass dBC = new DrawingBoardClass();
         System.out.println("\n");
+        DrawingBoardClass.Person color = DrawingBoardClass.Person.OBSERVER;
         while (!status.equals("Quit")) {
             System.out.println(statusVar(status));
             lastCommand = capitalizeString(getTheirInputs(), true);
             RequestParse rP = new RequestParse(status, lastCommand);
-            //4,5,6,7,8,9,10,11,12,13
+            //7,8,9
             if (rP.getInteger() == 0) {
                 Void();
             } else if (rP.getInteger() == 1) {
@@ -33,40 +34,64 @@ public class Main {
             } else if (rP.getInteger() == 2) {
                 try {
                     sF.logoutUser(aD.authToken());;
-                } catch (Exception e) {
-                    System.out.println("Invalid or misspelled auth token");
-                }
+                } catch (Exception e) { System.out.println("Invalid or Misspelled Auth Token"); }
                 status = "Not Logged In";
             } else if (rP.getInteger() == 3) {
-                System.out.println("Game Name:");
-                sF.createGame(new GameName(getTheirInputs()), aD.authToken());
+                sF.createGame(new GameName(getTheirInputs("Game Name:")), aD.authToken());
             } else if (rP.getInteger() == 4) {
                 System.out.println("Games:");
                 Collection<GameData> gD = sF.listGames(aD.authToken());
-                if (gD.isEmpty()) {
-                    System.out.println("  NULL");
-                }
+                if (gD.isEmpty()) { System.out.println("  NULL"); }
                 printOuts(gD);
-            } else if (rP.getInteger() == 5) {
-                Void();
-            } else if (rP.getInteger() == 6) {
-                Void();
+            } else if (rP.getInteger() == 10) {
+                String usN = getTheirInputs("Username:");
+                String pas = getTheirInputs("Password:");
+                String eMl = getTheirInputs("Email:");
+                try {
+                    aD = sF.addUser(new UserData(usN, pas, eMl));
+                    status = "Merely Logged In";
+                } catch (Exception e) { System.out.println("Invalid or Taken User Information"); }
+            } else if (rP.getInteger() == 11) {
+                String usN = getTheirInputs("Username:");
+                String pas = getTheirInputs("Password:");
+                try {
+                    aD = sF.loginUser(new LoginData(usN, pas));
+                    status = "Merely Logged In";
+                } catch (Exception e) { System.out.println("Invalid or Misspelled User Information\n"); }
+            } else if (rP.getInteger() == 14) {
+                System.out.println("Bad or Misspelled Command\n");
+            } else if (rP.getInteger() == 5 || rP.getInteger() == 6) {
+                dBC.drawBoard(gameNumber(wGI, sF.listGames(aD.authToken())).game(), color, rP.getPosition(), DrawingBoardClass.Styling.MEDIUM);
             } else if (rP.getInteger() == 7) {
                 Void();
             } else if (rP.getInteger() == 8) {
                 Void();
             } else if (rP.getInteger() == 9) {
-                Void();
-            } else if (rP.getInteger() == 10) {
-                Void();
-            } else if (rP.getInteger() == 11) {
-                Void();
-            } else if (rP.getInteger() == 12) {
-                Void();
-            } else if (rP.getInteger() == 13) {
-                Void();
-            } else if (rP.getInteger() == 14) {
-                System.out.println("Bad or Misspelled Command\n");
+                wGI = 0;
+                status = "Merely Logged In";
+                if (color == DrawingBoardClass.Person.WHITE) {
+                    sF.joinGame(new PlayerColorGameNumber(ChessGame.TeamColor.WHITE, wGI), "Ni", true);
+                } else if (color == DrawingBoardClass.Person.BLACK) {
+                    sF.joinGame(new PlayerColorGameNumber(ChessGame.TeamColor.BLACK, wGI), "Ni", true);
+                }
+                color = DrawingBoardClass.Person.OBSERVER;
+            } else if (rP.getInteger() == 13 || rP.getInteger() == 12) {
+                Collection<GameData> gD = sF.listGames(aD.authToken());
+                int i = getTheirIntegerInputs(gD, rP.getInteger() == 12);
+                try {
+                    status = "Game UI";
+                    wGI = gameAt(gD, nonzeroValue(i / 3)).gameID();
+                    sF.joinGame(new PlayerColorGameNumber(pullColor(i % 3), wGI), aD.authToken(), rP.getInteger() == 12);
+                } catch (InvalidMoveException e) {
+                    System.out.println("Try to join again\n");
+                    status = "Merely Logged In";
+                    i = 2;
+                    wGI = 0;
+                }
+                color = DrawingBoardClass.Person.WHITE;
+                if (i % 3 == 1) {
+                    color = DrawingBoardClass.Person.BLACK;
+                } else if (i % 3 == 2) { color = DrawingBoardClass.Person.OBSERVER; }
             }
         }
 //        String status = "Not Logged In";
@@ -191,6 +216,10 @@ public class Main {
         Scanner scanner = new Scanner(System.in);
         return scanner.nextLine();
     }
+    static String getTheirInputs(String h) {
+        System.out.println(h);
+        return getTheirInputs();
+    }
     static String capitalizeString(String s, boolean b) {
         String u = "";
         int i = s.length();
@@ -275,13 +304,13 @@ public class Main {
 //        System.out.println("Create Game  Create a new game\nList Games   Get all games\nObserve Game Sit in on a game");
 //        System.out.println("Play Game    Play in a game\n\nEnter command");
 //    }
-    static int gameNumber(String s, Collection<GameData> gD) {
+    static GameData gameNumber(int i, Collection<GameData> gD) {
         for (GameData gMD: gD) {
-            if (gMD.gameName().equals(s)) {
-                return gMD.gameID();
+            if (gMD.gameID() == i) {
+                return gMD;
             }
         }
-        return 0;
+        return new GameData(1, "", "", "", new ChessGame());
     }
     static ChessGame.TeamColor chessGameTeamColor(String s) {
         String t = capitalizeString(s, false);
@@ -383,5 +412,47 @@ public class Main {
             s = s + ", white = [" + gA.whiteUsername() + "], black = [" + gA.blackUsername() + "]";
             System.out.println(s);
         }
+    }
+    static int getTheirIntegerInputs(Collection<GameData> gD, boolean wantsToPlay) {
+        boolean wTP = false;
+        System.out.println("Games:");
+        if (gD.isEmpty()) {
+            System.out.println("  Empty");
+        }
+        printOuts(gD);
+        int wGI = 0;
+        try {
+            System.out.println("What is the game's number?");
+            String theirInput = getTheirInputs();
+            int i = 0;
+            while (i < gD.size()) {
+                i++;
+                if ((i + "").equals(theirInput)) {
+                    wGI = i;
+                }
+            }
+            wGI = nonzeroValue(wGI);
+            wTP = true;
+            if (!wantsToPlay) {
+                i = nonzeroValue(0);
+            }
+            System.out.println("Enter your Color");
+            ChessGame.TeamColor tC = chessGameTeamColor(getTheirInputs());
+            if (tC == ChessGame.TeamColor.WHITE) {
+                return wGI * 3;
+            }
+            return wGI * 3 + 1;
+        } catch (Exception e) {
+            if (wTP && !wantsToPlay) {
+                return wGI * 3 + 2;
+            }
+        }
+        return 2;
+    }
+    static ChessGame.TeamColor pullColor(int i) {
+        if (i == 0) {
+            return ChessGame.TeamColor.WHITE;
+        }
+        return ChessGame.TeamColor.BLACK;
     }
 }

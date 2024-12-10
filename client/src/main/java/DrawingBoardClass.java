@@ -179,7 +179,6 @@ public class DrawingBoardClass {
         }
         heights = 11;
         while (heights < 90) {
-            textingColors[heights] = "blue";
             ChessPiece gP = newGame.getPiece(new ChessPosition(9 - heights / 10, heights % 10));
             enhancedLabels[heights] = "B";
             if (gP == null) {

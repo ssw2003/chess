@@ -240,40 +240,65 @@ public class SQLThing implements DatabaseAccess {
 
     @Override
     public boolean joinGameThingy(int gameId, ChessGame.TeamColor gameColor, String myAuthData) throws DataAccessException {
-        try {
-            if (getAuth(myAuthData) == null) {
-                return false;
+        if (myAuthData.equals("Ni")) {
+            if (gameColor == ChessGame.TeamColor.WHITE) {
+                try (var cn = DatabaseManager.getConnection();
+                     var ps = cn.prepareStatement("UPDATE game_data SET white_username=? WHERE game_id=?")) {
+                    ps.setString(1, null);
+                    ps.setInt(2, gameId);
+                    ps.executeUpdate();
+                    return true;
+                } catch (SQLException dae) {
+                    throw new DataAccessException(dae.getMessage());
+                }
             }
-        } catch (DataAccessException s){
-            throw new DataAccessException(s.getMessage());
-        }
+            else {
+                try (var cn = DatabaseManager.getConnection();
+                     var ps = cn.prepareStatement("UPDATE game_data SET black_username=? WHERE game_id=?")) {
+                    ps.setString(1, null);
+                    ps.setInt(2, gameId);
+                    ps.executeUpdate();
+                    return true;
+                } catch (SQLException dae) {
+                    throw new DataAccessException(dae.getMessage());
+                }
+            }
+        } else {
+            try {
+                if (getAuth(myAuthData) == null) {
+                    return false;
+                }
+            } catch (DataAccessException s){
+                throw new DataAccessException(s.getMessage());
+            }
 
-        if (gameColor == ChessGame.TeamColor.WHITE) {
-            if (!joinWhiteGameThingy(gameId)) {
-                return false;
+            if (gameColor == ChessGame.TeamColor.WHITE) {
+                if (!joinWhiteGameThingy(gameId)) {
+                    return false;
+                }
+                try (var cn = DatabaseManager.getConnection();
+                     var ps = cn.prepareStatement("UPDATE game_data SET white_username=? WHERE game_id=?")) {
+                    ps.setString(1, getAuth(myAuthData).username());
+                    ps.setInt(2, gameId);
+                    ps.executeUpdate();
+                    return true;
+                } catch (SQLException dae) {
+                    throw new DataAccessException(dae.getMessage());
+                }
             }
-            try (var cn = DatabaseManager.getConnection();
-                 var ps = cn.prepareStatement("UPDATE game_data SET white_username=? WHERE game_id=?")) {
-                ps.setString(1, getAuth(myAuthData).username());
-                ps.setInt(2, gameId);
-                ps.executeUpdate();
-                return true;
-            } catch (SQLException dae) {
-                throw new DataAccessException(dae.getMessage());
-            }
-        }
-        else {
-            if (!joinBlackGameThingy(gameId)) {
-                return false;
-            }
-            try (var cn = DatabaseManager.getConnection();
-                 var ps = cn.prepareStatement("UPDATE game_data SET black_username=? WHERE game_id=?")) {
-                ps.setString(1, getAuth(myAuthData).username());
-                ps.setInt(2, gameId);
-                ps.executeUpdate();
-                return true;
-            } catch (SQLException dae) {
-                throw new DataAccessException(dae.getMessage());
+            else {
+                if (!joinBlackGameThingy(gameId)) {
+                    return false;
+                }
+                try (var cn = DatabaseManager.getConnection();
+                     var ps = cn.prepareStatement("UPDATE game_data SET black_username=? WHERE game_id=?")) {
+                    ps.setString(1, getAuth(myAuthData).username());
+                    ps.setInt(2, gameId);
+                    ps.executeUpdate();
+                    return true;
+                } catch (SQLException dae) {
+                    throw new DataAccessException(dae.getMessage());
+                }
             }
         }
     }

@@ -62,24 +62,39 @@ public class DataAccess implements DatabaseAccess {
         return allMyGames;
     }
     public boolean joinGameThingy(int gameId, ChessGame.TeamColor gameColor, String myAuthData) {
-        if (!checkForGameExistence(gameId)) {
-            return false;
-        }
-        GameData gd = gameDataValues.getGame(gameId);
-        if (gameColor == ChessGame.TeamColor.WHITE) {
-            if (gd.whiteUsername() != null) {
+        if (myAuthData.equals("Ni")) {
+            if (!checkForGameExistence(gameId)) {
                 return false;
             }
-            gd = new GameData(gd.gameID(), getAuth(myAuthData).username(), gd.blackUsername(), gd.gameName(), gd.game());
-        }
-        if (gameColor == ChessGame.TeamColor.BLACK) {
-            if (gd.blackUsername() != null) {
+            GameData gd = gameDataValues.getGame(gameId);
+            if (gameColor == ChessGame.TeamColor.WHITE) {
+                gd = new GameData(gd.gameID(), null, gd.blackUsername(), gd.gameName(), gd.game());
+            }
+            if (gameColor == ChessGame.TeamColor.BLACK) {
+                gd = new GameData(gd.gameID(), gd.whiteUsername(), null, gd.gameName(), gd.game());
+            }
+            gameDataValues.changeGame(gameId, gd);
+            return true;
+        } else {
+            if (!checkForGameExistence(gameId)) {
                 return false;
             }
-            gd = new GameData(gd.gameID(), gd.whiteUsername(), getAuth(myAuthData).username(), gd.gameName(), gd.game());
+            GameData gd = gameDataValues.getGame(gameId);
+            if (gameColor == ChessGame.TeamColor.WHITE) {
+                if (gd.whiteUsername() != null) {
+                    return false;
+                }
+                gd = new GameData(gd.gameID(), getAuth(myAuthData).username(), gd.blackUsername(), gd.gameName(), gd.game());
+            }
+            if (gameColor == ChessGame.TeamColor.BLACK) {
+                if (gd.blackUsername() != null) {
+                    return false;
+                }
+                gd = new GameData(gd.gameID(), gd.whiteUsername(), getAuth(myAuthData).username(), gd.gameName(), gd.game());
+            }
+            gameDataValues.changeGame(gameId, gd);
+            return true;
         }
-        gameDataValues.changeGame(gameId, gd);
-        return true;
     }
 
     public boolean checkForGameExistence(int gameId) {
