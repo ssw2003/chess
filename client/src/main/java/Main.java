@@ -69,11 +69,6 @@ public class Main {
             } else if (rP.getInteger() == 9) {
                 wGI = 0;
                 status = "Merely Logged In";
-                if (color == DrawingBoardClass.Person.WHITE) {
-                    sF.joinGame(new PlayerColorGameNumber(ChessGame.TeamColor.WHITE, wGI), "Ni", true);
-                } else if (color == DrawingBoardClass.Person.BLACK) {
-                    sF.joinGame(new PlayerColorGameNumber(ChessGame.TeamColor.BLACK, wGI), "Ni", true);
-                }
                 color = DrawingBoardClass.Person.OBSERVER;
             } else if (rP.getInteger() == 13 || rP.getInteger() == 12) {
                 Collection<GameData> gD = sF.listGames(aD.authToken());

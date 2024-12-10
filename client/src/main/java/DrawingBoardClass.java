@@ -217,7 +217,7 @@ public class DrawingBoardClass {
             } else if (textingColors[heights].equals("blue")) {
                 textingColors[heights] = EscapeSequences.SET_TEXT_COLOR_BLUE;
             } else {
-                colorBackGroundsEquals[heights] = EscapeSequences.SET_BG_COLOR_BLACK;
+                textingColors[heights] = EscapeSequences.SET_TEXT_COLOR_BLACK;
             }
             heights = heights + 1;
         }

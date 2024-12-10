@@ -105,9 +105,6 @@ public class RequestParse {
                 cM = new ChessMove(st, en, null);
             }
         }
-        //Show Moves [S]->6
-        //Make Move [S]->[E]->7
-        //Make Move [S]->[E] with promotion of [P]->7
     }
     private int letterToNumber(String s) {
         return switch (s) {
