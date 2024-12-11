@@ -86,11 +86,11 @@ public class RequestParse {
         }
         if (mC.length() == 13) {
             i = 6;
-            cP = new ChessPosition(letterToNumber(mC.substring(11, 12)), numberToNumber(mC.substring(12, 13)));
+            cP = new ChessPosition(numberToNumber(mC.substring(12, 13)), letterToNumber(mC.substring(11, 12)));
         } else if (mC.length() >= 16) {
             i = 7;
-            ChessPosition st = new ChessPosition(letterToNumber(mC.substring(10, 11)), numberToNumber(mC.substring(11, 12)));
-            ChessPosition en = new ChessPosition(letterToNumber(mC.substring(14, 15)), numberToNumber(mC.substring(15, 16)));
+            ChessPosition st = new ChessPosition(numberToNumber(mC.substring(11, 12)), letterToNumber(mC.substring(10, 11)));
+            ChessPosition en = new ChessPosition(numberToNumber(mC.substring(15, 16)), letterToNumber(mC.substring(14, 15)));
             if (mC.length() >= 35) {
                 switch (mC.substring(35)) {
                     case "PAWN" -> cM = new ChessMove(st, en, ChessPiece.PieceType.PAWN);

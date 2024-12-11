@@ -15,11 +15,11 @@ public class MisterClient {
         ss = wsc.connectToServer(this, u);
         ss.addMessageHandler(new MessageHandler.Whole<String>() {
             @Override
-            public void onMessage(String ms) {
-                System.out.println(ms);
-            }
+            public void onMessage(String ms) {}
         });
     }
     public void sn(String ms) throws Exception { ss.getBasicRemote().sendText(ms); }
-    public void whenMessageComes (Session ss, EndpointConfig ep) {}
+    public void whenMessageComes (Session ss, EndpointConfig ep) {
+        ss.getBasicRemote().toString();
+    }
 }

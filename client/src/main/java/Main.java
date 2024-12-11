@@ -23,6 +23,7 @@ public class Main {
         System.out.println("\n");
         DrawingBoardClass.Person color = DrawingBoardClass.Person.OBSERVER;
         MisterClient misterClient = null;
+        ChessGame notificationGame = new ChessGame();
         try {
             misterClient = new MisterClient();
         } catch (Exception e) { Void(); }
@@ -69,19 +70,21 @@ public class Main {
             } else if (rP.getInteger() == 7) {
                 ChessGame chessGame = gameNumber(wGI, sF.listGames(aD.authToken())).game();
                 dBC.drawBoard(chessGame, color, null, DrawingBoardClass.Styling.MEDIUM);
-                boolean moved = true;
-                if (rP.getMove() == null) {
-                    System.out.println("That isn't a valid way to write a move\n");
-                    moved = false;
-                }
+                //boolean moved = true;
+                //if (rP.getMove() == null) {
+                //    System.out.println("That isn't a valid way to write a move\n");
+                //    moved = false;
+                //}
                 var thingSerializer = new Gson();
                 var thingToSerialize = new MoveMaker(UserGameCommand.CommandType.MAKE_MOVE, aD.authToken(), wGI, rP.getMove());
                 var thingJson = thingSerializer.toJson(thingToSerialize);
                 try {
                     misterClient.sn(thingJson);
-                    moved = false;
-                } catch (Exception e) { Void(); }
+                    //moved = false;
+                } catch (Exception e) { System.out.println("Error"); }
                 if (moved) { System.out.println("Illegal move\n"); }
+                chessGame = gameNumber(wGI, sF.listGames(aD.authToken())).game();
+                dBC.drawBoard(chessGame, color, null, DrawingBoardClass.Styling.MEDIUM);
             } else if (rP.getInteger() == 8) {
                 int resigns = 1;
                 ChessGame chessGame = gameNumber(wGI, sF.listGames(aD.authToken())).game();
@@ -99,10 +102,13 @@ public class Main {
                 var thingSerializer = new Gson();
                 var thingToSerialize = new UserGameCommand(UserGameCommand.CommandType.RESIGN, aD.authToken(), wGI);
                 var thingJson = thingSerializer.toJson(thingToSerialize);
+                boolean b = (resigns == 0);
                 try {
                     misterClient.sn(thingJson);
                     resigns = nonzeroValue(resigns);
-                } catch (Exception e) { Void(); }
+                } catch (Exception e) {
+                    print(b);
+                }
             } else if (rP.getInteger() == 9) {
                 wGI = 0;
                 status = "Merely Logged In";
@@ -140,92 +146,6 @@ public class Main {
                 } catch (Exception e) { Void(); }
             }
         }
-//        String status = "Not Logged In";
-//        String lastCommand = "Help";
-//        printHelp();
-//        while (!status.equals("Quit")) {
-//            lastCommand = getInString();
-//            if (status.equals("Not Logged In") && lastCommand.equals("Register")) {
-//                try {
-//                    aD = sF.addUser(new UserData(getInString("Username:"), getInString("Password:"), getInString("Email:")));
-//                    status = "Merely Logged In";
-//                    printIn();
-//                } catch (Exception e) {
-//                    System.out.println(printHelp("Invalid user information"));
-//                }
-//                lastCommand = "Help";
-//            } else if (status.equals("Not Logged In") && lastCommand.equals("Login")) {
-//                try {
-//                    aD = sF.loginUser(new LoginData(getInString("Username:"), getInString("Password:")));
-//                    status = "Merely Logged In";
-//                    printIn();
-//                } catch (Exception e) {
-//                    System.out.println(printHelp("Invalid or misspelled user information"));
-//                }
-//                lastCommand = "Help";
-//            } else if (status.equals("Not Logged In") && lastCommand.equals("Quit")) {
-//                break;
-//            } else if (status.equals("Not Logged In")) {
-//                status = stringReturn(lastCommand);
-//                lastCommand = "Help";
-//            } else if (status.equals("Merely Logged In") && lastCommand.equals("Logout")) {
-//                lastCommand = "Help";
-//                try {
-//                    sF.logoutUser(aD.authToken());;
-//                    status = "Not Logged In";
-//                    printHelp();
-//                } catch (Exception e) {
-//                    System.out.println(printIn("Invalid or misspelled auth token"));
-//                }
-//            } else if (status.equals("Merely Logged In") && lastCommand.equals("List Games")) {
-//                lastCommand = "Help";
-//                Collection<GameData> cGM = new ArrayList<>();
-//                try {
-//                    cGM = sF.listGames(aD.authToken());
-//                } catch (Exception e) {
-//                    System.out.println(printIn("Invalid or misspelled auth token"));
-//                }
-//                listOutGames(cGM);
-//            } else if (status.equals("Merely Logged In") && lastCommand.equals("Create Game")) {
-//                String gameName = getInString("Game Name:");
-//                if (gameNumber(gameName, sF.listGames(aD.authToken())) == 0) {
-//                    sF.createGame(new GameName(gameName), aD.authToken());
-//                    printIn();
-//                } else {
-//                    System.out.println(printIn("Taken"));
-//                }
-//                lastCommand = "Help";
-//            } else if (status.equals("Merely Logged In") && lastCommand.equals("Observe Game")) {
-//                try {
-//                    whichGameIn = nonzeroValue(gameNumber(getInString("Game Name:"), sF.listGames(aD.authToken())));
-//                    inGameAsWhite = true;
-//                    inGameAsBlack = true;
-//                } catch (Exception e) {
-//                    System.out.println(printIn("Invalid Game Name"));
-//                }
-//                lastCommand = "Help";
-//            } else if (status.equals("Merely Logged In") && lastCommand.equals("Play Game")) {
-//                try {
-//                    whichGameIn = nonzeroValue(gameNumber(getInString("Game Name:"), sF.listGames(aD.authToken())));
-//                    ChessGame.TeamColor color = chessGameTeamColor(getInString(whichGameIn));
-//                    sF.joinGame(new PlayerColorGameNumber(color, whichGameIn), aD.authToken());
-//                    inGameAsWhite = color == ChessGame.TeamColor.WHITE;
-//                    inGameAsBlack = !inGameAsWhite;
-//                } catch (Exception e) {
-//                    System.out.println(printIn("Try to join again"));
-//                }
-//                lastCommand = "Help";
-//            } else {
-//                status = stringThing(lastCommand);
-//            }
-//            if (whichGameIn != 0) {
-//                drawBoard(gameMetaData(sF.listGames(aD.authToken()), whichGameIn), inGameAsWhite, inGameAsBlack);
-//                printIn();
-//            }
-//            whichGameIn = 0;
-//            inGameAsWhite = false;
-//            inGameAsBlack = false;
-//        }
     }
     static String statusVar(String status) {
         String s = '"' + "";
@@ -500,5 +420,10 @@ public class Main {
             return ChessGame.TeamColor.WHITE;
         }
         return ChessGame.TeamColor.BLACK;
+    }
+    static void print(boolean b) {
+        if (!b) {
+            System.out.println("Illegal resign\n");
+        }
     }
 }

@@ -11,6 +11,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Map;
 import java.util.UUID;
 
 public class SQLThing implements DatabaseAccess {
@@ -168,10 +169,14 @@ public class SQLThing implements DatabaseAccess {
 
     @Override
     public int addGame(String gameName) throws DataAccessException {
+        var thingSerializer = new Gson();
+        var thingToSerialize = new ChessGame();
+        var thingJson = thingSerializer.toJson(thingToSerialize);
 
         try (var cn = DatabaseManager.getConnection();
-             var ps = cn.prepareStatement("INSERT INTO game_data (game_name) VALUES (?)", Statement.RETURN_GENERATED_KEYS)) {
+             var ps = cn.prepareStatement("INSERT INTO game_data (game_name, game) VALUES (?, ?)", Statement.RETURN_GENERATED_KEYS)) {
             ps.setString(1, gameName);
+            ps.setString(2, thingJson);
             ps.executeUpdate();
             var j = ps.getGeneratedKeys();
             var i = 0;

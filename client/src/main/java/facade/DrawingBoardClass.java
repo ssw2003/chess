@@ -143,8 +143,9 @@ public class DrawingBoardClass {
                 ChessPosition mv = move.getEndPosition();
                 if (!isWhite) { mv = new ChessPosition(9 - mv.getRow(), 9 - mv.getColumn()); }
                 heights = 90 + mv.getColumn() - mv.getRow() * 10;
+                boolean bf = colorBackGroundsEquals[heights].equals("green");
                 colorBackGroundsEquals[heights] = "white";
-                if (colorBackGroundsEquals[heights].equals("green")) { colorBackGroundsEquals[heights] = "magenta"; }
+                if (bf) { colorBackGroundsEquals[heights] = "magenta"; }
             }
         }
         String[] enhancedLabels = new String[90];
