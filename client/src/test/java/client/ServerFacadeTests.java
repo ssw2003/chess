@@ -187,15 +187,15 @@ public class ServerFacadeTests {
     public void testJoin() {
         AuthData aD = sF.addUser(myUser);
         int i = sF.createGame(new GameName("World's greatest Game"), aD.authToken());
-        sF.joinGame(new PlayerColorGameNumber(ChessGame.TeamColor.WHITE, i), aD.authToken());
+        sF.joinGame(new PlayerColorGameNumber(ChessGame.TeamColor.WHITE, i), aD.authToken(), true);
         Assertions.assertTrue(true);
     }
     @Test
     public void failedJoin() {
         AuthData aD = sF.addUser(myUser);
         int i = sF.createGame(new GameName("World's greatest Game"), aD.authToken());
-        sF.joinGame(new PlayerColorGameNumber(ChessGame.TeamColor.WHITE, i), aD.authToken());
-        Assertions.assertThrows(RuntimeException.class, () -> sF.joinGame(new PlayerColorGameNumber(ChessGame.TeamColor.WHITE, i), aD.authToken()));
+        sF.joinGame(new PlayerColorGameNumber(ChessGame.TeamColor.WHITE, i), aD.authToken(), true);
+        Assertions.assertThrows(RuntimeException.class, () -> sF.joinGame(new PlayerColorGameNumber(ChessGame.TeamColor.WHITE, i), aD.authToken(), true));
     }
 
 }
