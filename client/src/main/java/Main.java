@@ -82,7 +82,7 @@ public class Main {
                     misterClient.sn(thingJson);
                     //moved = false;
                 } catch (Exception e) { System.out.println("Error"); }
-                if (moved) { System.out.println("Illegal move\n"); }
+                //if (moved) { System.out.println("Illegal move\n"); }
                 chessGame = gameNumber(wGI, sF.listGames(aD.authToken())).game();
                 dBC.drawBoard(chessGame, color, null, DrawingBoardClass.Styling.MEDIUM);
             } else if (rP.getInteger() == 8) {
