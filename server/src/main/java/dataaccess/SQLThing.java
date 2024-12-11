@@ -240,6 +240,27 @@ public class SQLThing implements DatabaseAccess {
 
     @Override
     public boolean joinGameThingy(int gameId, ChessGame.TeamColor gameColor, String myAuthData) throws DataAccessException {
+        if (myAuthData == null && gameColor == ChessGame.TeamColor.WHITE) {
+            try (var cn = DatabaseManager.getConnection();
+                 var ps = cn.prepareStatement("UPDATE game_data SET white_username=? WHERE game_id=?")) {
+                ps.setString(1, null);
+                ps.setInt(2, gameId);
+                ps.executeUpdate();
+                return true;
+            } catch (SQLException dae) {
+                throw new DataAccessException(dae.getMessage());
+            }
+        } else if (myAuthData == null) {
+            try (var cn = DatabaseManager.getConnection();
+                 var ps = cn.prepareStatement("UPDATE game_data SET black_username=? WHERE game_id=?")) {
+                ps.setString(1, null);
+                ps.setInt(2, gameId);
+                ps.executeUpdate();
+                return true;
+            } catch (SQLException dae) {
+                throw new DataAccessException(dae.getMessage());
+            }
+        }
         try {
             if (getAuth(myAuthData) == null) {
                 return false;

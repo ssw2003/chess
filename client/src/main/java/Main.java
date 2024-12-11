@@ -1,8 +1,8 @@
 import chess.*;
 import com.google.gson.Gson;
+import facade.DrawingBoardClass;
 import facade.ServerFacade;
 import model.*;
-import ui.EscapeSequences;
 import websocket.commands.MoveMaker;
 import websocket.commands.UserGameCommand;
 
@@ -67,18 +67,41 @@ public class Main {
             } else if (rP.getInteger() == 5 || rP.getInteger() == 6) {
                 dBC.drawBoard(gameNumber(wGI, sF.listGames(aD.authToken())).game(), color, rP.getPosition(), DrawingBoardClass.Styling.MEDIUM);
             } else if (rP.getInteger() == 7) {
+                ChessGame chessGame = gameNumber(wGI, sF.listGames(aD.authToken())).game();
+                dBC.drawBoard(chessGame, color, null, DrawingBoardClass.Styling.MEDIUM);
+                boolean moved = true;
+                if (rP.getMove() == null) {
+                    System.out.println("That isn't a valid way to write a move\n");
+                    moved = false;
+                }
                 var thingSerializer = new Gson();
                 var thingToSerialize = new MoveMaker(UserGameCommand.CommandType.MAKE_MOVE, aD.authToken(), wGI, rP.getMove());
                 var thingJson = thingSerializer.toJson(thingToSerialize);
                 try {
                     misterClient.sn(thingJson);
+                    moved = false;
                 } catch (Exception e) { Void(); }
+                if (moved) { System.out.println("Illegal move\n"); }
             } else if (rP.getInteger() == 8) {
+                int resigns = 1;
+                ChessGame chessGame = gameNumber(wGI, sF.listGames(aD.authToken())).game();
+                dBC.drawBoard(chessGame, color, rP.getPosition(), DrawingBoardClass.Styling.MEDIUM);
+                if (!chessGame.abortGame("Question").equals("Set")) {
+                    System.out.println("Somebody has resigned already, so you can't\n");
+                    resigns = 0;
+                } else if (color == DrawingBoardClass.Person.OBSERVER) {
+                    System.out.println("You are an observer. You can't move or resign\n");
+                    resigns = 0;
+                } else if (chessGame.isInCheckmate(chessGame.getTeamTurn()) || chessGame.isInStalemate(chessGame.getTeamTurn())) {
+                    System.out.println("The game has finished, so you can't resign\n");
+                    resigns = 0;
+                }
                 var thingSerializer = new Gson();
                 var thingToSerialize = new UserGameCommand(UserGameCommand.CommandType.RESIGN, aD.authToken(), wGI);
                 var thingJson = thingSerializer.toJson(thingToSerialize);
                 try {
                     misterClient.sn(thingJson);
+                    resigns = nonzeroValue(resigns);
                 } catch (Exception e) { Void(); }
             } else if (rP.getInteger() == 9) {
                 wGI = 0;
@@ -97,6 +120,7 @@ public class Main {
                     status = "Game UI";
                     wGI = gameAt(gD, nonzeroValue(i / 3)).gameID();
                     sF.joinGame(new PlayerColorGameNumber(pullColor(i % 3), wGI), aD.authToken(), rP.getInteger() == 12);
+                    dBC.drawBoard(gameNumber(wGI, sF.listGames(aD.authToken())).game(), color, rP.getPosition(), DrawingBoardClass.Styling.MEDIUM);
                 } catch (InvalidMoveException e) {
                     System.out.println("Try to join again\n");
                     status = "Merely Logged In";

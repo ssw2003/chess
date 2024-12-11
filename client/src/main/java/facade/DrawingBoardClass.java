@@ -1,3 +1,5 @@
+package facade;
+
 import chess.*;
 import ui.EscapeSequences;
 

@@ -13,6 +13,7 @@ import spark.Spark;
 import websocket.commands.MoveMaker;
 import websocket.commands.UserGameCommand;
 import websocket.messages.ErrorThing;
+import websocket.messages.GameOfChessThing;
 import websocket.messages.ServerMessage;
 
 import java.io.IOException;
@@ -51,23 +52,24 @@ public class MisterServer {
         if (cT == UserGameCommand.CommandType.RESIGN || cM != null) {
             try {
                 Collection<GameData> cGs = sv.theService.dataAccess.getAllGames();
-                boolean b = false;
-                GameData firstGame = null;
-                for (GameData gD: cGs) {
-                    if (gD.gameID() == gameNumber) {
-                        b = true;
-                        firstGame = gD;
-                    }
-                }
-                if (!b) { throw new RuntimeException(); }
+                GameData firstGame = gameData(cGs, gameNumber);
                 if (!"Set".equals(firstGame.game().abortGame("Question"))) { throw new RuntimeException(); }
-                if (cM != null) {
-                    firstGame.game().makeMove(cM);
+                if (cM != null) { firstGame.game().makeMove(cM); }
+                ChessGame.TeamColor color = null;
+                if (firstGame.whiteUsername().equals(usN)) {
+                    color = ChessGame.TeamColor.WHITE;
+                } else if (firstGame.whiteUsername().equals(usN)) {
+                    color = ChessGame.TeamColor.BLACK;
                 }
-            } catch (Exception e) {
-                errorIsSent = true;
-            }
+                if (cT == UserGameCommand.CommandType.RESIGN) {
+                    firstGame.game().abortGame("Resign");
+                }
+            } catch (Exception e) { errorIsSent = true; }
         }
+        GameData cg = null;
+        try {
+            cg = gameData(sv.theService.getAllGames(), gameNumber);
+        } catch (Exception e) {}
         if (errorIsSent) {
             try {
                 var thingSerializer = new Gson();
@@ -75,7 +77,43 @@ public class MisterServer {
                 var thingJson = thingSerializer.toJson(thingToSerialize);
                 ss.getRemote().sendString(thingJson);
             } catch (IOException e) {}
+        } else if (cT == UserGameCommand.CommandType.CONNECT) {
+            //Connect
+            try {
+                var thingSerializer = new Gson();
+                var thingToSerialize = new GameOfChessThing(ServerMessage.ServerMessageType.LOAD_GAME, cg.game());
+                var thingJson = thingSerializer.toJson(thingToSerialize);
+                ss.getRemote().sendString(thingJson);
+            } catch (IOException e) {}
+        } else if (cT == UserGameCommand.CommandType.LEAVE) {
+            //Leave
+            try {
+                if (cg.whiteUsername().equals(usN)) {
+                    sv.theService.dataAccess.joinGameThingy(gameNumber, ChessGame.TeamColor.WHITE, null);
+                } else if (cg.blackUsername().equals(usN)) {
+                    sv.theService.dataAccess.joinGameThingy(gameNumber, ChessGame.TeamColor.BLACK, null);
+                }
+            } catch (Exception e) {}
+        } else if (cT == UserGameCommand.CommandType.MAKE_MOVE) {
+            //Make move
+        } else {
+            //Resign
+            try {
+                if (cg.whiteUsername().equals(usN)) {
+                    sv.theService.dataAccess.joinGameThingy(gameNumber, ChessGame.TeamColor.WHITE, null);
+                } else if (cg.blackUsername().equals(usN)) {
+                    sv.theService.dataAccess.joinGameThingy(gameNumber, ChessGame.TeamColor.BLACK, null);
+                }
+            } catch (Exception e) {}
         }
         //sv.theService.dataAccess.joinGameThingy()
+    }
+    GameData gameData(Collection<GameData> cGs, int gameNumber) throws Exception {
+        for (GameData gD: cGs) {
+            if (gD.gameID() == gameNumber) {
+                return gD;
+            }
+        }
+        throw new Exception();
     }
 }
