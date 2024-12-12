@@ -18,4 +18,5 @@ public interface DatabaseAccess {
     public Collection<GameData> getAllGames() throws DataAccessException;
     public boolean joinGameThingy(int gameId, ChessGame.TeamColor gameColor, String myAuthData) throws DataAccessException;
     public boolean checkForGameExistence(int gameId) throws DataAccessException;
+    public void updateGame(int gameId, ChessGame cg);
 }

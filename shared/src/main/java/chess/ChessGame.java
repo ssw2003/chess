@@ -313,6 +313,9 @@ whiteKingHasMoved = false;
         if (theBoard.getPiece(move.getStartPosition()).getTeamColor() != whoseTurnIsIt) {
             throw p;
         }
+        if (aborted || hasResigned) {
+            throw p;
+        }
         Collection<ChessMove> possibleChessMoves = validMovesWithColor(whoseTurnIsIt);
         boolean isBadMove = true;
         for (ChessMove potentialMove: possibleChessMoves) {

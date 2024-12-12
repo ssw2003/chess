@@ -33,13 +33,22 @@ public class MisterServer {
     @OnWebSocketMessage
     //public void takeCareOfIt(Session ss, String ms) {
     public void onMessage(Session ss, String ms) {
+        String mt = ms + "";
         var frommedJson = new Gson().fromJson(ms, UserGameCommand.class);
         boolean errorIsSent = false;
         String usN = "";
         ChessMove cM = null;
         int gameNumber = frommedJson.getGameID();;
+        String color = "observer";
+        GameData firstGame = null;
         try {
             usN = sv.theService.dataAccess.getAuth(frommedJson.getAuthToken()).username();
+            firstGame = gameData(sv.theService.dataAccess.getAllGames(), gameNumber);
+            if (firstGame.whiteUsername().equals(usN)) {
+                color = "white";
+            } else if (firstGame.blackUsername().equals(usN)) {
+                color = "black";
+            }
             if (!sv.theService.dataAccess.checkForGameExistence(gameNumber)) {
                 errorIsSent = true;
             }
@@ -48,36 +57,134 @@ public class MisterServer {
         }
         UserGameCommand.CommandType cT = frommedJson.getCommandType();
         if (frommedJson.getCommandType() == UserGameCommand.CommandType.MAKE_MOVE) {
-            var fJ = new Gson().fromJson(ms, MoveMaker.class);
+            var fJ = new Gson().fromJson(mt, MoveMaker.class);
             cM = fJ.getMove();
         }
         if ((cT == UserGameCommand.CommandType.MAKE_MOVE) == (cM == null)) {
             errorIsSent = true;
         }
-        if (cT == UserGameCommand.CommandType.RESIGN || cM != null) {
+        if (cT == UserGameCommand.CommandType.CONNECT) {
             try {
-                Collection<GameData> cGs = sv.theService.dataAccess.getAllGames();
-                GameData firstGame = gameData(cGs, gameNumber);
-                if (!"Set".equals(firstGame.game().abortGame("Question"))) { throw new RuntimeException(); }
-                if (cM != null) { firstGame.game().makeMove(cM); }
-                ChessGame.TeamColor color;
-                if (firstGame.whiteUsername().equals(usN)) {
-                    color = ChessGame.TeamColor.WHITE;
-                } else if (firstGame.blackUsername().equals(usN)) {
-                    color = ChessGame.TeamColor.BLACK;
-                } else {
-                    throw new Exception();
+                if (errorIsSent) {
+                    throw new RuntimeException();
                 }
-                if (cT == UserGameCommand.CommandType.RESIGN) {
-                    firstGame.game().abortGame("Resign");
-                    firstGame.game().setBlackResigns(new ChessPiece(color, ChessPiece.PieceType.KING));
+                links.add(new ServerSession(ss, gameNumber, true));
+                var thingSerializer = new Gson();
+                var thingToSerialize = new GameOfChessThing(ServerMessage.ServerMessageType.LOAD_GAME, firstGame.game());
+                var thingJson = thingSerializer.toJson(thingToSerialize);
+                ss.getRemote().sendString(thingJson);
+                for (ServerSession lk: links) {
+                    if (lk.getSession().isOpen() && lk.getSession() != ss && lk.getGameID() == gameNumber) {
+                        var thingySerializer = new Gson();
+                        var thingyToSerialize = new NotificationFactor(ServerMessage.ServerMessageType.NOTIFICATION, "J:" + usN + " connected as " + color);
+                        var thingyJson = thingySerializer.toJson(thingyToSerialize);
+                        lk.getSession().getRemote().sendString(thingyJson);
+                    }
                 }
-            } catch (Exception e) { errorIsSent = true; }
+            } catch (Exception e) {
+                errorIsSent = true;
+            }
+        } else if (cT == UserGameCommand.CommandType.MAKE_MOVE) {
+            try {
+                if (color.equals("observer")) {
+                    throw new RuntimeException();
+                } else if (color.equals("white") == (firstGame.game().getTeamTurn() == ChessGame.TeamColor.BLACK)) {
+                    throw new RuntimeException();
+                } else if (!firstGame.game().abortGame("Question").equals("Set")) {
+                    throw new RuntimeException();
+                }
+//                System.out.println(cM.getStartPosition().getColumn());
+//                System.out.println(cM.getStartPosition().getRow());
+//                System.out.println(cM.getEndPosition().getColumn());
+//                System.out.println(cM.getEndPosition().getRow());
+                ChessGame fg = firstGame.game().clone();
+                fg.makeMove(cM);
+                sv.theService.dataAccess.updateGame(gameNumber, fg);
+                var thingSerializer = new Gson();
+                var thingToSerialize = new GameOfChessThing(ServerMessage.ServerMessageType.LOAD_GAME, firstGame.game());
+                var thingJson = thingSerializer.toJson(thingToSerialize);
+                for (ServerSession lk: links) {
+                    if (lk.getSession().isOpen() && lk.getGameID() == gameNumber) {
+                        lk.getSession().getRemote().sendString(thingJson);
+                    }
+                }
+                for (ServerSession lk: links) {
+                    if (lk.getSession().isOpen() && lk.getSession() != ss && lk.getGameID() == gameNumber) {
+                        var thingySerializer = new Gson();
+                        String mv = convertMove(cM);
+                        var thingyToSerialize = new NotificationFactor(ServerMessage.ServerMessageType.NOTIFICATION, "M:" + usN + " moved from " + mv);
+                        var thingyJson = thingySerializer.toJson(thingyToSerialize);
+                        lk.getSession().getRemote().sendString(thingyJson);
+                    }
+                }
+                for (ServerSession lk: links) {
+                    if (!firstGame.game().isInCheck(firstGame.game().getTeamTurn()) && !firstGame.game().isInStalemate(firstGame.game().getTeamTurn())) {
+                        break;
+                    }
+                    if (lk.getSession().isOpen() && lk.getGameID() == gameNumber) {
+                        var thingySerializer = new Gson();
+                        var thingyToSerialize = new NotificationFactor(ServerMessage.ServerMessageType.NOTIFICATION, "C:");
+                        var thingyJson = thingySerializer.toJson(thingyToSerialize);
+                        lk.getSession().getRemote().sendString(thingyJson);
+                    }
+                }
+            } catch (Exception e) {
+                errorIsSent = true;
+            }
+        } else if (cT == UserGameCommand.CommandType.LEAVE) {
+            try {
+                if (color.equals("white")) {
+                    sv.theService.dataAccess.joinGameThingy(gameNumber, ChessGame.TeamColor.WHITE, null);
+                } else if (color.equals("black")) {
+                    sv.theService.dataAccess.joinGameThingy(gameNumber, ChessGame.TeamColor.BLACK, null);
+                }
+                ServerSession ses = null;
+                for (ServerSession ir: links) {
+                    if (ir.getSession() == ss) {
+                        ses = ir;
+                        break;
+                    }
+                }
+                ss.close();
+                links.remove(ses);
+                for (ServerSession ir: links) {
+                    if (ir.getGameID() == gameNumber && ir.getSession().isOpen()) {
+                        var thingySerializer = new Gson();
+                        var thingyToSerialize = new NotificationFactor(ServerMessage.ServerMessageType.NOTIFICATION, "L:" + usN + " left from " + color);
+                        var thingyJson = thingySerializer.toJson(thingyToSerialize);
+                        ir.getSession().getRemote().sendString(thingyJson);
+                        //System.out.println(ir.getGameID());
+                    }
+                }
+            } catch (Exception e) {
+                errorIsSent = true;
+            }
+        } else {
+            try {
+                if (color.equals("observer")) {
+                    throw new RuntimeException();
+                } else if (!firstGame.game().abortGame("Question").equals("Set")) {
+                    throw new RuntimeException();
+                }
+                ChessPiece resignPiece = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.PAWN);
+                if (color.equals("black")) {
+                    resignPiece = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.PAWN);
+                }
+                firstGame.game().abortGame("Abort");
+                firstGame.game().setBlackResigns(resignPiece);
+                sv.theService.dataAccess.updateGame(gameNumber, firstGame.game());
+                for (ServerSession lk: links) {
+                    if (lk.getSession().isOpen() && lk.getGameID() == gameNumber) {
+                        var thingySerializer = new Gson();
+                        var thingyToSerialize = new NotificationFactor(ServerMessage.ServerMessageType.NOTIFICATION, "R:" + usN + " resigned from " + color);
+                        var thingyJson = thingySerializer.toJson(thingyToSerialize);
+                        lk.getSession().getRemote().sendString(thingyJson);
+                    }
+                }
+            } catch (Exception e) {
+                errorIsSent = true;
+            }
         }
-        GameData cg = null;
-        try {
-            cg = gameData(sv.theService.getAllGames(), gameNumber);
-        } catch (Exception e) {}
         if (errorIsSent) {
             try {
                 var thingSerializer = new Gson();
@@ -85,113 +192,145 @@ public class MisterServer {
                 var thingJson = thingSerializer.toJson(thingToSerialize);
                 ss.getRemote().sendString(thingJson);
             } catch (IOException e) {}
-        } else if (cT == UserGameCommand.CommandType.CONNECT) {
-            //Connect
-            try {
-                var thingSerializer = new Gson();
-                var thingToSerialize = new GameOfChessThing(ServerMessage.ServerMessageType.LOAD_GAME, cg.game());
-                var thingJson = thingSerializer.toJson(thingToSerialize);
-                ss.getRemote().sendString(thingJson);
-                String cl = "observer";
-                if (cg.whiteUsername().equals(usN)) {
-                    cl = "white";
-                } else if (cg.blackUsername().equals(usN)) {
-                    cl = "black";
-                }
-                for (ServerSession ir: links) {
-                    if (ir.getSession() != ss && ir.getGameID() == gameNumber && ir.isGoing()) {
-                        var thingySerializer = new Gson();
-                        var thingyToSerialize = new NotificationFactor(ServerMessage.ServerMessageType.NOTIFICATION, usN + " joined as " + cl);
-                        var thingyJson = thingySerializer.toJson(thingyToSerialize);
-                        ir.getSession().getRemote().sendString(thingyJson);
-                    }
-                }
-                links.add(new ServerSession(ss, gameNumber, true));
-            } catch (IOException e) {}
-        } else if (cT == UserGameCommand.CommandType.LEAVE) {
-            //Leave
-            try {
-                //System.out.println("Chp a");
-                String cl = "observer";
-                if (eqS(cg.whiteUsername(), usN)) {
-                    cl = "white";
-                } else if (eqS(cg.blackUsername(), usN)) {
-                    cl = "black";
-                }
-                //System.out.println("Chp b");
-                if (cl.equals("white")) {
-                    sv.theService.dataAccess.joinGameThingy(gameNumber, ChessGame.TeamColor.WHITE, null);
-                } else if (cl.equals("black")) {
-                    sv.theService.dataAccess.joinGameThingy(gameNumber, ChessGame.TeamColor.BLACK, null);
-                }
-                //System.out.println("Chp c");
-                //System.out.println(gameNumber);
-                for (ServerSession ir: links) {
-                    if (ir.getSession() != ss && ir.getGameID() == gameNumber && ir.isGoing()) {
-                        var thingySerializer = new Gson();
-                        var thingyToSerialize = new NotificationFactor(ServerMessage.ServerMessageType.NOTIFICATION, usN + " left from " + cl);
-                        var thingyJson = thingySerializer.toJson(thingyToSerialize);
-                        ir.getSession().getRemote().sendString(thingyJson);
-                        //System.out.println(ir.getGameID());
-                    }
-                    if (ir.getSession() == ss) {
-                        ir.setGoing(false);
-                    }
-                }
-                //System.out.println("Chp d");
-                //links.add(new ServerSession(ss, gameNumber, true));
-                //System.out.println("Chp e");
-            } catch (Exception e) {
-                try {
-                    var thingSerializer = new Gson();
-                    var thingToSerialize = new ErrorThing(ServerMessage.ServerMessageType.ERROR, "Error");
-                    var thingJson = thingSerializer.toJson(thingToSerialize);
-                    ss.getRemote().sendString(thingJson);
-                } catch (IOException ee) {}
-            }
-        } else if (cT == UserGameCommand.CommandType.MAKE_MOVE) {
-            //Make move
-            try {
-                for (ServerSession ir: links) {
-                    if (ir.getGameID() == gameNumber && ir.isGoing()) {
-                        var thingySerializer = new Gson();
-                        var thingyToSerialize = new GameOfChessThing(ServerMessage.ServerMessageType.LOAD_GAME, cg.game());
-                        var thingyJson = thingySerializer.toJson(thingyToSerialize);
-                        ir.getSession().getRemote().sendString(thingyJson);
-                    }
-                    if (ir.getSession() != ss && ir.getGameID() == gameNumber && ir.isGoing()) {
-                        var thingySerializer = new Gson();
-                        var thingyToSerialize = new NotificationFactor(ServerMessage.ServerMessageType.NOTIFICATION, usN + " made move " + cM.toString());
-                        var thingyJson = thingySerializer.toJson(thingyToSerialize);
-                        ir.getSession().getRemote().sendString(thingyJson);
-                    }
-                    if ((cg.game().isInCheck(cg.game().getTeamTurn()) ||
-                            cg.game().isInCheck(cg.game().getTeamTurn())) &&
-                            ir.getSession() != ss &&
-                            ir.getGameID() == gameNumber &&
-                            ir.isGoing()) {
-                        var thingySerializer = new Gson();
-                        var thingyToSerialize = new NotificationFactor(ServerMessage.ServerMessageType.NOTIFICATION, usN + " check " + cM.toString());
-                        var thingyJson = thingySerializer.toJson(thingyToSerialize);
-                        ir.getSession().getRemote().sendString(thingyJson);
-                    }
-                }
+        }
+//        if (cT == UserGameCommand.CommandType.RESIGN || cM != null) {
+//            try {
+//                Collection<GameData> cGs = sv.theService.dataAccess.getAllGames();
+//                GameData firstGame = gameData(cGs, gameNumber);
+//                if (!"Set".equals(firstGame.game().abortGame("Question"))) { throw new RuntimeException(); }
+//                if (cM != null) { firstGame.game().makeMove(cM); }
+//                ChessGame.TeamColor color;
+//                if (firstGame.whiteUsername().equals(usN)) {
+//                    color = ChessGame.TeamColor.WHITE;
+//                } else if (firstGame.blackUsername().equals(usN)) {
+//                    color = ChessGame.TeamColor.BLACK;
+//                } else {
+//                    throw new Exception();
+//                }
+//                if (cT == UserGameCommand.CommandType.RESIGN) {
+//                    firstGame.game().abortGame("Resign");
+//                    firstGame.game().setBlackResigns(new ChessPiece(color, ChessPiece.PieceType.KING));
+//                }
+//            } catch (Exception e) { errorIsSent = true; }
+//        }
+//        GameData cg = null;
+//        try {
+//            cg = gameData(sv.theService.getAllGames(), gameNumber);
+//        } catch (Exception e) {}
+//        if (errorIsSent) {
+//            try {
+//                var thingSerializer = new Gson();
+//                var thingToSerialize = new ErrorThing(ServerMessage.ServerMessageType.ERROR, "Error");
+//                var thingJson = thingSerializer.toJson(thingToSerialize);
+//                ss.getRemote().sendString(thingJson);
+//            } catch (IOException e) {}
+//        } else if (cT == UserGameCommand.CommandType.CONNECT) {
+//            //Connect
+//            try {
 //                var thingSerializer = new Gson();
 //                var thingToSerialize = new GameOfChessThing(ServerMessage.ServerMessageType.LOAD_GAME, cg.game());
 //                var thingJson = thingSerializer.toJson(thingToSerialize);
 //                ss.getRemote().sendString(thingJson);
-            } catch (IOException e) {}
-        } else {
-            //Resign
-            try {
-                if (!cg.game().abortGame("Question").equals("Set")) {
-                    throw new Exception();
-                } else if (cg.game().isInCheckmate(cg.game().getTeamTurn()) || cg.game().isInStalemate(cg.game().getTeamTurn())) {
-                    throw new Exception();
-                }
-            } catch (Exception e) {}
-        }
-        //sv.theService.dataAccess.joinGameThingy()
+//                String cl = "observer";
+//                if (cg.whiteUsername().equals(usN)) {
+//                    cl = "white";
+//                } else if (cg.blackUsername().equals(usN)) {
+//                    cl = "black";
+//                }
+//                for (ServerSession ir: links) {
+//                    if (ir.getSession() != ss && ir.getGameID() == gameNumber && ir.isGoing()) {
+//                        var thingySerializer = new Gson();
+//                        var thingyToSerialize = new NotificationFactor(ServerMessage.ServerMessageType.NOTIFICATION, usN + " joined as " + cl);
+//                        var thingyJson = thingySerializer.toJson(thingyToSerialize);
+//                        ir.getSession().getRemote().sendString(thingyJson);
+//                    }
+//                }
+//                links.add(new ServerSession(ss, gameNumber, true));
+//            } catch (IOException e) {}
+//        } else if (cT == UserGameCommand.CommandType.LEAVE) {
+//            //Leave
+//            try {
+//                //System.out.println("Chp a");
+//                String cl = "observer";
+//                if (eqS(cg.whiteUsername(), usN)) {
+//                    cl = "white";
+//                } else if (eqS(cg.blackUsername(), usN)) {
+//                    cl = "black";
+//                }
+//                //System.out.println("Chp b");
+//                if (cl.equals("white")) {
+//                    sv.theService.dataAccess.joinGameThingy(gameNumber, ChessGame.TeamColor.WHITE, null);
+//                } else if (cl.equals("black")) {
+//                    sv.theService.dataAccess.joinGameThingy(gameNumber, ChessGame.TeamColor.BLACK, null);
+//                }
+//                //System.out.println("Chp c");
+//                //System.out.println(gameNumber);
+//                for (ServerSession ir: links) {
+//                    if (ir.getSession() != ss && ir.getGameID() == gameNumber && ir.isGoing()) {
+//                        var thingySerializer = new Gson();
+//                        var thingyToSerialize = new NotificationFactor(ServerMessage.ServerMessageType.NOTIFICATION, usN + " left from " + cl);
+//                        var thingyJson = thingySerializer.toJson(thingyToSerialize);
+//                        ir.getSession().getRemote().sendString(thingyJson);
+//                        //System.out.println(ir.getGameID());
+//                    }
+//                    if (ir.getSession() == ss) {
+//                        ir.setGoing(false);
+//                    }
+//                }
+//                //System.out.println("Chp d");
+//                //links.add(new ServerSession(ss, gameNumber, true));
+//                //System.out.println("Chp e");
+//            } catch (Exception e) {
+//                try {
+//                    var thingSerializer = new Gson();
+//                    var thingToSerialize = new ErrorThing(ServerMessage.ServerMessageType.ERROR, "Error");
+//                    var thingJson = thingSerializer.toJson(thingToSerialize);
+//                    ss.getRemote().sendString(thingJson);
+//                } catch (IOException ee) {}
+//            }
+//        } else if (cT == UserGameCommand.CommandType.MAKE_MOVE) {
+//            //Make move
+//            try {
+//                for (ServerSession ir: links) {
+//                    if (ir.getGameID() == gameNumber && ir.isGoing()) {
+//                        var thingySerializer = new Gson();
+//                        var thingyToSerialize = new GameOfChessThing(ServerMessage.ServerMessageType.LOAD_GAME, cg.game());
+//                        var thingyJson = thingySerializer.toJson(thingyToSerialize);
+//                        ir.getSession().getRemote().sendString(thingyJson);
+//                    }
+//                    if (ir.getSession() != ss && ir.getGameID() == gameNumber && ir.isGoing()) {
+//                        var thingySerializer = new Gson();
+//                        var thingyToSerialize = new NotificationFactor(ServerMessage.ServerMessageType.NOTIFICATION, usN + " made move " + cM.toString());
+//                        var thingyJson = thingySerializer.toJson(thingyToSerialize);
+//                        ir.getSession().getRemote().sendString(thingyJson);
+//                    }
+//                    if ((cg.game().isInCheck(cg.game().getTeamTurn()) ||
+//                            cg.game().isInCheck(cg.game().getTeamTurn())) &&
+//                            ir.getSession() != ss &&
+//                            ir.getGameID() == gameNumber &&
+//                            ir.isGoing()) {
+//                        var thingySerializer = new Gson();
+//                        var thingyToSerialize = new NotificationFactor(ServerMessage.ServerMessageType.NOTIFICATION, usN + " check " + cM.toString());
+//                        var thingyJson = thingySerializer.toJson(thingyToSerialize);
+//                        ir.getSession().getRemote().sendString(thingyJson);
+//                    }
+//                }
+////                var thingSerializer = new Gson();
+////                var thingToSerialize = new GameOfChessThing(ServerMessage.ServerMessageType.LOAD_GAME, cg.game());
+////                var thingJson = thingSerializer.toJson(thingToSerialize);
+////                ss.getRemote().sendString(thingJson);
+//            } catch (IOException e) {}
+//        } else {
+//            //Resign
+//            try {
+//                if (!cg.game().abortGame("Question").equals("Set")) {
+//                    throw new Exception();
+//                } else if (cg.game().isInCheckmate(cg.game().getTeamTurn()) || cg.game().isInStalemate(cg.game().getTeamTurn())) {
+//                    throw new Exception();
+//                }
+//            } catch (Exception e) {}
+//        }
+//        //sv.theService.dataAccess.joinGameThingy()
     }
     GameData gameData(Collection<GameData> cGs, int gameNumber) throws Exception {
         for (GameData gD: cGs) {
@@ -204,6 +343,43 @@ public class MisterServer {
     boolean eqS(String a, String b) {
         if (a == null) { return b == null; }
         if (b == null) { return false; }
-        return a == b;
+        return a.equals(b);
+    }
+    private String convertMove(ChessMove mv) {
+        String w = NumberToLetter(mv.getStartPosition().getColumn());
+        w = w + mv.getStartPosition().getRow();
+        w = w + " to ";
+        w = w + NumberToLetter(mv.getEndPosition().getColumn());
+        w = w + mv.getEndPosition().getRow();
+        if (mv.getPromotionPiece() == null) {
+            return w;
+        }
+        w = w + " making ";
+        ChessPiece.PieceType pT = mv.getPromotionPiece();
+        if (pT == ChessPiece.PieceType.QUEEN) {
+            return w + "QUEEN";
+        } else if (pT == ChessPiece.PieceType.BISHOP) {
+            return w + "BISHOP";
+        } else if (pT == ChessPiece.PieceType.KNIGHT) {
+            return w + "KNIGHT";
+        } else if (pT == ChessPiece.PieceType.ROOK) {
+            return w + "ROOK";
+        } else if (pT == ChessPiece.PieceType.KING) {
+            return w + "KING";
+        }
+        return w + "PAWN";
+    }
+    private String NumberToLetter(int s) {
+        return switch (s) {
+            case 1 -> "A";
+            case 2 -> "B";
+            case 3 -> "C";
+            case 4 -> "D";
+            case 5 -> "E";
+            case 6 -> "F";
+            case 7 -> "G";
+            case 8 -> "H";
+            default -> "";
+        };
     }
 }

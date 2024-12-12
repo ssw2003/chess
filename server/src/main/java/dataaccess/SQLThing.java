@@ -6,6 +6,8 @@ import org.mindrot.jbcrypt.BCrypt;
 import model.AuthData;
 import model.GameData;
 import model.UserData;
+import websocket.messages.GameOfChessThing;
+import websocket.messages.ServerMessage;
 
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -241,6 +243,20 @@ public class SQLThing implements DatabaseAccess {
             return true;
         }
         return true;
+    }
+    @Override
+    public void updateGame(int gameId, ChessGame cg) {
+        try (var cn = DatabaseManager.getConnection();
+             var ps = cn.prepareStatement("UPDATE game_data SET game=? WHERE game_id=?")) {
+            var thingSerializer = new Gson();
+            var thingToSerialize = cg.clone();
+            var thingJson = thingSerializer.toJson(thingToSerialize);
+            ps.setString(1, thingJson);
+            ps.setInt(2, gameId);
+            ps.executeUpdate();
+        } catch (Exception e) {
+            //throw new DataAccessException(dae.getMessage());
+        }
     }
 
     @Override

@@ -1,5 +1,6 @@
 package server;
 
+import chess.ChessGame;
 import model.GameData;
 
 import java.util.ArrayList;
@@ -51,5 +52,10 @@ public class GameDataSet {
                 gameData.add(game);
             }
         }
+    }
+    public void updateGame(int i, ChessGame gd) {
+        GameData ga = getGame(i);
+        GameData si = new GameData(ga.gameID(), ga.whiteUsername(), ga.blackUsername(), ga.gameName(), gd);
+        changeGame(i, si);
     }
 }

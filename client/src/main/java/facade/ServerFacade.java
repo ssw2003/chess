@@ -122,19 +122,17 @@ public class ServerFacade {
         GameInteger r = this.requestSomethingBody(cn, url + "/game", gN, GameInteger.class);
         return r.gameID();
     }
-    public void joinGame(PlayerColorGameNumber uD, String aT, boolean w) {
-        if (w) {
-            HttpURLConnection cn;
-            try {
-                URL newUrl = (new URI(url + "/game")).toURL();
-                cn = (HttpURLConnection) newUrl.openConnection();
-                cn.setRequestMethod("PUT");
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-            this.setHeader(cn, aT);
-            this.requestSomethingBody(cn, url + "/game", uD, Map.class);
+    public void joinGame(PlayerColorGameNumber uD, String aT) {
+        HttpURLConnection cn;
+        try {
+            URL newUrl = (new URI(url + "/game")).toURL();
+            cn = (HttpURLConnection) newUrl.openConnection();
+            cn.setRequestMethod("PUT");
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
+        this.setHeader(cn, aT);
+        this.requestSomethingBody(cn, url + "/game", uD, Map.class);
     }
     public Collection<GameData> listGames(String aT) {
         HttpURLConnection cn;

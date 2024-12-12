@@ -89,4 +89,9 @@ public class DataAccess implements DatabaseAccess {
         return true;
     }
 
+    @Override
+    public void updateGame(int gameId, ChessGame cg) {
+        gameDataValues.updateGame(gameId, cg);
+    }
+
 }
