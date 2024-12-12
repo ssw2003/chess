@@ -115,127 +115,105 @@ public class DrawingBoardClass {
         }
         dBoard(isWhite, chessPosition, newGame, game, boardSize, theChessPosition, bigNumber, messageColoring, checkMessaging);
     }
-    private void dBoard(boolean isWhite, ChessPosition chessPosition, ChessBoard newGame, ChessGame game, String boardSize, ChessPosition theChessPosition, int bigNumber, String messageColoring, String checkMessaging) {
-        String[] colorBackGroundsEquals = new String[90];
+    private void dBoard(boolean isWhite, ChessPosition ps, ChessBoard ng, ChessGame z, String sz, ChessPosition tcp, int bN, String mc, String cm) {
+        String[] cBE = new String[90];
         String[] labels = new String[8];
         labels = new String[] { "h", "g", "f", "e", "d", "c", "b", "a" };
-        if (isWhite) {
-            labels = new String[] { "a", "b", "c", "d", "e", "f", "g", "h" };
+        if (isWhite) { labels = new String[] { "a", "b", "c", "d", "e", "f", "g", "h" }; }
+        int he = 0;
+        while (he < 10) {
+            cBE[he] = "yellow";
+            he = he + 1;
         }
-        int heights = 0;
-        while (heights < 10) {
-            colorBackGroundsEquals[heights] = "yellow";
-            heights = heights + 1;
+        while (he <= 89) {
+            cBE[he] = "gray";
+            if ((he - 1) % 10 > 7) { cBE[he] = "yellow"; } else if (((he % 10) + (he / 10)) % 2 == 1) { cBE[he] = "green"; }
+            he = he + 1;
         }
-        while (heights <= 89) {
-            colorBackGroundsEquals[heights] = "gray";
-            if ((heights - 1) % 10 > 7) {
-                colorBackGroundsEquals[heights] = "yellow";
-            } else if (((heights % 10) + (heights / 10)) % 2 == 1) {
-                colorBackGroundsEquals[heights] = "green";
-            }
-            heights = heights + 1;
-        }
-        if (chessPosition == null) {
-            voidThings();
-        } else if (newGame.getPiece(chessPosition) == null) {
-            voidThings();
+        if (ps == null) {} else if (ng.getPiece(ps) == null) {
         } else {
-            Collection<ChessMove> vM = game.validMoves(theChessPosition);
+            Collection<ChessMove> vM = z.validMoves(tcp);
             for (ChessMove move: vM) {
                 ChessPosition mv = move.getEndPosition();
                 if (!isWhite) { mv = new ChessPosition(9 - mv.getRow(), 9 - mv.getColumn()); }
-                heights = 90 + mv.getColumn() - mv.getRow() * 10;
-                boolean bf = colorBackGroundsEquals[heights].equals("green");
-                colorBackGroundsEquals[heights] = "white";
-                if (bf) { colorBackGroundsEquals[heights] = "magenta"; }
+                he = 90 + mv.getColumn() - mv.getRow() * 10;
+                boolean bf = cBE[he].equals("green");
+                cBE[he] = "white";
+                if (bf) { cBE[he] = "magenta"; }
             }
         }
         String[] enhancedLabels = new String[90];
-        String[] textingColors = new String[90];
-        heights = 0;
-        while (heights < 90) {
-            textingColors[heights] = "magenta";
-            heights = heights + 1;
+        String[] txc = new String[90];
+        he = 0;
+        while (he < 90) {
+            txc[he] = "magenta";
+            he = he + 1;
         }
-        heights = 11;
-        while (heights < 90) {
-            textingColors[heights] = "blue";
-            if (newGame.getPiece(new ChessPosition(9 - heights / 10, heights % 10)) == null) {
-                voidThings();
-            } else if (newGame.getPiece(new ChessPosition(9 - heights / 10, heights % 10)).getTeamColor() == ChessGame.TeamColor.BLACK) {
-                textingColors[heights] = "black";
-            }
-            heights = heights + 1;
-            if ((heights - 1) % 10 > 7) {
-                heights = heights + 2;
-            }
+        he = 11;
+        while (he < 90) {
+            txc[he] = "blue";
+            if (ng.getPiece(new ChessPosition(9 - he / 10, he % 10)) == null) {
+            } else if (ng.getPiece(new ChessPosition(9 - he / 10, he % 10)).getTeamColor() == ChessGame.TeamColor.BLACK) { txc[he] = "black"; }
+            he = he + 1;
+            if ((he - 1) % 10 > 7) { he = he + 2; }
         }
-        heights = 0;
+        he = 0;
         enhancedLabels[0] = " ";
         enhancedLabels[9] = " ";
-        while (heights < 8) {
-            enhancedLabels[heights + 1] = labels[heights];
-            heights = heights + 1;
-            enhancedLabels[10 * heights] = "" + heights;
-            if (isWhite) {
-                enhancedLabels[10 * heights] = "" + (9 - heights);
-            }
-            enhancedLabels[10 * heights + 9] = enhancedLabels[10 * heights];
+        while (he < 8) {
+            enhancedLabels[he + 1] = labels[he];
+            he = he + 1;
+            enhancedLabels[10 * he] = "" + he;
+            if (isWhite) { enhancedLabels[10 * he] = "" + (9 - he); }
+            enhancedLabels[10 * he + 9] = enhancedLabels[10 * he];
         }
-        heights = 11;
-        while (heights < 90) {
-            ChessPiece gP = newGame.getPiece(new ChessPosition(9 - heights / 10, heights % 10));
-            enhancedLabels[heights] = "B";
+        he = 11;
+        while (he < 90) {
+            ChessPiece gP = ng.getPiece(new ChessPosition(9 - he / 10, he % 10));
+            enhancedLabels[he] = "B";
             if (gP == null) {
-                enhancedLabels[heights] = " ";
+                enhancedLabels[he] = " ";
             } else if (gP.getPieceType() == ChessPiece.PieceType.PAWN) {
-                enhancedLabels[heights] = "P";
+                enhancedLabels[he] = "P";
             } else if (gP.getPieceType() == ChessPiece.PieceType.KING) {
-                enhancedLabels[heights] = "K";
+                enhancedLabels[he] = "K";
             } else if (gP.getPieceType() == ChessPiece.PieceType.QUEEN) {
-                enhancedLabels[heights] = "Q";
+                enhancedLabels[he] = "Q";
             } else if (gP.getPieceType() == ChessPiece.PieceType.ROOK) {
-                enhancedLabels[heights] = "R";
+                enhancedLabels[he] = "R";
             } else if (gP.getPieceType() == ChessPiece.PieceType.KNIGHT) {
-                enhancedLabels[heights] = "N";
+                enhancedLabels[he] = "N";
             }
-            heights = heights + 1;
-            if ((heights - 1) % 10 > 7) {
-                heights = heights + 2;
+            he = he + 1;
+            if ((he - 1) % 10 > 7) {
+                he = he + 2;
             }
         }
-        heights = 0;
-        while (heights < 90) {
-            if (colorBackGroundsEquals[heights].equals("yellow")) {
-                colorBackGroundsEquals[heights] = EscapeSequences.SET_BG_COLOR_YELLOW;
-            } else if (colorBackGroundsEquals[heights].equals("green")) {
-                colorBackGroundsEquals[heights] = EscapeSequences.SET_BG_COLOR_DARK_GREEN;
-            } else if (colorBackGroundsEquals[heights].equals("gray")) {
-                colorBackGroundsEquals[heights] = EscapeSequences.SET_BG_COLOR_LIGHT_GREY;
-            } else if (colorBackGroundsEquals[heights].equals("magenta")) {
-                colorBackGroundsEquals[heights] = EscapeSequences.SET_BG_COLOR_MAGENTA;
-            } else {
-                colorBackGroundsEquals[heights] = EscapeSequences.SET_BG_COLOR_WHITE;
-            }
-            if (textingColors[heights].equals("magenta")) {
-                textingColors[heights] = EscapeSequences.SET_TEXT_COLOR_MAGENTA;
-            } else if (textingColors[heights].equals("blue")) {
-                textingColors[heights] = EscapeSequences.SET_TEXT_COLOR_BLUE;
-            } else {
-                textingColors[heights] = EscapeSequences.SET_TEXT_COLOR_BLACK;
-            }
-            heights = heights + 1;
+        he = 0;
+        while (he < 90) {
+            if (cBE[he].equals("yellow")) {
+                cBE[he] = EscapeSequences.SET_BG_COLOR_YELLOW;
+            } else if (cBE[he].equals("green")) {
+                cBE[he] = EscapeSequences.SET_BG_COLOR_DARK_GREEN;
+            } else if (cBE[he].equals("gray")) {
+                cBE[he] = EscapeSequences.SET_BG_COLOR_LIGHT_GREY;
+            } else if (cBE[he].equals("magenta")) {
+                cBE[he] = EscapeSequences.SET_BG_COLOR_MAGENTA;
+            } else { cBE[he] = EscapeSequences.SET_BG_COLOR_WHITE; }
+            if (txc[he].equals("magenta")) {
+                txc[he] = EscapeSequences.SET_TEXT_COLOR_MAGENTA;
+            } else if (txc[he].equals("blue")) {
+                txc[he] = EscapeSequences.SET_TEXT_COLOR_BLUE;
+            } else { txc[he] = EscapeSequences.SET_TEXT_COLOR_BLACK; }
+            he = he + 1;
         }
-        heights = 13;
-        if (boardSize.equals("big")) {
-            heights = 39;
-        } else if (boardSize.equals("medium")) {
-            heights = 37;
-        }
-        drawIt(heights, textingColors, colorBackGroundsEquals, enhancedLabels, bigNumber, labels, checkMessaging, messageColoring);
+        he = 13;
+        if (sz.equals("big")) {
+            he = 39;
+        } else if (sz.equals("medium")) { he = 37; }
+        drawIt(he, txc, cBE, enhancedLabels, bN, labels, cm, mc);
     }
-    private void drawIt(int heights, String[] textingColors, String[] colorBackGroundsEquals, String[] enhancedLabels, int bigNumber, String[] labels, String checkMessaging, String messageColoring) {
+    private void drawIt(int heights, String[] textingColors, String[] cbe, String[] el, int bn, String[] lb, String cm, String mc) {
         int j = 0;
         int k = 0;
         String ke = "";
@@ -251,7 +229,7 @@ public class DrawingBoardClass {
                 k = 10 * i;
                 while (k < 10 * i + 10) {
                     System.out.print(textingColors[k]);
-                    System.out.print(colorBackGroundsEquals[k]);
+                    System.out.print(cbe[k]);
                     System.out.print(ke + ke + " ");
                     System.out.print(EscapeSequences.RESET_TEXT_COLOR);
                     System.out.print(EscapeSequences.RESET_BG_COLOR);
@@ -262,9 +240,9 @@ public class DrawingBoardClass {
             }
             k = 10 * i;
             while (k < 10 * i + 10) {
-                System.out.print(colorBackGroundsEquals[k]);
+                System.out.print(cbe[k]);
                 System.out.print(textingColors[k]);
-                System.out.print(ke + enhancedLabels[k] + ke);
+                System.out.print(ke + el[k] + ke);
                 System.out.print(EscapeSequences.RESET_BG_COLOR);
                 System.out.print(EscapeSequences.RESET_TEXT_COLOR);
                 k = k + 1;
@@ -274,7 +252,7 @@ public class DrawingBoardClass {
                 k = 0;
                 while (k < 10) {
                     System.out.print(textingColors[10 * i + k]);
-                    System.out.print(colorBackGroundsEquals[10 * i + k]);
+                    System.out.print(cbe[10 * i + k]);
                     System.out.print(ke + ke + " ");
                     System.out.print(EscapeSequences.RESET_BG_COLOR);
                     System.out.print(EscapeSequences.RESET_TEXT_COLOR);
@@ -284,7 +262,7 @@ public class DrawingBoardClass {
             i = i + 1;
             System.out.print("\n");
         }
-        finalDraw(bigNumber, heights, labels, enhancedLabels, messageColoring, checkMessaging);
+        finalDraw(bn, heights, lb, el, mc, cm);
     }
     private void finalDraw(int bigNumber, int heights, String[] labels, String[] enhancedLabels, String messageColoring, String checkMessaging) {
         bigNumber = ((heights - 3) % 10) * 5 + bigNumber;
