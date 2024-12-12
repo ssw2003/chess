@@ -343,8 +343,8 @@ public class Client implements NotificationHandler {
         }
         if (wGI != 0) {
             var thingSerializer = new Gson();
-            var thingToSerialize = new UserGameCommand(UserGameCommand.CommandType.CONNECT, aD.authToken(), wGI);
-            var thingJson = thingSerializer.toJson(thingToSerialize);
+            var command = new UserGameCommand(UserGameCommand.CommandType.CONNECT, aD.authToken(), wGI);
+            var thingJson = thingSerializer.toJson(command);
             status = "Game UI";
             try {
                 misterClient.sn(thingJson);

@@ -113,6 +113,9 @@ public class DrawingBoardClass {
             bigNumber = 10;
             messageColoring = "blue";
         }
+        dBoard(isWhite, chessPosition, newGame, game, boardSize, theChessPosition, bigNumber, messageColoring, checkMessaging);
+    }
+    private void dBoard(boolean isWhite, ChessPosition chessPosition, ChessBoard newGame, ChessGame game, String boardSize, ChessPosition theChessPosition, int bigNumber, String messageColoring, String checkMessaging) {
         String[] colorBackGroundsEquals = new String[90];
         String[] labels = new String[8];
         labels = new String[] { "h", "g", "f", "e", "d", "c", "b", "a" };
@@ -230,6 +233,9 @@ public class DrawingBoardClass {
         } else if (boardSize.equals("medium")) {
             heights = 37;
         }
+        drawIt(heights, textingColors, colorBackGroundsEquals, enhancedLabels, bigNumber, labels, checkMessaging, messageColoring);
+    }
+    private void drawIt(int heights, String[] textingColors, String[] colorBackGroundsEquals, String[] enhancedLabels, int bigNumber, String[] labels, String checkMessaging, String messageColoring) {
         int j = 0;
         int k = 0;
         String ke = "";
@@ -278,9 +284,13 @@ public class DrawingBoardClass {
             i = i + 1;
             System.out.print("\n");
         }
+        finalDraw(bigNumber, heights, labels, enhancedLabels, messageColoring, checkMessaging);
+    }
+    private void finalDraw(int bigNumber, int heights, String[] labels, String[] enhancedLabels, String messageColoring, String checkMessaging) {
         bigNumber = ((heights - 3) % 10) * 5 + bigNumber;
+        String ke;
         labels = new String[270];
-        i = 0;
+        int i = 0;
         while (i < 270) {
             labels[i] = " ";
             i = i + 1;
@@ -290,8 +300,8 @@ public class DrawingBoardClass {
             labels[(heights % 10) * i + ((heights % 10) / 2) + (heights / 20) * 90] = enhancedLabels[i];
             i = i + 1;
         }
-        j = (heights / 10) - 1;
-        k = (heights % 10) * 10;
+        int j = (heights / 10) - 1;
+        int k = (heights % 10) * 10;
         i = 0;
         while (i < j) {
             ke = "";
@@ -333,9 +343,7 @@ public class DrawingBoardClass {
             } else if (messageColoring.equals("blue")) {
                 System.out.print(EscapeSequences.SET_BG_COLOR_BLUE);
             }
-            if (!messageColoring.equals("null")) {
-                System.out.print(EscapeSequences.SET_TEXT_COLOR_WHITE);
-            }
+            if (!messageColoring.equals("null")) { System.out.print(EscapeSequences.SET_TEXT_COLOR_WHITE); }
             System.out.print(checkMessaging);
             System.out.print(EscapeSequences.RESET_BG_COLOR);
             System.out.print(EscapeSequences.RESET_TEXT_COLOR);
