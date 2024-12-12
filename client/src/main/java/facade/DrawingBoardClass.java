@@ -10,7 +10,7 @@ public class DrawingBoardClass {
     public DrawingBoardClass() {
         i = false;
     }
-    private void Void() {
+    private void voidThings() {
         boolean v = false;
     }
     public enum Styling {
@@ -134,9 +134,9 @@ public class DrawingBoardClass {
             heights = heights + 1;
         }
         if (chessPosition == null) {
-            Void();
+            voidThings();
         } else if (newGame.getPiece(chessPosition) == null) {
-            Void();
+            voidThings();
         } else {
             Collection<ChessMove> vM = game.validMoves(theChessPosition);
             for (ChessMove move: vM) {
@@ -159,7 +159,7 @@ public class DrawingBoardClass {
         while (heights < 90) {
             textingColors[heights] = "blue";
             if (newGame.getPiece(new ChessPosition(9 - heights / 10, heights % 10)) == null) {
-                Void();
+                voidThings();
             } else if (newGame.getPiece(new ChessPosition(9 - heights / 10, heights % 10)).getTeamColor() == ChessGame.TeamColor.BLACK) {
                 textingColors[heights] = "black";
             }
@@ -322,7 +322,7 @@ public class DrawingBoardClass {
         System.out.print(EscapeSequences.SET_TEXT_COLOR_MAGENTA);
         System.out.print(ke);
         if (i == k) {
-            Void();
+            voidThings();
         } else {
             System.out.print(EscapeSequences.RESET_BG_COLOR);
             System.out.print(EscapeSequences.RESET_TEXT_COLOR);
