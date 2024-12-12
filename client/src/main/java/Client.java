@@ -265,24 +265,6 @@ public class Client implements NotificationHandler {
         }
         throw new RuntimeException("");
     }
-    static int nonzeroValue(int i) {
-        if (i == 0) {
-            throw new RuntimeException("");
-        }
-        return i;
-    }
-    //    static void listOutGames(Collection<GameData> cGM) {
-//        boolean didWeList = false;
-//        for (GameData gMD: cGM) {
-//            didWeList = true;
-//            String outPrint = gMD.gameName() + ", white = ";
-//            System.out.println(outPrint + gMD.whiteUsername() + ", black = " + gMD.blackUsername());
-//        }
-//        if (!didWeList) {
-//            System.out.println("Empty");
-//        }
-//        //printIn();
-//    }
     static void voidThing() {
         boolean v;
     }
@@ -336,8 +318,6 @@ public class Client implements NotificationHandler {
             if (j == 0) {
                 return gMD;
             }
-            //String outPrint = gMD.gameName() + ", white = ";
-            //System.out.println(outPrint + gMD.whiteUsername() + ", black = " + gMD.blackUsername());
         }
         throw new InvalidMoveException();
     }
@@ -356,42 +336,6 @@ public class Client implements NotificationHandler {
             System.out.println(s);
         }
     }
-    //    static int getTheirIntegerInputs(Collection<GameData> gD, boolean wantsToPlay) {
-//        boolean wTP = false;
-//        System.out.println("Games:");
-//        if (gD.isEmpty()) {
-//            System.out.println("  Empty");
-//        }
-//        printOuts(gD);
-//        int wGI = 0;
-//        try {
-//            System.out.println("What is the game's number?");
-//            String theirInput = getTheirInputs();
-//            int i = 0;
-//            while (i < gD.size()) {
-//                i++;
-//                if ((i + "").equals(theirInput)) {
-//                    wGI = i;
-//                }
-//            }
-//            wGI = nonzeroValue(wGI);
-//            wTP = true;
-//            if (!wantsToPlay) {
-//                i = nonzeroValue(0);
-//            }
-//            System.out.println("Enter your Color");
-//            ChessGame.TeamColor tC = chessGameTeamColor(getTheirInputs());
-//            if (tC == ChessGame.TeamColor.WHITE) {
-//                return wGI * 3;
-//            }
-//            return wGI * 3 + 1;
-//        } catch (Exception e) {
-//            if (wTP && !wantsToPlay) {
-//                return wGI * 3 + 2;
-//            }
-//        }
-//        return 2;
-//    }
     static int getTheirIntegerInputs(Collection<GameData> gD, String theirInput) {
         int i = 0;
         int wGI = 0;

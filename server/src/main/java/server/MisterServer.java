@@ -72,8 +72,8 @@ public class MisterServer {
                 for (ServerSession lk: links) {
                     if (lk.getSession().isOpen() && lk.getSession() != ss && lk.getGameID() == gameNumber) {
                         var thingySerializer = new Gson();
-                        var thingyToSerialize = new NotificationFactor(ServerMessage.ServerMessageType.NOTIFICATION, "J:" + usN + " connected as " + color);
-                        var thingyJson = thingySerializer.toJson(thingyToSerialize);
+                        var factor = new NotificationFactor(ServerMessage.ServerMessageType.NOTIFICATION, "J:" + usN + " connected as " + color);
+                        var thingyJson = thingySerializer.toJson(factor);
                         lk.getSession().getRemote().sendString(thingyJson);
                     }
                 }
@@ -104,13 +104,14 @@ public class MisterServer {
                     if (lk.getSession().isOpen() && lk.getSession() != ss && lk.getGameID() == gameNumber) {
                         var thingySerializer = new Gson();
                         String mv = convertMove(cM);
-                        var thingyToSerialize = new NotificationFactor(ServerMessage.ServerMessageType.NOTIFICATION, "M:" + usN + " moved from " + mv);
-                        var thingyJson = thingySerializer.toJson(thingyToSerialize);
+                        var factor = new NotificationFactor(ServerMessage.ServerMessageType.NOTIFICATION, "M:" + usN + " moved from " + mv);
+                        var thingyJson = thingySerializer.toJson(factor);
                         lk.getSession().getRemote().sendString(thingyJson);
                     }
                 }
                 for (ServerSession lk: links) {
-                    if (!firstGame.game().isInCheck(firstGame.game().getTeamTurn()) && !firstGame.game().isInStalemate(firstGame.game().getTeamTurn())) {
+                    if (!firstGame.game().isInCheck(firstGame.game().getTeamTurn()) &&
+                            !firstGame.game().isInStalemate(firstGame.game().getTeamTurn())) {
                         break;
                     }
                     if (lk.getSession().isOpen() && lk.getGameID() == gameNumber) {
@@ -142,8 +143,8 @@ public class MisterServer {
                 for (ServerSession ir: links) {
                     if (ir.getGameID() == gameNumber && ir.getSession().isOpen()) {
                         var thingySerializer = new Gson();
-                        var thingyToSerialize = new NotificationFactor(ServerMessage.ServerMessageType.NOTIFICATION, "L:" + usN + " left from " + color);
-                        var thingyJson = thingySerializer.toJson(thingyToSerialize);
+                        var factor = new NotificationFactor(ServerMessage.ServerMessageType.NOTIFICATION, "L:" + usN + " left from " + color);
+                        var thingyJson = thingySerializer.toJson(factor);
                         ir.getSession().getRemote().sendString(thingyJson);
                     }
                 }
@@ -167,8 +168,8 @@ public class MisterServer {
                 for (ServerSession lk: links) {
                     if (lk.getSession().isOpen() && lk.getGameID() == gameNumber) {
                         var thingySerializer = new Gson();
-                        var thingyToSerialize = new NotificationFactor(ServerMessage.ServerMessageType.NOTIFICATION, "R:" + usN + " resigned from " + color);
-                        var thingyJson = thingySerializer.toJson(thingyToSerialize);
+                        var factor = new NotificationFactor(ServerMessage.ServerMessageType.NOTIFICATION, "R:" + usN + " resigned from " + color);
+                        var thingyJson = thingySerializer.toJson(factor);
                         lk.getSession().getRemote().sendString(thingyJson);
                     }
                 }

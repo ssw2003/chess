@@ -199,15 +199,19 @@ whiteKingHasMoved = false;
         }
         if (whichPawnsHaveDoubleMoved != 0) {
             TeamColor color = theBoard.getPiece(startPosition).getTeamColor();
-            if (startPosition.getRow() == 5 && (startPosition.getColumn() == whichPawnsHaveDoubleMoved + 1 || startPosition.getColumn() == whichPawnsHaveDoubleMoved - 1) && color == TeamColor.WHITE) {
+            if (startPosition.getRow() == 5 && (startPosition.getColumn() == whichPawnsHaveDoubleMoved + 1 ||
+                    startPosition.getColumn() == whichPawnsHaveDoubleMoved - 1) && color == TeamColor.WHITE) {
                 chessMoves.add(new ChessMove(startPosition, new ChessPosition(6, whichPawnsHaveDoubleMoved), null));
             }
-            if (startPosition.getRow() == 4 && (startPosition.getColumn() == whichPawnsHaveDoubleMoved + 1 || startPosition.getColumn() == whichPawnsHaveDoubleMoved - 1) && color == TeamColor.BLACK) {
+            if (startPosition.getRow() == 4 && (startPosition.getColumn() == whichPawnsHaveDoubleMoved + 1 ||
+                    startPosition.getColumn() == whichPawnsHaveDoubleMoved - 1) && color == TeamColor.BLACK) {
                 chessMoves.add(new ChessMove(startPosition, new ChessPosition(3, whichPawnsHaveDoubleMoved), null));
             }
         }
         if (startPosition.equals(new ChessPosition(1, 5)) && !whiteKingHasMoved && !whiteQueenRookHasMoved) {
-            if (theBoard.getPiece(new ChessPosition(1, 4)) == null && theBoard.getPiece(new ChessPosition(1, 3)) == null && theBoard.getPiece(new ChessPosition(1, 2)) == null) {
+            if (theBoard.getPiece(new ChessPosition(1, 4)) == null &&
+                    theBoard.getPiece(new ChessPosition(1, 3)) == null &&
+                    theBoard.getPiece(new ChessPosition(1, 2)) == null) {
                 if (!getIsCheck(theBoard, TeamColor.WHITE)) {
                     ChessBoard thisBoard = theBoard.clone();
                     ChessBoard thatBoard = theBoard.clone();
@@ -245,7 +249,9 @@ whiteKingHasMoved = false;
             }
         }
         if (startPosition.equals(new ChessPosition(8, 5)) && !blackKingHasMoved && !blackQueenRookHasMoved) {
-            if (theBoard.getPiece(new ChessPosition(8, 4)) == null && theBoard.getPiece(new ChessPosition(8, 3)) == null && theBoard.getPiece(new ChessPosition(8, 2)) == null) {
+            if (theBoard.getPiece(new ChessPosition(8, 4)) == null &&
+                    theBoard.getPiece(new ChessPosition(8, 3)) == null &&
+                    theBoard.getPiece(new ChessPosition(8, 2)) == null) {
                 if (!getIsCheck(theBoard, TeamColor.BLACK)) {
                     ChessBoard thisBoard = theBoard.clone();
                     ChessBoard thatBoard = theBoard.clone();
@@ -340,7 +346,9 @@ whiteKingHasMoved = false;
         enPassant = theBoard.getPiece(move.getEndPosition()).getPieceType() == ChessPiece.PieceType.KING;
         enPassant = enPassant && ((move.getEndPosition().getColumn() - move.getStartPosition().getColumn() + 8) % 4 == 2);
         if (enPassant) {
-            theBoard.addPiece(new ChessPosition(move.getStartPosition().getRow(), (move.getEndPosition().getColumn() + move.getStartPosition().getColumn()) / 2), new ChessPiece(whoseTurnIsIt, ChessPiece.PieceType.ROOK));
+            int cl = (move.getEndPosition().getColumn() + move.getStartPosition().getColumn()) / 2;
+            ChessPosition pw = new ChessPosition(move.getStartPosition().getRow(), cl);
+            theBoard.addPiece(pw, new ChessPiece(whoseTurnIsIt, ChessPiece.PieceType.ROOK));
             theBoard.addPiece(new ChessPosition(move.getStartPosition().getRow(), ((move.getEndPosition().getColumn() + 3) / 4) * 7 - 6), null);
         }
         if (theBoard.getPiece(move.getEndPosition()).getPieceType() == ChessPiece.PieceType.KING) {
