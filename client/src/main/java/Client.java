@@ -27,6 +27,7 @@ public class Client implements NotificationHandler {
     DrawingBoardClass.Person color;
     MisterClient misterClient;
     ChessGame notificationGame;
+    RequestParse rP;
     public void run() {
         var piece = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.PAWN);
         inGameAsWhite = false;
@@ -48,7 +49,7 @@ public class Client implements NotificationHandler {
         while (!status.equals("Quit")) {
             System.out.println(statusVar(status));
             lastCommand = capitalizeString(getTheirInputs(), true);
-            RequestParse rP = new RequestParse(status, lastCommand);
+            rP = new RequestParse(status, lastCommand);
             if (rP.getInteger() == 0) {
                 voidThing();
             } else if (rP.getInteger() == 1) {
@@ -85,103 +86,19 @@ public class Client implements NotificationHandler {
             } else if (rP.getInteger() == 6 || rP.getInteger() == 5) {
                 drawBoard(dBC, gameNumber(wGI, sF.listGames(aD.authToken())).game(), color, rP.getPosition());
             } else if (rP.getInteger() == 7) {
-                if (color == DrawingBoardClass.Person.OBSERVER) {
-                    System.out.println("You are an Observer");
-                } else if (!notificationGame.abortGame("Question").equals("Set")) {
-                    System.out.println("Illegal Move from Resignation");
-                } else if (notificationGame.getTeamTurn() != convert(color)) {
-                    System.out.println("Illegal Move from it Not Being your Turn");
-                } else {
-                    var thingSerializer = new Gson();
-                    var thingToSerialize = new MoveMaker(UserGameCommand.CommandType.MAKE_MOVE, aD.authToken(), wGI, rP.getMove());
-                    var thingJson = thingSerializer.toJson(thingToSerialize);
-                    try {
-                        misterClient.sn(thingJson);
-                    } catch (Exception e) {
-                        System.out.println("Illegal Move");
-                    }
-                }
+                doSeven();
             } else if (rP.getInteger() == 8) {
-                if (color == DrawingBoardClass.Person.OBSERVER) {
-                    System.out.println("You are an Observer");
-                } else if (!notificationGame.abortGame("Question").equals("Set")) {
-                    System.out.println("Illegal Resign");
-                } else {
-                    var thingSerializer = new Gson();
-                    var thingToSerialize = new UserGameCommand(UserGameCommand.CommandType.RESIGN, aD.authToken(), wGI);
-                    var thingJson = thingSerializer.toJson(thingToSerialize);
-                    try {
-                        misterClient.sn(thingJson);
-                    } catch (Exception e) {
-                        System.out.println("Illegal Resign");
-                    }
-                }
+                doEight();
             } else if (rP.getInteger() == 9) {
-                var thingSerializer = new Gson();
-                var thingToSerialize = new UserGameCommand(UserGameCommand.CommandType.LEAVE, aD.authToken(), wGI);
-                var thingJson = thingSerializer.toJson(thingToSerialize);
-                status = "Merely Logged In";
-                try {
-                    misterClient.sn(thingJson);
-                    notificationGame = new ChessGame();
-                    wGI = 0;
-                    color = DrawingBoardClass.Person.OBSERVER;
-                } catch (Exception e) {}
+                doNine();
             } else if (rP.getInteger() == 13) {
-                System.out.println("What is the game's number?");
-                wGI = getTheirIntegerInputs(sF.listGames(aD.authToken()), getTheirInputs());
-                if (wGI == 0) {
-                    System.out.println("That is not the number of any game\nTry to join again\n");
-                } else {
-                    var thingSerializer = new Gson();
-                    var thingToSerialize = new UserGameCommand(UserGameCommand.CommandType.CONNECT, aD.authToken(), wGI);
-                    var thingJson = thingSerializer.toJson(thingToSerialize);
-                    status = "Game UI";
-                    try {
-                        misterClient.sn(thingJson);
-                    } catch (Exception e) { voidThing(); }
-                }
+                doThirteen();
             } else if (rP.getInteger() == 12) {
-                System.out.println("What is the game's number?");
-                wGI = getTheirIntegerInputs(sF.listGames(aD.authToken()), getTheirInputs());
-                if (wGI == 0) {
-                    System.out.println("That is not the number of any game\nTry to join again\n");
-                } else {
-                    System.out.println("Enter your Color");
-                    try {
-                        color = convert(chessGameTeamColor(getTheirInputs()));
-                        String s = gameNumber(wGI, sF.listGames(aD.authToken())).whiteUsername();
-                        if (color == DrawingBoardClass.Person.BLACK) {
-                            s = gameNumber(wGI, sF.listGames(aD.authToken())).blackUsername();
-                        }
-                        if (s != null) {
-                            System.out.println("Taken\nTry to join again\n");
-                            wGI = 0;
-                            color = DrawingBoardClass.Person.OBSERVER;
-                            throw new RuntimeException();
-                        }
-                        sF.joinGame(new PlayerColorGameNumber(convert(color), wGI), aD.authToken());
-                    } catch (Exception e) {
-                        color = DrawingBoardClass.Person.OBSERVER;
-                        if (wGI != 0) {
-                            System.out.println("Bad or Misspelled Color\nTry to join again\n");
-                        }
-                        wGI = 0;
-                    }
-                }
-                if (wGI != 0) {
-                    var thingSerializer = new Gson();
-                    var thingToSerialize = new UserGameCommand(UserGameCommand.CommandType.CONNECT, aD.authToken(), wGI);
-                    var thingJson = thingSerializer.toJson(thingToSerialize);
-                    status = "Game UI";
-                    try {
-                        misterClient.sn(thingJson);
-                    } catch (Exception e) { voidThing(); }
-                }
+                doTwelve();
             }
         }
     }
-    static String statusVar(String status) {
+    public String statusVar(String status) {
         String s = '"' + "";
         String u = "";
         if (status.equals("Not Logged In")) {
@@ -212,15 +129,15 @@ public class Client implements NotificationHandler {
         }
         return u;
     }
-    static String getTheirInputs() {
+    public String getTheirInputs() {
         Scanner scanner = new Scanner(System.in);
         return scanner.nextLine();
     }
-    static String getTheirInputs(String h) {
+    public String getTheirInputs(String h) {
         System.out.println(h);
         return getTheirInputs();
     }
-    static String capitalizeString(String s, boolean b) {
+    public String capitalizeString(String s, boolean b) {
         String u = "";
         int i = s.length();
         String lowercase = "qwertyuiopasdfghjklzxcvbnm";
@@ -244,7 +161,7 @@ public class Client implements NotificationHandler {
         }
         return u;
     }
-    static GameData gameNumber(int i, Collection<GameData> gD) {
+    public GameData gameNumber(int i, Collection<GameData> gD) {
         for (GameData gMD: gD) {
             if (gMD.gameID() == i) {
                 return gMD;
@@ -252,7 +169,7 @@ public class Client implements NotificationHandler {
         }
         return new GameData(1, "", "", "", new ChessGame());
     }
-    static ChessGame.TeamColor chessGameTeamColor(String s) {
+    public ChessGame.TeamColor chessGameTeamColor(String s) {
         String t = capitalizeString(s, false);
         if (t.equals("white")) {
             return ChessGame.TeamColor.WHITE;
@@ -265,13 +182,13 @@ public class Client implements NotificationHandler {
         }
         throw new RuntimeException("");
     }
-    static void voidThing() {
+    public void voidThing() {
         boolean v;
     }
-    static void drawBoard(DrawingBoardClass dbc, ChessGame cg, DrawingBoardClass.Person p, ChessPosition cp) {
+    public void drawBoard(DrawingBoardClass dbc, ChessGame cg, DrawingBoardClass.Person p, ChessPosition cp) {
         dbc.drawBoard(cg, p, cp, DrawingBoardClass.Styling.MEDIUM);
     }
-    static boolean compareString(String s, String t) {
+    public boolean compareString(String s, String t) {
         int u = s.hashCode();
         int v = t.hashCode();
         if (u != v) {
@@ -293,7 +210,7 @@ public class Client implements NotificationHandler {
         }
         return true;
     }
-    static String compareStrings(String s, String t) {
+    public String compareStrings(String s, String t) {
         boolean cS = compareString(s, t);
         if (!cS) {
             return ">";
@@ -303,7 +220,7 @@ public class Client implements NotificationHandler {
         }
         return "<";
     }
-    static GameData gameAt(Collection<GameData> cGM, int i) throws InvalidMoveException {
+    public GameData gameAt(Collection<GameData> cGM, int i) throws InvalidMoveException {
         int j = 0;
         for (GameData gMD: cGM) {
             j = i;
@@ -321,7 +238,7 @@ public class Client implements NotificationHandler {
         }
         throw new InvalidMoveException();
     }
-    static void printOuts(Collection<GameData> cGD) {
+    public void printOuts(Collection<GameData> cGD) {
         int varValue = 0;
         while (varValue < cGD.size()) {
             varValue++;
@@ -336,7 +253,7 @@ public class Client implements NotificationHandler {
             System.out.println(s);
         }
     }
-    static int getTheirIntegerInputs(Collection<GameData> gD, String theirInput) {
+    public int getTheirIntegerInputs(Collection<GameData> gD, String theirInput) {
         int i = 0;
         int wGI = 0;
         while (i < gD.size()) {
@@ -352,7 +269,7 @@ public class Client implements NotificationHandler {
         }
         return wGI;
     }
-    static ChessGame.TeamColor convert(DrawingBoardClass.Person p) {
+    public ChessGame.TeamColor convert(DrawingBoardClass.Person p) {
         if (p == null) {
             return null;
         } else if (p == DrawingBoardClass.Person.WHITE) {
@@ -362,7 +279,7 @@ public class Client implements NotificationHandler {
         }
         return null;
     }
-    static DrawingBoardClass.Person convert(ChessGame.TeamColor p) {
+    public DrawingBoardClass.Person convert(ChessGame.TeamColor p) {
         if (p == null) {
             return DrawingBoardClass.Person.OBSERVER;
         } else if (p == ChessGame.TeamColor.WHITE) {
@@ -394,6 +311,105 @@ public class Client implements NotificationHandler {
             drawBoard(dBC, notificationGame, color, null);
         } else {
             System.out.println("Illegal move");
+        }
+    }
+    public void doTwelve() {
+        System.out.println("What is the game's number?");
+        wGI = getTheirIntegerInputs(sF.listGames(aD.authToken()), getTheirInputs());
+        if (wGI == 0) {
+            System.out.println("That is not the number of any game\nTry to join again\n");
+        } else {
+            System.out.println("Enter your Color");
+            try {
+                color = convert(chessGameTeamColor(getTheirInputs()));
+                String s = gameNumber(wGI, sF.listGames(aD.authToken())).whiteUsername();
+                if (color == DrawingBoardClass.Person.BLACK) {
+                    s = gameNumber(wGI, sF.listGames(aD.authToken())).blackUsername();
+                }
+                if (s != null) {
+                    System.out.println("Taken\nTry to join again\n");
+                    wGI = 0;
+                    color = DrawingBoardClass.Person.OBSERVER;
+                    throw new RuntimeException();
+                }
+                sF.joinGame(new PlayerColorGameNumber(convert(color), wGI), aD.authToken());
+            } catch (Exception e) {
+                color = DrawingBoardClass.Person.OBSERVER;
+                if (wGI != 0) {
+                    System.out.println("Bad or Misspelled Color\nTry to join again\n");
+                }
+                wGI = 0;
+            }
+        }
+        if (wGI != 0) {
+            var thingSerializer = new Gson();
+            var thingToSerialize = new UserGameCommand(UserGameCommand.CommandType.CONNECT, aD.authToken(), wGI);
+            var thingJson = thingSerializer.toJson(thingToSerialize);
+            status = "Game UI";
+            try {
+                misterClient.sn(thingJson);
+            } catch (Exception e) { voidThing(); }
+        };
+    }
+    public void doThirteen() {
+        System.out.println("What is the game's number?");
+        wGI = getTheirIntegerInputs(sF.listGames(aD.authToken()), getTheirInputs());
+        if (wGI == 0) {
+            System.out.println("That is not the number of any game\nTry to join again\n");
+        } else {
+            var thingSerializer = new Gson();
+            var thingToSerialize = new UserGameCommand(UserGameCommand.CommandType.CONNECT, aD.authToken(), wGI);
+            var thingJson = thingSerializer.toJson(thingToSerialize);
+            status = "Game UI";
+            try {
+                misterClient.sn(thingJson);
+            } catch (Exception e) { voidThing(); }
+        }
+    }
+    public void doNine() {
+        var thingSerializer = new Gson();
+        var thingToSerialize = new UserGameCommand(UserGameCommand.CommandType.LEAVE, aD.authToken(), wGI);
+        var thingJson = thingSerializer.toJson(thingToSerialize);
+        status = "Merely Logged In";
+        try {
+            misterClient.sn(thingJson);
+            notificationGame = new ChessGame();
+            wGI = 0;
+            color = DrawingBoardClass.Person.OBSERVER;
+        } catch (Exception e) {}
+    }
+    public void doSeven() {
+        if (color == DrawingBoardClass.Person.OBSERVER) {
+            System.out.println("You are an Observer");
+        } else if (!notificationGame.abortGame("Question").equals("Set")) {
+            System.out.println("Illegal Move from Resignation");
+        } else if (notificationGame.getTeamTurn() != convert(color)) {
+            System.out.println("Illegal Move from it Not Being your Turn");
+        } else {
+            var thingSerializer = new Gson();
+            var thingToSerialize = new MoveMaker(UserGameCommand.CommandType.MAKE_MOVE, aD.authToken(), wGI, rP.getMove());
+            var thingJson = thingSerializer.toJson(thingToSerialize);
+            try {
+                misterClient.sn(thingJson);
+            } catch (Exception e) {
+                System.out.println("Illegal Move");
+            }
+        }
+    }
+    public void doEight() {
+        if (color == DrawingBoardClass.Person.OBSERVER) {
+            System.out.println("You are an Observer");
+        } else if (!notificationGame.abortGame("Question").equals("Set")) {
+            System.out.println("Illegal Resign");
+        } else {
+            var thingSerializer = new Gson();
+            var thingToSerialize = new UserGameCommand(UserGameCommand.CommandType.RESIGN, aD.authToken(), wGI);
+            var thingJson = thingSerializer.toJson(thingToSerialize);
+            try {
+                misterClient.sn(thingJson);
+            } catch (Exception e) {
+                System.out.println("Illegal Resign");
+            }
         }
     }
 }
