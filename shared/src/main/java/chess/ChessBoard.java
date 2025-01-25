@@ -250,7 +250,7 @@ public class ChessBoard {
         while (i < 9) {
             j = 1;
             while (j < 9) {
-                if (ch.getPiece(new ChessPosition(i, j)) != getPiece(new ChessPosition(i, j))) {
+                if (cvVa(ch.getPiece(new ChessPosition(i, j))) != cvVa(getPiece(new ChessPosition(i, j)))) {
                     return false;
                 }
                 j = j + 1;
