@@ -25,22 +25,7 @@ public class ChessBoard {
     int sixteenthGroup;
 
     public ChessBoard() {
-        firstGroup = 0;
-        secondGroup = 0;
-        thirdGroup = 0;
-        fourthGroup = 0;
-        fifthGroup = 0;
-        sixthGroup = 0;
-        seventhGroup = 0;
-        eighthGroup = 0;
-        ninthGroup = 0;
-        tenthGroup = 0;
-        eleventhGroup = 0;
-        twelfthGroup = 0;
-        thirteenthGroup = 0;
-        fourteenthGroup = 0;
-        fifteenthGroup = 0;
-        sixteenthGroup = 0;
+        geBr();
         
     }
 
@@ -209,6 +194,46 @@ public class ChessBoard {
      * (How the game of chess normally starts)
      */
     public void resetBoard() {
-        throw new RuntimeException("Not implemented");
+        geBr();
+        addPiece(new ChessPosition(1, 4), new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.QUEEN));
+        addPiece(new ChessPosition(1, 5), new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.KING));
+        addPiece(new ChessPosition(8, 4), new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.QUEEN));
+        addPiece(new ChessPosition(8, 5), new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.KING));
+        addPiece(new ChessPosition(1, 3), new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.BISHOP));
+        addPiece(new ChessPosition(1, 6), new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.BISHOP));
+        addPiece(new ChessPosition(8, 3), new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.BISHOP));
+        addPiece(new ChessPosition(8, 6), new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.BISHOP));
+        addPiece(new ChessPosition(1, 2), new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.KNIGHT));
+        addPiece(new ChessPosition(1, 7), new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.KNIGHT));
+        addPiece(new ChessPosition(8, 2), new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.KNIGHT));
+        addPiece(new ChessPosition(8, 7), new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.KNIGHT));
+        addPiece(new ChessPosition(1, 1), new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.ROOK));
+        addPiece(new ChessPosition(1, 8), new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.ROOK));
+        addPiece(new ChessyPosition(8, 1), new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.ROOK));
+        addPiece(new ChessPosition(8, 8), new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.ROOK));
+        int i = 1;
+        while (i < 9) {
+            addPiece(new ChessPosition(2, i), new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.PAWN));
+            addPiece(new ChessPosition(7, i), new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.PAWN));
+            i = i + 1;
+        }
+    }
+    private void geBr() {
+        firstGroup = 0;
+        secondGroup = 0;
+        thirdGroup = 0;
+        fourthGroup = 0;
+        fifthGroup = 0;
+        sixthGroup = 0;
+        seventhGroup = 0;
+        eighthGroup = 0;
+        ninthGroup = 0;
+        tenthGroup = 0;
+        eleventhGroup = 0;
+        twelfthGroup = 0;
+        thirteenthGroup = 0;
+        fourteenthGroup = 0;
+        fifteenthGroup = 0;
+        sixteenthGroup = 0;
     }
 }
