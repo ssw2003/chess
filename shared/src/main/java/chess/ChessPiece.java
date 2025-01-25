@@ -53,12 +53,15 @@ public class ChessPiece {
      */
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
         if (board.getPiece(myPosition).getPieceType() == PieceType.PAWN) {
-            return pawnMoves(board, myPosition);
+            if (board.getPiece(myPosition).getTeamColor() == ChessGame.TeamColor.WHITE) {
+                return pawnMoves(board, myPosition, 0);
+            }
+            return pawnMoves(board, myPosition, 1);
         }
         Collection<ChessMove> cM = new ArrayList<>();
         return cM;
     }
-    private Collection<ChessMove> pawnMoves(ChessBoard board, ChessPosition myPosition) {
+    private Collection<ChessMove> pawnMoves(ChessBoard board, ChessPosition myPosition, int cl) {
         Collection<ChessMove> cM = new ArrayList<>();
         return cM;
     }
