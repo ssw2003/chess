@@ -59,6 +59,36 @@ public class ChessBoard {
         int j = (position.getColumn() - 1) % 4;
         if (i == 1) {
             firstGroup = chg(firstGroup, piece, j);
+        } else if (i == 2) {
+            secondGroup = chg(secondGroup, piece, j);
+        } else if (i == 3) {
+            thirdGroup = chg(thirdGroup, piece, j);
+        } else if (i == 4) {
+            fourthGroup = chg(fourthGroup, piece, j);
+        } else if (i == 5) {
+            fifthGroup = chg(fifthGroup, piece, j);
+        } else if (i == 6) {
+            sixthGroup = chg(sixthGroup, piece, j);
+        } else if (i == 7) {
+            seventhGroup = chg(seventhGroup, piece, j);
+        } else if (i == 8) {
+            eighthGroup = chg(eighthGroup, piece, j);
+        } else if (i == 9) {
+            ninthGroup = chg(ninthGroup, piece, j);
+        } else if (i == 10) {
+            tenthGroup = chg(tenthGroup, piece, j);
+        } else if (i == 11) {
+            eleventhGroup = chg(eleventhGroup, piece, j);
+        } else if (i == 12) {
+            twelfthGroup = chg(twelfthGroup, piece, j);
+        } else if (i == 13) {
+            thirteenthGroup = chg(thirteenthGroup, piece, j);
+        } else if (i == 14) {
+            fourteenthGroup = chg(fourteenthGroup, piece, j);
+        } else if (i == 15) {
+            fifteenthGroup = chg(fifteenthGroup, piece, j);
+        } else {
+            sixteenthGroup = chg(sixteenthGroup, piece, j);
         }
     }
     private int cvVa(ChessPiece pc) {
@@ -132,7 +162,46 @@ public class ChessBoard {
      * position
      */
     public ChessPiece getPiece(ChessPosition position) {
-        throw new RuntimeException("Not implemented");
+        int i = 1;
+        int j = position.getColumn();
+        if (j > 4) {
+            i = 2;
+        }
+        j = (j - 1) % 4;
+        i = i + position.getRow() * 2 - 2;
+        if (i == 1) {
+            return chg(firstGroup, j);
+        } else if (i == 2) {
+            return chg(secondGroup, j);
+        } else if (i == 3) {
+            return chg(thirdGroup, j);
+        } else if (i == 4) {
+            return chg(fourthGroup, j);
+        } else if (i == 5) {
+            return chg(fifthGroup, j);
+        } else if (i == 6) {
+            return chg(sixthGroup, j);
+        } else if (i == 7) {
+            return chg(seventhGroup, j);
+        } else if (i == 8) {
+            return chg(eighthGroup, j);
+        } else if (i == 9) {
+            return chg(ninthGroup, j);
+        } else if (i == 10) {
+            return chg(tenthGroup, j);
+        } else if (i == 11) {
+            return chg(eleventhGroup, j);
+        } else if (i == 12) {
+            return chg(twelfthGroup, j);
+        } else if (i == 13) {
+            return chg(thirteenthGroup, j);
+        } else if (i == 14) {
+            return chg(fourteenthGroup, j);
+        } else if (i == 15) {
+            return chg(fifteenthGroup, j);
+        } else {
+            return chg(sixteenthGroup, j);
+        }
     }
 
     /**
