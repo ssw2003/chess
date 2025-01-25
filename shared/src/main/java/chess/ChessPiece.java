@@ -60,9 +60,6 @@ public class ChessPiece {
         }
         Collection<ChessMove> cM = new ArrayList<>();
         return cM;
-        if (board.getPiece(myPosition).getTeamColor() == ChessGame.TeamColor.WHITE) {
-            return cM;
-        }
     }
     private Collection<ChessMove> pawnMoves(ChessBoard board, ChessPosition myPosition, int cl) {
         Collection<ChessMove> cM = new ArrayList<>();
