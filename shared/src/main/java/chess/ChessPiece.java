@@ -72,6 +72,60 @@ public class ChessPiece {
                 }
             }
         }
+        boolean cal = false;
+        boolean caf = (board.getPiece(new ChessPosition(r + 1 - 2 * cl, c)) == null);
+        boolean car = false;
+        if (cl != 1) {
+            ChessPosition cP = new ChessPosition(r + 1 - 2 * cl, c - 1);
+            if (board.getPiece(cP) != null) {
+                if ((board.getPiece(cP).getTeamColor() == ChessGame.TeamColor.BLACK) == (cl == 0)) {
+                    cal = true;
+                }
+            }
+        }
+        if (cl != 8) {
+            ChessPosition cP = new ChessPosition(r + 1 - 2 * cl, c + 1);
+            if (board.getPiece(cP) != null) {
+                if ((board.getPiece(cP).getTeamColor() == ChessGame.TeamColor.WHITE) == (cl == 1)) {
+                    car = true;
+                }
+            }
+        }
+        r = r + 1 - 2 * cl;
+        boolean canPromote = (myPosition.getRow() == 7 - 5 * cl);
+        if (cal) {
+            if (canPromote) {
+                cM.add(new ChessMove(myPosition, new ChessPosition(r, c - 1), PieceType.QUEEN));
+                cM.add(new ChessMove(myPosition, new ChessPosition(r, c - 1), PieceType.ROOK));
+                cM.add(new ChessMove(myPosition, new ChessPosition(r, c - 1), PieceType.KNIGHT));
+                cM.add(new ChessMove(myPosition, new ChessPosition(r, c - 1), PieceType.BISHOP));
+            }
+            else {
+                cM.add(new ChessMove(myPosition, new ChessPosition(r, c - 1), null));
+            }
+        }
+        if (caf) {
+            if (canPromote) {
+                cM.add(new ChessMove(myPosition, new ChessPosition(r, c), PieceType.QUEEN));
+                cM.add(new ChessMove(myPosition, new ChessPosition(r, c), PieceType.ROOK));
+                cM.add(new ChessMove(myPosition, new ChessPosition(r, c), PieceType.KNIGHT));
+                cM.add(new ChessMove(myPosition, new ChessPosition(r, c), PieceType.BISHOP));
+            }
+            else {
+                cM.add(new ChessMove(myPosition, new ChessPosition(r, c), null));
+            }
+        }
+        if (car) {
+            if (canPromote) {
+                cM.add(new ChessMove(myPosition, new ChessPosition(r, c + 1), PieceType.QUEEN));
+                cM.add(new ChessMove(myPosition, new ChessPosition(r, c + 1), PieceType.ROOK));
+                cM.add(new ChessMove(myPosition, new ChessPosition(r, c + 1), PieceType.KNIGHT));
+                cM.add(new ChessMove(myPosition, new ChessPosition(r, c + 1), PieceType.BISHOP));
+            }
+            else {
+                cM.add(new ChessMove(myPosition, new ChessPosition(r, c + 1), null));
+            }
+        }
         return cM;
     }
     @Override
