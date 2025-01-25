@@ -209,7 +209,7 @@ public class ChessBoard {
         addPiece(new ChessPosition(8, 7), new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.KNIGHT));
         addPiece(new ChessPosition(1, 1), new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.ROOK));
         addPiece(new ChessPosition(1, 8), new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.ROOK));
-        addPiece(new ChessyPosition(8, 1), new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.ROOK));
+        addPiece(new ChessPosition(8, 1), new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.ROOK));
         addPiece(new ChessPosition(8, 8), new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.ROOK));
         int i = 1;
         while (i < 9) {
@@ -235,5 +235,47 @@ public class ChessBoard {
         fourteenthGroup = 0;
         fifteenthGroup = 0;
         sixteenthGroup = 0;
+    }
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (obj.getClass() != getClass()) {
+            return false;
+        }
+        ChessBoard ch = (ChessBoard) obj;
+        int i = 1;
+        int j = 1;
+        while (i < 9) {
+            j = 1;
+            while (j < 9) {
+                if (ch.getPiece(new ChessPosition(i, j)) != getPiece(new ChessPosition(i, j))) {
+                    return false;
+                }
+                j = j + 1;
+            }
+            i = i + 1;
+        }
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        return 22;
+    }
+    public ChessBoard clone() {
+        ChessBoard cB = new ChessBoard();
+        int i = 1;
+        int j = 1;
+        while (i < 9) {
+            j = 1;
+            while (j < 9) {
+                cB.addPiece(new ChessPosition(i, j), getPiece(new ChessPosition(i, j)));
+                j = j + 1;
+            }
+            i = i + 1;
+        }
+        return cB;
     }
 }
