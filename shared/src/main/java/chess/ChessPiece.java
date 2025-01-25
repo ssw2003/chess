@@ -63,6 +63,7 @@ public class ChessPiece {
     }
     private Collection<ChessMove> pawnMoves(ChessBoard board, ChessPosition myPosition, int cl) {
         Collection<ChessMove> cM = new ArrayList<>();
+        int a = 5;
         int r = myPosition.getRow();
         int c = myPosition.getColumn();
         if (myPosition.getRow() == 2 + 5 * cl) {
