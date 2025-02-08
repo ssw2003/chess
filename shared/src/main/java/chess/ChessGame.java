@@ -1,5 +1,6 @@
 package chess;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
 /**
@@ -71,7 +72,18 @@ public class ChessGame {
      * @throws InvalidMoveException if move is invalid
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
-        throw new RuntimeException("Not implemented");
+        InvalidMoveException thrower = new InvalidMoveException();
+        Collection<ChessMove> ccm = validMoves(move.getStartPosition());
+        boolean canMakeIt = false;
+        for (ChessMove cm: ccm) {
+            if (cm.equals(move)) {
+                canMakeIt = true;
+            }
+        }
+        if (!canMakeIt) {
+            throw thrower;
+        }
+        //make the move;
     }
 
     /**
@@ -81,7 +93,14 @@ public class ChessGame {
      * @return True if the specified team is in check
      */
     public boolean isInCheck(TeamColor teamColor) {
-        throw new RuntimeException("Not implemented");
+        Collection<ChessPosition> squareThings = new ArrayList<>();
+        ChessPosition psit;
+        int i = 0;
+        while (i < 64) {
+            psit = new ChessPosition(8 - (i / 8), 1 + (i % 8));
+            i = i + 1;
+        }
+        return false;
     }
 
     /**
@@ -91,7 +110,7 @@ public class ChessGame {
      * @return True if the specified team is in checkmate
      */
     public boolean isInCheckmate(TeamColor teamColor) {
-        throw new RuntimeException("Not implemented");
+        return (isInCheckmateOrStalemate(teamColor) && isInCheck(teamColor));
     }
 
     /**
@@ -102,7 +121,18 @@ public class ChessGame {
      * @return True if the specified team is in stalemate, otherwise false
      */
     public boolean isInStalemate(TeamColor teamColor) {
-        throw new RuntimeException("Not implemented");
+        return ((!isInCheck(teamColor)) && isInCheckmateOrStalemate(teamColor));
+    }
+    private boolean isInCheckmateOrStalemate(TeamColor teamColor) {
+        int i = 0;
+        while (i < 64) {
+            ChessPosition cp = new ChessPosition((i % 8) + 1, (i / 8) + 1);
+            i = i + 1;
+            if (validMoves(cp).size() != 0) {
+                return false;
+            }
+        }
+        return true;
     }
 
     /**
@@ -112,6 +142,11 @@ public class ChessGame {
      */
     public void setBoard(ChessBoard board) {
         theBoard = board.clone();
+        whiteQueenRookMoved = false;
+        whiteKingRookMoved = whiteQueenRookMoved;
+        blackQueenRookMoved = whiteQueenRookMoved;
+        blackKingRookMoved = whiteQueenRookMoved;
+        lastMove = 0;
     }
 
     /**
