@@ -83,6 +83,9 @@ public class ChessGame {
         if (!canMakeIt) {
             throw thrower;
         }
+        if (theBoard.getPiece(move.getStartPosition()).getTeamColor() != theTurn) {
+            throw thrower;
+        }
         ChessPosition i = new ChessPosition(move.getStartPosition().getRow(), 1);
         ChessPosition j = new ChessPosition(move.getStartPosition().getRow(), 4);
         if (theBoard.getPiece(move.getStartPosition()).getPieceType() == ChessPiece.PieceType.KING) {
@@ -107,6 +110,27 @@ public class ChessGame {
             if ((move.getEndPosition().getRow() - move.getStartPosition().getRow() + 8) % 4 == 2) {
                 lastMove = move.getEndPosition().getColumn();
             }
+        }
+        if (theBoard.getPiece(move.getStartPosition()).getPieceType() == ChessPiece.PieceType.KING) {
+            if (theBoard.getPiece(move.getStartPosition()).getTeamColor() == TeamColor.WHITE) {
+                whiteKingRookMoved = true;
+                whiteQueenRookMoved = true;
+            } else {
+                blackKingRookMoved = true;
+                blackQueenRookMoved = true;
+            }
+        }
+        if (move.getStartPosition().equals(new ChessPosition(1, 1))) {
+            whiteQueenRookMoved = true;
+        }
+        if (move.getStartPosition().equals(new ChessPosition(1, 8))) {
+            whiteKingRookMoved = true;
+        }
+        if (move.getStartPosition().equals(new ChessPosition(8, 1))) {
+            blackQueenRookMoved = true;
+        }
+        if (move.getStartPosition().equals(new ChessPosition(8, 8))) {
+            blackKingRookMoved = true;
         }
     }
 
