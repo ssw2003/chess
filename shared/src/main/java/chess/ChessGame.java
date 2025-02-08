@@ -9,8 +9,23 @@ import java.util.Collection;
  * signature of the existing methods.
  */
 public class ChessGame {
+    private TeamColor theTurn;
+    private ChessBoard theBoard;
+    private boolean whiteKingRookMoved;
+    private boolean whiteQueenRookMoved;
+    private boolean blackKingRookMoved;
+    private boolean blackQueenRookMoved;
+    private int lastMove;
 
     public ChessGame() {
+        theTurn = TeamColor.WHITE;
+        theBoard = new ChessBoard();
+        theBoard.resetBoard();
+        whiteKingRookMoved = false;
+        whiteQueenRookMoved = false;
+        blackQueenRookMoved = false;
+        blackKingRookMoved = false;
+        lastMove = 0;
 
     }
 
@@ -18,7 +33,7 @@ public class ChessGame {
      * @return Which team's turn it is
      */
     public TeamColor getTeamTurn() {
-        throw new RuntimeException("Not implemented");
+        return theTurn;
     }
 
     /**
@@ -27,7 +42,7 @@ public class ChessGame {
      * @param team the team whose turn it is
      */
     public void setTeamTurn(TeamColor team) {
-        throw new RuntimeException("Not implemented");
+        theTurn = team;
     }
 
     /**
@@ -96,7 +111,7 @@ public class ChessGame {
      * @param board the new board to use
      */
     public void setBoard(ChessBoard board) {
-        throw new RuntimeException("Not implemented");
+        theBoard = board.clone();
     }
 
     /**
@@ -105,6 +120,58 @@ public class ChessGame {
      * @return the chessboard
      */
     public ChessBoard getBoard() {
-        throw new RuntimeException("Not implemented");
+        return theBoard.clone();
+    }
+    private boolean convertBoolean(int m) {
+        return (m % 2 == 1);
+    }
+    private int convertBoolean(boolean m) {
+        if (m) {
+            return 1;
+        }
+        return 0;
+    }
+    public int getInfo(int m) {
+        if (m == 144) {
+            int f = convertBoolean(whiteKingRookMoved) * 8 + 4 * convertBoolean(whiteQueenRookMoved);
+            f = f + convertBoolean(blackKingRookMoved) * 2 + convertBoolean(blackQueenRookMoved);
+            return 16 * lastMove + f;
+        }
+        lastMove = m / 16;
+        whiteKingRookMoved = convertBoolean(m / 8);
+        whiteQueenRookMoved = convertBoolean(m / 4);
+        blackKingRookMoved = convertBoolean(m / 2);
+        blackQueenRookMoved = convertBoolean(m);
+        return 144;
+    }
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (obj.getClass() != getClass()) {
+            return false;
+        }
+        ChessGame ch = (ChessGame) obj;
+        if (ch.getInfo(144) != getInfo(144)) {
+            return false;
+        }
+        if (ch.getTeamTurn() != theTurn) {
+            return false;
+        }
+        return ch.getBoard().equals(theBoard);
+    }
+
+    @Override
+    public int hashCode() {
+        return 67;
+    }
+    public ChessGame clone() {
+        ChessGame cg = new ChessGame();
+        cg.setBoard(theBoard);
+        if (cg.getInfo(getInfo(144)) == 144) {
+            cg.setTeamTurn(theTurn);
+        }
+        return cg;
     }
 }
