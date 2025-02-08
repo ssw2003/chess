@@ -99,6 +99,22 @@ public class ChessGame {
         while (i < 64) {
             psit = new ChessPosition(8 - (i / 8), 1 + (i % 8));
             i = i + 1;
+            if (theBoard.getPiece(psit) != null) {
+                if (theBoard.getPiece(psit).getTeamColor() != teamColor) {
+                    squareThings.add(psit.clone());
+                }
+            }
+        }
+        for (ChessPosition sT: squareThings) {
+            ChessPiece ch = new ChessPiece(TeamColor.WHITE, ChessPiece.PieceType.KING);
+            Collection<ChessMove> cm = ch.pieceMoves(theBoard, sT);
+            for (ChessMove se: cm) {
+                if (theBoard.getPiece(se.getEndPosition()) != null) {
+                    boolean v = false;
+                } else if (theBoard.getPiece(se.getEndPosition()).equals(new ChessPiece(teamColor, ChessPiece.PieceType.KING))) {
+                    return true;
+                }
+            }
         }
         return false;
     }
