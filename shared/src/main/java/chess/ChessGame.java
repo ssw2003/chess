@@ -83,7 +83,31 @@ public class ChessGame {
         if (!canMakeIt) {
             throw thrower;
         }
-        //make the move;
+        ChessPosition i = new ChessPosition(move.getStartPosition().getRow(), 1);
+        ChessPosition j = new ChessPosition(move.getStartPosition().getRow(), 4);
+        if (theBoard.getPiece(move.getStartPosition()).getPieceType() == ChessPiece.PieceType.KING) {
+            if ((move.getStartPosition().getColumn() - move.getEndPosition().getColumn() + 8) % 4 == 2) {
+                if (move.getEndPosition().getColumn() > 4) {
+                    i = new ChessPosition(move.getStartPosition().getRow(), 8);
+                    j = new ChessPosition(move.getStartPosition().getRow(), 6);
+                }
+                theBoard.addPiece(j, theBoard.getPiece(i));
+                theBoard.addPiece(i, null);
+            }
+        }
+        if (theBoard.getPiece(move.getStartPosition()).getPieceType() == ChessPiece.PieceType.PAWN) {
+            if (move.getStartPosition().getColumn() != move.getEndPosition().getColumn()) {
+                if (theBoard.getPiece(move.getEndPosition()) != null) {
+                    theBoard.addPiece(new ChessPosition(move.getStartPosition().getRow(), move.getEndPosition().getColumn()), null);
+                }
+            }
+        }
+        lastMove = 0;
+        if (theBoard.getPiece(move.getStartPosition()).getPieceType() == ChessPiece.PieceType.PAWN) {
+            if ((move.getEndPosition().getRow() - move.getStartPosition().getRow() + 8) % 4 == 2) {
+                lastMove = move.getEndPosition().getColumn();
+            }
+        }
     }
 
     /**
