@@ -98,6 +98,17 @@ public class ChessGame {
         maybeCastle = maybeCastle && (!whiteKingRookMoved);
         maybeCastle = maybeCastle && theBoard.getPiece(new ChessPosition(1, 6)) == null;
         maybeCastle = maybeCastle && theBoard.getPiece(new ChessPosition(1, 7)) == null;
+        if (maybeCastle) {
+            tempBoard = theBoard.clone();
+            tempBoard.addPiece(new ChessPosition(1, 5), new ChessPiece(TeamColor.WHITE, ChessPiece.PieceType.KING));
+            tempBoard.addPiece(new ChessPosition(1, 6), new ChessPiece(TeamColor.WHITE, ChessPiece.PieceType.KING));
+            tempBoard.addPiece(new ChessPosition(1, 7), new ChessPiece(TeamColor.WHITE, ChessPiece.PieceType.KING));
+            tempBoard.addPiece(new ChessPosition(1, 8), null);
+            tempGame.setBoard(tempBoard);
+            if (!tempGame.isInCheck(theTurn)) {
+                cm.add(new ChessMove(startPosition, new ChessPosition(1, 7), null));
+            }
+        }
         return cm;
     }
 
