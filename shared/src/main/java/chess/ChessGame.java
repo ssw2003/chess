@@ -80,6 +80,12 @@ public class ChessGame {
                 maybeCastle = (startPosition.getRow() == 5);
             }
         }
+        ChessBoard tempBoard = theBoard.clone();
+        if (maybeCastle) {
+            tempBoard.addPiece(new ChessPosition(startPosition.getRow(), lastMove), null);
+            tempBoard.addPiece(new ChessPosition(startPosition.getRow() * 3 - 9, lastMove), tempBoard.getPiece(startPosition));
+            tempBoard.addPiece(startPosition, null);
+        }
     }
 
     /**
