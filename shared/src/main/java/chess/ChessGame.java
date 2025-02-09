@@ -74,6 +74,12 @@ public class ChessGame {
                 }
             }
         }
+        if (maybeCastle) {
+            maybeCastle = (startPosition.getRow() == 4);
+            if (theTurn == TeamColor.WHITE) {
+                maybeCastle = (startPosition.getRow() == 5);
+            }
+        }
     }
 
     /**
