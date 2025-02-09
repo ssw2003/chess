@@ -156,7 +156,7 @@ public class ChessGame {
                 cm.add(new ChessMove(startPosition, new ChessPosition(8, 3), null));
             }
         }
-        return cm;
+        return valMoves(cm, startPosition);
     }
 
     /**
@@ -344,6 +344,10 @@ public class ChessGame {
     }
     private boolean convertBoolean(int m) {
         return (m % 2 == 1);
+    }
+    private Collection<ChessMove> valMoves(Collection<ChessMove> beg, ChessPosition startPosition) {
+        ChessPiece cm = new ChessPiece(TeamColor.WHITE, ChessPiece.PieceType.BISHOP);
+        Collection<ChessMove> cms = cm.pieceMoves(theBoard, startPosition);
     }
     private int convertBoolean(boolean m) {
         if (m) {
