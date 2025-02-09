@@ -81,11 +81,20 @@ public class ChessGame {
             }
         }
         ChessBoard tempBoard = theBoard.clone();
+        ChessGame tempGame = new ChessGame();
         if (maybeCastle) {
             tempBoard.addPiece(new ChessPosition(startPosition.getRow(), lastMove), null);
             tempBoard.addPiece(new ChessPosition(startPosition.getRow() * 3 - 9, lastMove), tempBoard.getPiece(startPosition));
             tempBoard.addPiece(startPosition, null);
+            tempGame.setBoard(tempBoard);
+            if (tempGame.isInCheck(theTurn)) {
+                maybeCastle = false;
+            }
         }
+        if (maybeCastle) {
+            cm.add(new ChessMove(startPosition, new ChessPosition(startPosition.getRow() * 3 - 9, lastMove), null));
+        }
+        return cm;
     }
 
     /**
