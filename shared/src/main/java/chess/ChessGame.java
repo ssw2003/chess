@@ -94,6 +94,10 @@ public class ChessGame {
         if (maybeCastle) {
             cm.add(new ChessMove(startPosition, new ChessPosition(startPosition.getRow() * 3 - 9, lastMove), null));
         }
+        maybeCastle = (theBoard.getPiece(startPosition).equals(new ChessPiece(TeamColor.WHITE, ChessPiece.PieceType.KING)));
+        maybeCastle = maybeCastle && (!whiteKingRookMoved);
+        maybeCastle = maybeCastle && theBoard.getPiece(new ChessPosition(1, 6)) == null;
+        maybeCastle = maybeCastle && theBoard.getPiece(new ChessPosition(1, 7)) == null;
         return cm;
     }
 
@@ -216,7 +220,7 @@ public class ChessGame {
             ChessPiece ch = new ChessPiece(TeamColor.WHITE, ChessPiece.PieceType.KING);
             Collection<ChessMove> cm = ch.pieceMoves(theBoard, sT);
             for (ChessMove se: cm) {
-                if (theBoard.getPiece(se.getEndPosition()) != null) {
+                if (theBoard.getPiece(se.getEndPosition()) == null) {
                     boolean v = false;
                 } else if (theBoard.getPiece(se.getEndPosition()).equals(new ChessPiece(teamColor, ChessPiece.PieceType.KING))) {
                     return true;
