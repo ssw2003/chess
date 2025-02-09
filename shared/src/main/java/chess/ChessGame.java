@@ -168,6 +168,9 @@ public class ChessGame {
     public void makeMove(ChessMove move) throws InvalidMoveException {
         InvalidMoveException thrower = new InvalidMoveException();
         Collection<ChessMove> ccm = validMoves(move.getStartPosition());
+        if (ccm == null) {
+            throw thrower;
+        }
         boolean canMakeIt = false;
         for (ChessMove cm: ccm) {
             if (cm.equals(move)) {
@@ -247,6 +250,9 @@ public class ChessGame {
         }
         theBoard.addPiece(move.getEndPosition(), theBoard.getPiece(move.getStartPosition()));
         theBoard.addPiece(move.getStartPosition(), null);
+        if (move.getPromotionPiece() != null) {
+            theBoard.addPiece(move.getEndPosition(), new ChessPiece(theTurn, move.getPromotionPiece()));
+        }
         boolean whitesTurn = theTurn == TeamColor.WHITE;
         if (whitesTurn) {
             theTurn = TeamColor.BLACK;
