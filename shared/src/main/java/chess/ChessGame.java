@@ -105,8 +105,24 @@ public class ChessGame {
             tempBoard.addPiece(new ChessPosition(1, 7), new ChessPiece(TeamColor.WHITE, ChessPiece.PieceType.KING));
             tempBoard.addPiece(new ChessPosition(1, 8), null);
             tempGame.setBoard(tempBoard);
-            if (!tempGame.isInCheck(theTurn)) {
+            if (!tempGame.isInCheck(TeamColor.WHITE)) {
                 cm.add(new ChessMove(startPosition, new ChessPosition(1, 7), null));
+            }
+        }
+        maybeCastle = (theBoard.getPiece(startPosition).equals(new ChessPiece(TeamColor.WHITE, ChessPiece.PieceType.KING)));
+        maybeCastle = maybeCastle && (!whiteQueenRookMoved);
+        maybeCastle = maybeCastle && theBoard.getPiece(new ChessPosition(1, 4)) == null;
+        maybeCastle = maybeCastle && theBoard.getPiece(new ChessPosition(1, 3)) == null;
+        maybeCastle = maybeCastle && theBoard.getPiece(new ChessPosition(1, 2)) == null;
+        if (maybeCastle) {
+            tempBoard = theBoard.clone();
+            tempBoard.addPiece(new ChessPosition(1, 5), new ChessPiece(TeamColor.WHITE, ChessPiece.PieceType.KING));
+            tempBoard.addPiece(new ChessPosition(1, 4), new ChessPiece(TeamColor.WHITE, ChessPiece.PieceType.KING));
+            tempBoard.addPiece(new ChessPosition(1, 3), new ChessPiece(TeamColor.WHITE, ChessPiece.PieceType.KING));
+            tempBoard.addPiece(new ChessPosition(1, 1), null);
+            tempGame.setBoard(tempBoard);
+            if (!tempGame.isInCheck(TeamColor.WHITE)) {
+                cm.add(new ChessMove(startPosition, new ChessPosition(1, 3), null));
             }
         }
         return cm;
