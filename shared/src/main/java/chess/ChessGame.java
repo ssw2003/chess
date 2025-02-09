@@ -62,7 +62,18 @@ public class ChessGame {
      * startPosition
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
-        throw new RuntimeException("Not implemented");
+        if (theBoard.getPiece(startPosition) == null) {
+            return null;
+        }
+        Collection<ChessMove> cm = new ArrayList<>();
+        boolean maybeCastle = false;
+        if (theBoard.getPiece(startPosition).getPieceType() == ChessPiece.PieceType.PAWN) {
+            if (theTurn == theBoard.getPiece(startPosition).getTeamColor()) {
+                if ((startPosition.getColumn() - lastMove == 1 || lastMove - startPosition.getColumn() == 1) && lastMove != 0) {
+                    maybeCastle = true;
+                }
+            }
+        }
     }
 
     /**
@@ -111,16 +122,11 @@ public class ChessGame {
                 lastMove = move.getEndPosition().getColumn();
             }
         }
-        if (theBoard.getPiece(move.getStartPosition()).getPieceType() == ChessPiece.PieceType.KING) {
-            if (theBoard.getPiece(move.getStartPosition()).getTeamColor() == TeamColor.WHITE) {
-                whiteKingRookMoved = true;
-                whiteQueenRookMoved = true;
-            } else {
-                blackKingRookMoved = true;
-                blackQueenRookMoved = true;
-            }
-        }
         if (move.getStartPosition().equals(new ChessPosition(1, 1))) {
+            whiteQueenRookMoved = true;
+        }
+        if (move.getStartPosition().equals(new ChessPosition(1, 5))) {
+            whiteKingRookMoved = true;
             whiteQueenRookMoved = true;
         }
         if (move.getStartPosition().equals(new ChessPosition(1, 8))) {
@@ -129,8 +135,40 @@ public class ChessGame {
         if (move.getStartPosition().equals(new ChessPosition(8, 1))) {
             blackQueenRookMoved = true;
         }
+        if (move.getStartPosition().equals(new ChessPosition(8, 5))) {
+            blackKingRookMoved = true;
+            blackQueenRookMoved = true;
+        }
         if (move.getStartPosition().equals(new ChessPosition(8, 8))) {
             blackKingRookMoved = true;
+        }
+        if (move.getEndPosition().equals(new ChessPosition(1, 1))) {
+            whiteQueenRookMoved = true;
+        }
+        if (move.getEndPosition().equals(new ChessPosition(1, 5))) {
+            whiteKingRookMoved = true;
+            whiteQueenRookMoved = true;
+        }
+        if (move.getEndPosition().equals(new ChessPosition(1, 8))) {
+            whiteKingRookMoved = true;
+        }
+        if (move.getEndPosition().equals(new ChessPosition(8, 1))) {
+            blackQueenRookMoved = true;
+        }
+        if (move.getEndPosition().equals(new ChessPosition(8, 5))) {
+            blackKingRookMoved = true;
+            blackQueenRookMoved = true;
+        }
+        if (move.getEndPosition().equals(new ChessPosition(8, 8))) {
+            blackKingRookMoved = true;
+        }
+        theBoard.addPiece(move.getEndPosition(), theBoard.getPiece(move.getStartPosition()));
+        theBoard.addPiece(move.getStartPosition(), null);
+        boolean whitesTurn = theTurn == TeamColor.WHITE;
+        if (whitesTurn) {
+            theTurn = TeamColor.BLACK;
+        } else {
+            theTurn = TeamColor.WHITE;
         }
     }
 
