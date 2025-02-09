@@ -125,6 +125,37 @@ public class ChessGame {
                 cm.add(new ChessMove(startPosition, new ChessPosition(1, 3), null));
             }
         }
+        maybeCastle = (theBoard.getPiece(startPosition).equals(new ChessPiece(TeamColor.BLACK, ChessPiece.PieceType.KING)));
+        maybeCastle = maybeCastle && (!blackKingRookMoved);
+        maybeCastle = maybeCastle && theBoard.getPiece(new ChessPosition(8, 6)) == null;
+        maybeCastle = maybeCastle && theBoard.getPiece(new ChessPosition(8, 7)) == null;
+        if (maybeCastle) {
+            tempBoard = theBoard.clone();
+            tempBoard.addPiece(new ChessPosition(8, 5), new ChessPiece(TeamColor.BLACK, ChessPiece.PieceType.KING));
+            tempBoard.addPiece(new ChessPosition(8, 6), new ChessPiece(TeamColor.BLACK, ChessPiece.PieceType.KING));
+            tempBoard.addPiece(new ChessPosition(8, 7), new ChessPiece(TeamColor.BLACK, ChessPiece.PieceType.KING));
+            tempBoard.addPiece(new ChessPosition(8, 8), null);
+            tempGame.setBoard(tempBoard);
+            if (!tempGame.isInCheck(TeamColor.BLACK)) {
+                cm.add(new ChessMove(startPosition, new ChessPosition(8, 7), null));
+            }
+        }
+        maybeCastle = (theBoard.getPiece(startPosition).equals(new ChessPiece(TeamColor.BLACK, ChessPiece.PieceType.KING)));
+        maybeCastle = maybeCastle && (!blackQueenRookMoved);
+        maybeCastle = maybeCastle && theBoard.getPiece(new ChessPosition(8, 4)) == null;
+        maybeCastle = maybeCastle && theBoard.getPiece(new ChessPosition(8, 3)) == null;
+        maybeCastle = maybeCastle && theBoard.getPiece(new ChessPosition(8, 2)) == null;
+        if (maybeCastle) {
+            tempBoard = theBoard.clone();
+            tempBoard.addPiece(new ChessPosition(8, 5), new ChessPiece(TeamColor.BLACK, ChessPiece.PieceType.KING));
+            tempBoard.addPiece(new ChessPosition(8, 4), new ChessPiece(TeamColor.BLACK, ChessPiece.PieceType.KING));
+            tempBoard.addPiece(new ChessPosition(8, 3), new ChessPiece(TeamColor.BLACK, ChessPiece.PieceType.KING));
+            tempBoard.addPiece(new ChessPosition(8, 1), null);
+            tempGame.setBoard(tempBoard);
+            if (!tempGame.isInCheck(TeamColor.BLACK)) {
+                cm.add(new ChessMove(startPosition, new ChessPosition(8, 3), null));
+            }
+        }
         return cm;
     }
 
