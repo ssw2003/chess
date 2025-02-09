@@ -348,6 +348,13 @@ public class ChessGame {
     private Collection<ChessMove> valMoves(Collection<ChessMove> beg, ChessPosition startPosition) {
         ChessPiece cm = new ChessPiece(TeamColor.WHITE, ChessPiece.PieceType.BISHOP);
         Collection<ChessMove> cms = cm.pieceMoves(theBoard, startPosition);
+        for (ChessMove cn: cms) {
+            ChessBoard cb = theBoard.clone();
+            ChessGame cg = new ChessGame();
+            cb.addPiece(cn.getEndPosition(), cb.getPiece(cn.getStartPosition()));
+            cb.addPiece(cn.getStartPosition(), null);
+            cg.setBoard(cb);
+        }
     }
     private int convertBoolean(boolean m) {
         if (m) {
