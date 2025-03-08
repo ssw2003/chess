@@ -3,6 +3,7 @@ package dataaccess;
 import chess.ChessGame;
 import model.AuthData;
 import model.GameData;
+import model.GameDataWithout;
 import model.UserData;
 
 import java.util.ArrayList;
@@ -95,5 +96,13 @@ public class DatabaseThingy {
             }
         }
         return false;
+    }
+
+    public Collection<GameDataWithout> getGames() {
+        Collection<GameDataWithout> cGD = new ArrayList<>();
+        for (GameData i: games) {
+            cGD.add(new GameDataWithout(i.gameID(), i.whiteUsername(), i.blackUsername(), i.gameName()));
+        }
+        return cGD;
     }
 }

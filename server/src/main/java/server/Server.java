@@ -8,6 +8,8 @@ import dataaccess.DataAccessException;
 import model.*;
 import spark.*;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Map;
 
 public class Server {
@@ -66,6 +68,9 @@ public class Server {
             return gson.toJson(c);
         }
         int i = svc.addGame(gN);
+        var ce = Map.of("gameID", i);
+        response.status(200);
+        return gson.toJson(ce);
     }
 
     private Object thingyThing(Request request, Response response) {
@@ -129,8 +134,29 @@ public class Server {
     }
 
     private Object goThisThingy(Request request, Response response) {
-        return true;
+
         //Games listing
+        var gson = new Gson();
+        String authrztn = "";
+        try {
+            String json = request.headers("authorization");
+            authrztn = authrztn + json;
+        } catch (Exception exc) {
+            response.status(401);
+            var c = Map.of("message", "Error: unauthorized");
+            return gson.toJson(c);
+        }
+        try {
+            var e = Map.of();
+            Collection<GameDataWithout> cGD = svc.getGames();
+            var f = Map.of("games", cGD);
+            response.status(200);
+            return gson.toJson(f);
+        } catch (Exception exc) {
+            var e = Map.of("message", "Error: unauthorized");
+            response.status(500);
+            return gson.toJson(e);
+        }
     }
 
     private Object goThatThingy(Request request, Response response) {

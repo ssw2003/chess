@@ -1,8 +1,10 @@
 package dataaccess;
 
 import model.AuthData;
+import model.GameDataWithout;
 import model.UserData;
 
+import java.util.Collection;
 import java.util.UUID;
 
 public class Service {
@@ -38,5 +40,9 @@ public class Service {
 
     public int addGame(String gN) {
         return dT.addGame(gN);
+    }
+
+    public Collection<GameDataWithout> getGames() {
+        return dT.getGames();
     }
 }
