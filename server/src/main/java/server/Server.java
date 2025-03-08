@@ -35,8 +35,37 @@ public class Server {
     }
 
     private Object thisThingy(Request request, Response response) {
-        return true;
         //Create game
+        var gson = new Gson();
+        String authrztn = "";
+        try {
+            String json = request.headers("authorization");
+            authrztn = authrztn + json;
+        } catch (Exception exc) {
+            response.status(400);
+            var c = Map.of("message", "Error: bad request");
+            return gson.toJson(c);
+        }
+        if (!svc.isAuthorized(authrztn)) {
+            response.status(401);
+            var c = Map.of("message", "Error: unauthorized");
+            return gson.toJson(c);
+        }
+        String gN;
+        String psw;
+        String eml;
+        try {
+            var json = gson.fromJson(request.body(), GameNameData.class);
+            gN = json.gameName();
+            if (gN == null) {
+                throw new DataAccessException("");
+            }
+        } catch (Exception exc) {
+            response.status(400);
+            var c = Map.of("message", "Error: bad request");
+            return gson.toJson(c);
+        }
+        int i = svc.addGame(gN);
     }
 
     private Object thingyThing(Request request, Response response) {

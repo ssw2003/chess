@@ -1,5 +1,6 @@
 package dataaccess;
 
+import model.AuthData;
 import model.UserData;
 
 import java.util.UUID;
@@ -30,5 +31,12 @@ public class Service {
 
     public void clearThingy() {
         dT.clearThingy();
+    }
+    public boolean isAuthorized(String authy) {
+        return dT.isAuthorized(authy);
+    }
+
+    public int addGame(String gN) {
+        return dT.addGame(gN);
     }
 }

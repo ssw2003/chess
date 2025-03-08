@@ -1,5 +1,6 @@
 package dataaccess;
 
+import chess.ChessGame;
 import model.AuthData;
 import model.GameData;
 import model.UserData;
@@ -19,8 +20,9 @@ public class DatabaseThingy {
     public void addAuth(AuthData aD) {
         auths.add(new AuthData(aD.authToken(), aD.username()));
     }
-    public void addGame(GameData gD) {
-        games.add(new GameData(gD.gameID(), gD.whiteUsername(), gD.blackUsername(), gD.gameName(), gD.game().clone()));
+    public int addGame(String gD) {
+        games.add(new GameData(games.size() + 1, null, null, gD, new ChessGame()));
+        return games.size();
     }
     public boolean addUser(UserData uD, String aM, boolean b) {
         if (!b) {
