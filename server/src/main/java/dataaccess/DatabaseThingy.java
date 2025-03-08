@@ -79,4 +79,19 @@ public class DatabaseThingy {
         }
         return whatToReturn;
     }
+
+    public void clearThingy() {
+        auths = new ArrayList<>();
+        games = new ArrayList<>();
+        users = new ArrayList<>();
+    }
+
+    public boolean isAuthorized(String authy) {
+        for (AuthData aD: auths) {
+            if (aD.authToken().equals(authy)) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

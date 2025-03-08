@@ -27,4 +27,8 @@ public class Service {
             throw new DataAccessException("");
         }
     }
+
+    public void clearThingy() {
+        dT.clearThingy();
+    }
 }

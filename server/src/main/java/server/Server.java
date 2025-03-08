@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonNull;
 import com.google.gson.JsonSyntaxException;
 import com.sun.tools.javac.Main;
+import dataaccess.DataAccessException;
 import model.*;
 import spark.*;
 
@@ -34,10 +35,12 @@ public class Server {
     }
 
     private Object thisThingy(Request request, Response response) {
+        return true;
         //Create game
     }
 
     private Object thingyThing(Request request, Response response) {
+        return true;
         //Join game
     }
 
@@ -48,8 +51,8 @@ public class Server {
         try {
             String json = request.headers("authorization");
             authrztn = authrztn + json;
-        } catch (JsonSyntaxException e) {
-            response.status(500);
+        } catch (Exception exc) {
+            response.status(400);
             var c = Map.of("message", "Error: bad request");
             return gson.toJson(c);
         }
@@ -74,8 +77,14 @@ public class Server {
             var json = gson.fromJson(request.body(), UserPass.class);
             usn = json.username();
             psw = json.password();
-        } catch (JsonSyntaxException e) {
-            response.status(500);
+            if (usn == null) {
+                throw new DataAccessException("");
+            }
+            if (psw == null) {
+                throw new DataAccessException("");
+            }
+        } catch (Exception exc) {
+            response.status(400);
             var c = Map.of("message", "Error: bad request");
             return gson.toJson(c);
         }
@@ -91,11 +100,23 @@ public class Server {
     }
 
     private Object goThisThingy(Request request, Response response) {
+        return true;
         //Games listing
     }
 
     private Object goThatThingy(Request request, Response response) {
         //Clear
+        var gson = new Gson();
+        try {
+            svc.clearThingy();
+            response.status(200);
+            var c = Map.of();
+            return gson.toJson(c);
+        } catch (Exception exc) {
+            response.status(400);
+            var c = Map.of("message", "Error: bad request");
+            return gson.toJson(c);
+        }
     }
 
     private Object goThingy(Request request, Response response) {
@@ -109,8 +130,17 @@ public class Server {
             usn = json.username();
             psw = json.password();
             eml = json.email();
-        } catch (JsonSyntaxException e) {
-            response.status(500);
+            if (usn == null) {
+                throw new DataAccessException("");
+            }
+            if (psw == null) {
+                throw new DataAccessException("");
+            }
+            if (eml == null) {
+                throw new DataAccessException("");
+            }
+        } catch (Exception exc) {
+            response.status(400);
             var c = Map.of("message", "Error: bad request");
             return gson.toJson(c);
         }
