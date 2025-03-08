@@ -10,8 +10,10 @@ import spark.*;
 import java.util.Map;
 
 public class Server {
+    private dataaccess.Service svc;
 
     public int run(int desiredPort) {
+        svc = new dataaccess.Service();
         Spark.port(desiredPort);
 
         Spark.staticFiles.location("web");
@@ -45,6 +47,27 @@ public class Server {
 
     private Object thingy(Request request, Response response) {
         //LOGIN
+        String usn;
+        String psw;
+        var gson = new Gson();
+        try {
+            var json = gson.fromJson(request.body(), UserPass.class);
+            usn = json.username();
+            psw = json.password();
+        } catch (JsonSyntaxException e) {
+            response.status(500);
+            var c = Map.of("message", "Error: bad request");
+            return gson.toJson(c);
+        }
+        try {
+            var f = Map.of("username", usn, "authToken", svc.regUsr(usn, psw, "", false));
+            response.status(200);
+            return gson.toJson(f);
+        } catch (Exception exc) {
+            var e = Map.of("message", "Error: unauthorized");
+            response.status(401);
+            return gson.toJson(e);
+        }
     }
 
     private Object goThisThingy(Request request, Response response) {
@@ -56,6 +79,7 @@ public class Server {
     }
 
     private Object goThingy(Request request, Response response) {
+        //register
         String usn;
         String psw;
         String eml;
@@ -66,13 +90,19 @@ public class Server {
             psw = json.password();
             eml = json.email();
         } catch (JsonSyntaxException e) {
-            response.status(400);
+            response.status(500);
             var c = Map.of("message", "Error: bad request");
             return gson.toJson(c);
         }
-        var d = Map.of("message", "Error: Bad");
-        response.status(500);
-        return gson.toJson(d);
+        try {
+            var f = Map.of("username", usn, "authToken", svc.regUsr(usn, psw, eml, true));
+            response.status(200);
+            return gson.toJson(f);
+        } catch (Exception exc) {
+            var e = Map.of("message", "Error: already taken");
+            response.status(403);
+            return gson.toJson(e);
+        }
     }
 
     public void stop() {
