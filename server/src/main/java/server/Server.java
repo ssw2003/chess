@@ -43,6 +43,26 @@ public class Server {
 
     private Object thatThingy(Request request, Response response) {
         //LOGOUT
+        var gson = new Gson();
+        String authrztn = "";
+        try {
+            String json = request.headers("authorization");
+            authrztn = authrztn + json;
+        } catch (JsonSyntaxException e) {
+            response.status(500);
+            var c = Map.of("message", "Error: bad request");
+            return gson.toJson(c);
+        }
+        try {
+            svc.logout(authrztn);
+            var f = Map.of();
+            response.status(200);
+            return gson.toJson(f);
+        } catch (Exception exc) {
+            var e = Map.of("message", "Error: unauthorized");
+            response.status(401);
+            return gson.toJson(e);
+        }
     }
 
     private Object thingy(Request request, Response response) {

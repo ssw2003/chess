@@ -21,4 +21,10 @@ public class Service {
         }
         throw new DataAccessException("");
     }
+
+    public void logout(String authrztn) throws DataAccessException {
+        if (dT.logout(authrztn)) {
+            throw new DataAccessException("");
+        }
+    }
 }
