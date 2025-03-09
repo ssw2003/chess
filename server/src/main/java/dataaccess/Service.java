@@ -1,6 +1,5 @@
 package dataaccess;
 
-import model.AuthData;
 import model.GameDataWithout;
 import model.UserData;
 
@@ -44,5 +43,11 @@ public class Service {
 
     public Collection<GameDataWithout> getGames() {
         return dT.getGames();
+    }
+
+    public void joinGame(int ident, boolean isWhite, String authrztn) throws DataAccessException {
+        if (!dT.joinGame(ident, isWhite, authrztn)) {
+            throw new DataAccessException("");
+        }
     }
 }

@@ -105,4 +105,38 @@ public class DatabaseThingy {
         }
         return cGD;
     }
+    public boolean joinGame(int ident, boolean isWhite, String authrztn) {
+        String usnm = null;
+        for (AuthData aD: auths) {
+            if (aD.authToken().equals(authrztn)) {
+                usnm = aD.username();
+            }
+        }
+        if (usnm == null || ident <= 0 || ident > games.size()) {
+            return false;
+        }
+        Collection<GameData> cGD = new ArrayList<>();
+        for (GameData gaD: games) {
+            if (gaD.gameID() != ident) {
+                cGD.add(new GameData(gaD.gameID(), gaD.whiteUsername(), gaD.blackUsername(), gaD.gameName(), gaD.game()));
+            } else {
+                if ((gaD.whiteUsername() != null) && isWhite) {
+                    return false;
+                }
+                if ((gaD.blackUsername() != null) && (!isWhite)) {
+                    return false;
+                }
+                if (isWhite) {
+                    cGD.add(new GameData(gaD.gameID(), usnm, gaD.blackUsername(), gaD.gameName(), gaD.game()));
+                } else {
+                    cGD.add(new GameData(gaD.gameID(), gaD.whiteUsername(), usnm, gaD.gameName(), gaD.game()));
+                }
+            }
+        }
+        games = new ArrayList<>();
+        for (GameData data: cGD) {
+            games.add(new GameData(data.gameID(), data.whiteUsername(), data.blackUsername(), data.gameName(), data.game()));
+        }
+        return true;
+    }
 }

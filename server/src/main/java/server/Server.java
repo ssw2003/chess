@@ -74,8 +74,46 @@ public class Server {
     }
 
     private Object thingyThing(Request request, Response response) {
-        return true;
         //Join game
+        var gson = new Gson();
+        String authrztn = "";
+        try {
+            String json = request.headers("authorization");
+            authrztn = authrztn + json;
+        } catch (Exception exc) {
+            response.status(400);
+            var c = Map.of("message", "Error: bad request");
+            return gson.toJson(c);
+        }
+        if (!svc.isAuthorized(authrztn)) {
+            response.status(401);
+            var c = Map.of("message", "Error: unauthorized");
+            return gson.toJson(c);
+        }
+        String pC;
+        int ident;
+        try {
+            var json = gson.fromJson(request.body(), ColorAndNumber.class);
+            pC = json.playerColor();
+            ident = json.gameID();
+            if (pC == null) {
+                throw new DataAccessException("");
+            }
+        } catch (Exception exc) {
+            response.status(400);
+            var c = Map.of("message", "Error: bad request");
+            return gson.toJson(c);
+        }
+        var ce = Map.of();
+        try {
+            svc.joinGame(ident, pC.equals("WHITE"), authrztn);
+        } catch (DataAccessException e) {
+            ce = Map.of("message", "Error: already taken");
+            response.status(403);
+            return gson.toJson(ce);
+        }
+        response.status(200);
+        return gson.toJson(ce);
     }
 
     private Object thatThingy(Request request, Response response) {
