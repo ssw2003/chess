@@ -134,6 +134,7 @@ public class DatabaseThingy {
             }
         }
         games = new ArrayList<>();
+        String m;
         for (GameData data: cGD) {
             games.add(new GameData(data.gameID(), data.whiteUsername(), data.blackUsername(), data.gameName(), data.game()));
         }
