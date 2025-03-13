@@ -97,6 +97,7 @@ public class ChessPiece {
                     g = false;
                 }
                 mR = 19;
+                String stringy = "w";
             }
             if (g) {
                 cM.add(new ChessMove(myPosition, pstn, null));
