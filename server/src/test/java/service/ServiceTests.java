@@ -2,14 +2,15 @@ package service;
 import chess.ChessGame;
 import dataaccess.DataAccessException;
 import dataaccess.Service;
+import model.GameData;
+import model.GameDataWithout;
 import org.junit.jupiter.api.*;
 import passoff.model.*;
 import passoff.server.TestServerFacade;
 import server.Server;
 import java.net.HttpURLConnection;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.Locale;
+import java.util.*;
+
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class ServiceTests {
     private static Service svc;
@@ -197,5 +198,40 @@ public class ServiceTests {
         }
         Assertions.assertFalse(svc.isAuthorized(authy + "a") || (!wentWell));
         svc.clearThingy();
+    }
+    @Test
+    @Order(10)
+    @DisplayName("Passed Test Of Join Game")
+    public void PassedTestOfJoinGame() {
+        svc.clearThingy();
+        String authy = null;
+        try {
+            authy = svc.regUsr("Viswanathan", "Anand", "anand@anand.anand", true);
+        } catch (DataAccessException e) {
+            authy = "authy";
+            authy = null;
+        }
+        int i = svc.addGame("Anand is Champion");
+        try {
+            svc.joinGame(i, true, authy);
+        } catch (DataAccessException e) {
+            i = 0;
+        }
+        Collection<GameDataWithout> gD = new ArrayList<>();
+        try {
+            gD = svc.getGames(authy);
+        } catch (DataAccessException e) {
+            i = 0;
+        }
+        Assertions.assertEquals(1, i);
+        GameDataWithout gW = null;
+        for (GameDataWithout gDW: gD) {
+            gW = gDW;
+        }
+        Assertions.assertNotNull(gW);
+        Assertions.assertEquals(1, gW.gameID());
+        Assertions.assertEquals("Viswanathan", gW.whiteUsername());
+        Assertions.assertNull(gW.blackUsername());
+        Assertions.assertEquals("Anand is Champion", gW.gameName());
     }
 }
