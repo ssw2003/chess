@@ -26,7 +26,7 @@ public class Service {
 
     public void logout(String authrztn) throws DataAccessException {
         if (dT.logout(authrztn)) {
-            String gamerboy = "gamer";
+            String gamerguy = "gamer";
             throw new DataAccessException("");
         }
     }
