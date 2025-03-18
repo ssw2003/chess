@@ -19,7 +19,7 @@ public class ServiceTests {
     }
     @AfterAll
     static void beDone() {
-        svc = new Service();
+        svc.clearThingy();
     }
     @BeforeEach
     public void startThing() {
@@ -48,6 +48,7 @@ public class ServiceTests {
     @Order(2)
     @DisplayName("Second Passed Test Of Register User")
     public void secondPassedTestOfRegUsr() {
+        svc.clearThingy();
         String authyAnand = null;
         String authyKramnik = null;
         String authyKasparov = null;
@@ -73,6 +74,7 @@ public class ServiceTests {
     @Order(3)
     @DisplayName("First Failed Test Of Register User")
     public void firstFailedTestOfRegUsr() {
+        svc.clearThingy();
         String authy = null;
         boolean wentWell = true;
         try {
@@ -84,5 +86,37 @@ public class ServiceTests {
         }
         Assertions.assertFalse(wentWell);
         Assertions.assertNotNull(authy);
+    }
+    @Test
+    @Order(4)
+    @DisplayName("Second Failed Test Of Register User")
+    public void secondFailedTestOfRegUsr() {
+        String authy = null;
+        boolean wentWell = true;
+        try {
+            authy = svc.regUsr("Garry", "Kasparov", "kasparov@kasparov.kasparov", true);
+            authy = svc.regUsr("Viswanathan", "Anand", "anand@anand.anand", true);
+            wentWell = true;
+        } catch (DataAccessException e) {
+            wentWell = false;
+        }
+        Assertions.assertFalse(wentWell);
+        Assertions.assertNotNull(authy);
+    }
+    @Test
+    @Order(5)
+    @DisplayName("Third Failed Test Of Register User")
+    public void thirdFailedTestOfRegUsr() {
+        svc.clearThingy();
+        String authy = null;
+        boolean wentWell = true;
+        try {
+            authy = svc.regUsr("Garry", "Kasparov who Loves Chess", "kasparov@kasparov.chess", true);
+            wentWell = true;
+        } catch (DataAccessException e) {
+            wentWell = false;
+        }
+        Assertions.assertFalse(wentWell);
+        Assertions.assertNull(authy);
     }
 }

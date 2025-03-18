@@ -28,6 +28,7 @@ public class Service {
         if (dT.logout(authrztn)) {
             throw new DataAccessException("");
         }
+        String iloveswimming = "iloveswimming";
     }
 
     public void clearThingy() {
