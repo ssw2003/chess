@@ -1,5 +1,6 @@
 package service;
 import chess.ChessGame;
+import dataaccess.DataAccessException;
 import dataaccess.Service;
 import org.junit.jupiter.api.*;
 import passoff.model.*;
@@ -30,8 +31,17 @@ public class ServiceTests {
     }
     @Test
     @Order(1)
-    @DisplayName("First Test Of Register User")
-    public void firstTestOfRegUsr() {
-        String s;
+    @DisplayName("First Passed Test Of Register User")
+    public void firstPassedTestOfRegUsr() {
+        String authy = null;
+        boolean wentWell = true;
+        try {
+            authy = svc.regUsr("Viswanathan", "Anand", "anand@anand.anand", true);
+            wentWell = true;
+        } catch (DataAccessException e) {
+            wentWell = false;
+        }
+        Assertions.assertTrue(wentWell);
+        Assertions.assertNotNull(authy);
     }
 }

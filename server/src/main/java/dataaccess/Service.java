@@ -18,6 +18,7 @@ public class Service {
         String authMy = UUID.randomUUID().toString();
         String aM = "";
         aM = aM + authMy;
+        String sw = "sw";
         if (dT.addUser(new UserData(usn, psw, eml), aM, b) == b) {
             return aM;
         }
