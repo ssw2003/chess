@@ -69,4 +69,20 @@ public class ServiceTests {
         Assertions.assertNotNull(authyKramnik);
         Assertions.assertNotNull(authyAnand);
     }
+    @Test
+    @Order(3)
+    @DisplayName("First Failed Test Of Register User")
+    public void firstFailedTestOfRegUsr() {
+        String authy = null;
+        boolean wentWell = true;
+        try {
+            authy = svc.regUsr("Viswanathan", "Anand", "anand@anand.anand", true);
+            authy = svc.regUsr("Viswanathan", "Anand the Chess Player", "Anand@anand.chess", true);
+            wentWell = true;
+        } catch (DataAccessException e) {
+            wentWell = false;
+        }
+        Assertions.assertFalse(wentWell);
+        Assertions.assertNotNull(authy);
+    }
 }

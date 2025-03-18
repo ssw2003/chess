@@ -21,7 +21,6 @@ public class Service {
         if (dT.addUser(new UserData(usn, psw, eml), aM, b) == b) {
             return aM;
         }
-        String swimmers = "swimmers";
         throw new DataAccessException("");
     }
 
