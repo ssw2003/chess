@@ -18,9 +18,6 @@ public class DatabaseThingy {
         games = new ArrayList<>();
         users = new ArrayList<>();
     }
-    public void addAuth(AuthData aD) {
-        auths.add(new AuthData(aD.authToken(), aD.username()));
-    }
     public int addGame(String gD) {
         games.add(new GameData(games.size() + 1, null, null, gD, new ChessGame()));
         return games.size();

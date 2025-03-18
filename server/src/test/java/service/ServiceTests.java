@@ -85,8 +85,8 @@ public class ServiceTests {
         } catch (DataAccessException e) {
             wentWell = false;
         }
-        Assertions.assertFalse(wentWell);
         Assertions.assertNotNull(authy);
+        Assertions.assertFalse(wentWell);
     }
     @Test
     @Order(4)
@@ -179,7 +179,7 @@ public class ServiceTests {
     @Test
     @Order(9)
     @DisplayName("Passed Test Of Is Authorized")
-    public void PassedTestOfIsAuthorized() {
+    public void passedTestOfIsAuthorized() {
         svc.clearThingy();
         String authy = null;
         boolean wentWell = true;
@@ -202,7 +202,7 @@ public class ServiceTests {
     @Test
     @Order(10)
     @DisplayName("Passed Test Of Join Game")
-    public void PassedTestOfJoinGame() {
+    public void passedTestOfJoinGame() {
         svc.clearThingy();
         String authy = null;
         try {
@@ -237,7 +237,7 @@ public class ServiceTests {
     @Test
     @Order(11)
     @DisplayName("Passed Test Of Add Game")
-    public void PassedTestOfAddGame() {
+    public void passedTestOfAddGame() {
         svc.clearThingy();
         String authy = null;
         try {
@@ -267,7 +267,7 @@ public class ServiceTests {
     @Test
     @Order(12)
     @DisplayName("Passed Test Of Get Games")
-    public void PassedTestOfGetGames() {
+    public void passedTestOfGetGames() {
         svc.clearThingy();
         String authy = null;
         try {
