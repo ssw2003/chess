@@ -264,4 +264,61 @@ public class ServiceTests {
         Assertions.assertNull(gW.blackUsername());
         Assertions.assertEquals("Anand is Champion", gW.gameName());
     }
+    @Test
+    @Order(12)
+    @DisplayName("Passed Test Of Get Games")
+    public void PassedTestOfGetGames() {
+        svc.clearThingy();
+        String authy = null;
+        try {
+            authy = svc.regUsr("Garry", "Kasparov", "Kasparov@Kasparov.Kasparov", true);
+        } catch (DataAccessException e) {
+            authy = "authy";
+            authy = null;
+        }
+        int i = svc.addGame("Kasparov is Champion");
+        int j = svc.addGame("Kasparov is Chess Player");
+        int k = svc.addGame("Kasparov is Bad At Chess");
+        int l = svc.addGame("Kasparov is Good At Chess");
+        Collection<GameDataWithout> gD = new ArrayList<>();
+        try {
+            gD = svc.getGames(authy);
+        } catch (DataAccessException e) {
+            i = 0;
+            j = 0;
+            k = 0;
+            l = 0;
+        }
+        Assertions.assertEquals(1, i);
+        GameDataWithout gWI = null;
+        GameDataWithout gWJ = null;
+        GameDataWithout gWK = null;
+        GameDataWithout gWL = null;
+        for (GameDataWithout gDW: gD) {
+            if (gDW.gameID() == i) {
+                gWI = gDW;
+            }
+            if (gDW.gameID() == j) {
+                gWJ = gDW;
+            }
+            if (gDW.gameID() == k) {
+                gWK = gDW;
+            }
+            if (gDW.gameID() == l) {
+                gWL = gDW;
+            }
+        }
+        Assertions.assertEquals(1, i);
+        Assertions.assertEquals(2, j);
+        Assertions.assertEquals(3, k);
+        Assertions.assertEquals(4, l);
+        Assertions.assertEquals(1, gWI.gameID());
+        Assertions.assertEquals(2, gWJ.gameID());
+        Assertions.assertEquals(3, gWK.gameID());
+        Assertions.assertEquals(4, gWL.gameID());
+        Assertions.assertEquals("Kasparov is Champion", gWI.gameName());
+        Assertions.assertEquals("Kasparov is Chess Player", gWJ.gameName());
+        Assertions.assertEquals("Kasparov is Bad At Chess", gWK.gameName());
+        Assertions.assertEquals("Kasparov is Good At Chess", gWL.gameName());
+    }
 }
