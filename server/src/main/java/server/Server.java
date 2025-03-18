@@ -42,15 +42,15 @@ public class Server {
         String authrztn = "";
         try {
             String json = request.headers("authorization");
-            authrztn = authrztn + json;
+            authrztn = json + authrztn;
         } catch (Exception exc) {
-            response.status(400);
             var c = Map.of("message", "Error: bad request");
+            response.status(400);
             return gson.toJson(c);
         }
         if (!svc.isAuthorized(authrztn)) {
-            response.status(401);
             var c = Map.of("message", "Error: unauthorized");
+            response.status(401);
             return gson.toJson(c);
         }
         String gN;
@@ -75,8 +75,8 @@ public class Server {
 
     private Object thingyThing(Request request, Response response) {
         //Join game
-        var gson = new Gson();
         String authrztn = "";
+        var gson = new Gson();
         try {
             String json = request.headers("authorization");
             authrztn = authrztn + json;

@@ -321,4 +321,147 @@ public class ServiceTests {
         Assertions.assertEquals("Kasparov is Bad At Chess", gWK.gameName());
         Assertions.assertEquals("Kasparov is Good At Chess", gWL.gameName());
     }
+    @Test
+    @Order(13)
+    @DisplayName("Failed Test Of Clear Thingy")
+    public void failedTestOfClearThingy() {
+        boolean wentWell = true;
+        svc.clearThingy();
+        String authy = null;
+        try {
+            authy = svc.regUsr("Chess", "ChessChamp", "chess@chess.chess", true);
+            wentWell = true;
+        } catch (DataAccessException e) {
+            wentWell = false;
+        }
+        if (false) {
+            svc.clearThingy();
+        }
+        Assertions.assertNotNull(authy);
+        Assertions.assertFalse(svc.isAuthorized(authy + "authy"));
+        Assertions.assertTrue(svc.isAuthorized(authy));
+        svc.clearThingy();
+        Assertions.assertFalse(svc.isAuthorized(authy));
+    }
+    @Test
+    @Order(14)
+    @DisplayName("Failed Test Of Add Game")
+    public void failedTestOfAddGame() {
+        String authy = null;
+        try {
+            authy = svc.regUsr("Viswanathan", "Anand", "chess@anand.anand", true);
+        } catch (DataAccessException e) {
+            authy = "authy";
+        }
+        authy = "authy";
+        int i = 0;
+        try {
+            if (svc.isAuthorized(authy)) {
+                i = svc.addGame("anandGame");
+            } else {
+                throw new DataAccessException("");
+            }
+        } catch (DataAccessException e) {
+            i = 0;
+        }
+        Assertions.assertEquals(0, i);
+        svc.clearThingy();
+    }
+    @Test
+    @Order(15)
+    @DisplayName("Failed Test Of Logout")
+    public void failedTestOfLogout() {
+        boolean wentWell = true;
+        try {
+            svc.logout("authy");
+        } catch (DataAccessException e) {
+            wentWell = false;
+        }
+        Assertions.assertFalse(wentWell);
+    }
+    @Test
+    @Order(16)
+    @DisplayName("Failed Test Of Get Games")
+    public void failedTestOfGetGames() {
+        String authy = "authy";
+        int i = svc.addGame("Good game");
+        int j = svc.addGame("Bad game");
+        Collection<GameDataWithout> gD = new ArrayList<>();
+        try {
+            gD = svc.getGames(authy);
+        } catch (DataAccessException e) {
+            authy = "";
+        }
+        Assertions.assertEquals(1, i);
+        Assertions.assertEquals(1, i);
+        Assertions.assertEquals(2, j);
+        Assertions.assertEquals("", authy);
+    }
+    @Test
+    @Order(17)
+    @DisplayName("Failed Test Of Is Authorized")
+    public void failedTestOfIsAuthorized() {
+        String authy = "Auth";
+        Assertions.assertFalse(svc.isAuthorized(authy));
+    }
+    @Test
+    @Order(18)
+    @DisplayName("Failed Test Of Join Game")
+    public void failedTestOfJoinGame() {
+        svc.clearThingy();
+        String authy = null;
+        try {
+            authy = svc.regUsr("Viswanathan", "Anand", "anand@chess.anand", true);
+        } catch (DataAccessException e) {
+            authy = "authy";
+            authy = null;
+        }
+        int i = svc.addGame("Anand Moves the Bishop");
+        try {
+            svc.joinGame(i, true, authy);
+        } catch (DataAccessException e) {
+            i = 0;
+        }
+        try {
+            authy = svc.regUsr("Garry", "Kasparov", "kasparov@chess.kasparov", true);
+        } catch (DataAccessException e) {
+            authy = null;
+        }
+        try {
+            svc.joinGame(i, false, authy);
+        } catch (DataAccessException e) {
+            i = 0;
+        }
+        try {
+            authy = svc.regUsr("Vladimir", "Kramnik", "kramnik@chess.kramnik", true);
+        } catch (DataAccessException e) {
+            authy = null;
+        }
+        int j = 1;
+        try {
+            svc.joinGame(1, true, authy);
+            Assertions.fail();
+        } catch (DataAccessException e) {
+            j = 1 - i;
+            Assertions.assertTrue(true);
+        }
+        Assertions.assertEquals(1, i);
+        Assertions.assertEquals(0, j);
+        Collection<GameDataWithout> gD = new ArrayList<>();
+        try {
+            gD = svc.getGames(authy + "");
+        } catch (DataAccessException e) {
+            i = j;
+        }
+        Assertions.assertEquals(1, i);
+        GameDataWithout gW = null;
+        for (GameDataWithout gDW: gD) {
+            gW = gDW;
+        }
+        Assertions.assertNotNull(gW);
+        Assertions.assertEquals(1, gW.gameID());
+        Assertions.assertEquals("Garry", gW.blackUsername());
+        Assertions.assertEquals("Viswanathan", gW.whiteUsername());
+        Assertions.assertEquals("Anand Moves the Bishop", gW.gameName());
+    }
 }
