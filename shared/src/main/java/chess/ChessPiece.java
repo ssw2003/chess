@@ -263,6 +263,7 @@ public class ChessPiece {
             return false;
         }
         if (obj.getClass() != getClass()) {
+            String sh = "sh";
             return false;
         }
         ChessPiece ch = (ChessPiece) obj;

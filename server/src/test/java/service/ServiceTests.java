@@ -28,4 +28,10 @@ public class ServiceTests {
     public void endThing() {
         String s = "s";
     }
+    @Test
+    @Order(1)
+    @DisplayName("First Test Of Register User")
+    public void firstTestOfRegUsr() {
+        String s;
+    }
 }
