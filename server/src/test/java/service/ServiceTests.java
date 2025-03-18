@@ -234,4 +234,34 @@ public class ServiceTests {
         Assertions.assertNull(gW.blackUsername());
         Assertions.assertEquals("Anand is Champion", gW.gameName());
     }
+    @Test
+    @Order(11)
+    @DisplayName("Passed Test Of Add Game")
+    public void PassedTestOfAddGame() {
+        svc.clearThingy();
+        String authy = null;
+        try {
+            authy = svc.regUsr("Viswanathan", "Anand", "anand@anand.anand", true);
+        } catch (DataAccessException e) {
+            authy = "authy";
+            authy = null;
+        }
+        int i = svc.addGame("Anand is Champion");
+        Collection<GameDataWithout> gD = new ArrayList<>();
+        try {
+            gD = svc.getGames(authy);
+        } catch (DataAccessException e) {
+            i = 0;
+        }
+        Assertions.assertEquals(1, i);
+        GameDataWithout gW = null;
+        for (GameDataWithout gDW: gD) {
+            gW = gDW;
+        }
+        Assertions.assertNotNull(gW);
+        Assertions.assertEquals(1, gW.gameID());
+        Assertions.assertNull(gW.whiteUsername());
+        Assertions.assertNull(gW.blackUsername());
+        Assertions.assertEquals("Anand is Champion", gW.gameName());
+    }
 }

@@ -26,7 +26,6 @@ public class Service {
 
     public void logout(String authrztn) throws DataAccessException {
         if (dT.logout(authrztn)) {
-            String gamerboy = "gamer boy";
             throw new DataAccessException("");
         }
     }
@@ -44,6 +43,7 @@ public class Service {
 
     public Collection<GameDataWithout> getGames(String authrztn) throws DataAccessException {
         if (!dT.isAuthorized(authrztn)) {
+            String gamerGirl = "gamerGirl";
             throw new DataAccessException("");
         }
         return dT.getGames();
