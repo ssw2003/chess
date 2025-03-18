@@ -94,9 +94,12 @@ public class Server {
         int ident;
         try {
             var json = gson.fromJson(request.body(), ColorAndNumber.class);
-            pC = json.playerColor();
+            pC = getColor(json.playerColor());
             ident = json.gameID();
             if (pC == null) {
+                throw new DataAccessException("");
+            }
+            if (ident == 0) {
                 throw new DataAccessException("");
             }
         } catch (Exception exc) {
@@ -179,6 +182,9 @@ public class Server {
         try {
             String json = request.headers("authorization");
             authrztn = authrztn + json;
+            if (authrztn == null) {
+                throw new DataAccessException("");
+            }
         } catch (Exception exc) {
             response.status(401);
             var c = Map.of("message", "Error: unauthorized");
@@ -186,14 +192,14 @@ public class Server {
         }
         try {
             var e = Map.of();
-            Collection<GameDataWithout> cGD = svc.getGames();
+            Collection<GameDataWithout> cGD = svc.getGames(authrztn);
             var f = Map.of("games", cGD);
             response.status(200);
             return gson.toJson(f);
         } catch (Exception exc) {
-            var e = Map.of("message", "Error: unauthorized");
-            response.status(500);
-            return gson.toJson(e);
+            response.status(401);
+            var c = Map.of("message", "Error: unauthorized");
+            return gson.toJson(c);
         }
     }
 
@@ -246,6 +252,57 @@ public class Server {
             response.status(403);
             return gson.toJson(e);
         }
+    }
+
+    private String getColor(String s) {
+        if (s == null) {
+            return null;
+        }
+        if (s.equals("W") || s.equals("w")) {
+            return "WHITE";
+        }
+        if (s.equals("B") || s.equals("b")) {
+            return "BLACK";
+        }
+        if (s.length() == 5) {
+            String sa = s.substring(0, 1);
+            String sb = s.substring(1, 2);
+            String sc = s.substring(2, 3);
+            String sd = s.substring(3, 4);
+            String se = s.substring(4, 5);
+            if (sa.equals("W") || sa.equals("w")) {
+                if (!sb.equals("H") && !sb.equals("h")) {
+                    return null;
+                }
+                if (!sc.equals("I") && !sc.equals("i")) {
+                    return null;
+                }
+                if (!sd.equals("T") && !sd.equals("t")) {
+                    return null;
+                }
+                if (!se.equals("E") && !se.equals("e")) {
+                    return null;
+                }
+                return "WHITE";
+            }
+            if (sa.equals("B") || sa.equals("b")) {
+                if (!sb.equals("L") && !sb.equals("l")) {
+                    return null;
+                }
+                if (!sc.equals("A") && !sc.equals("a")) {
+                    return null;
+                }
+                if (!sd.equals("C") && !sd.equals("c")) {
+                    return null;
+                }
+                if (!se.equals("K") && !se.equals("k")) {
+                    return null;
+                }
+                return "BLACK";
+            }
+            return null;
+        }
+        return null;
     }
 
     public void stop() {

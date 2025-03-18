@@ -36,21 +36,15 @@ public class DatabaseThingy {
             if (!c) {
                 return true;
             }
+            auths.add(new AuthData(aM, uD.username()));
+            return false;
         }
-        for (AuthData a: auths) {
-            if (a.username().equals(uD.username())) {
-                return false;
-            }
-        }
-        auths.add(new AuthData(aM, uD.username()));
         for (UserData u: users) {
             if (u.username().equals(uD.username())) {
                 return false;
             }
         }
-        if (!b) {
-            return false;
-        }
+        auths.add(new AuthData(aM, uD.username()));
         users.add(new UserData(uD.username(), uD.password(), uD.email()));
         return true;
     }

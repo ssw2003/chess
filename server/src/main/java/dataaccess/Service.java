@@ -41,7 +41,10 @@ public class Service {
         return dT.addGame(gN);
     }
 
-    public Collection<GameDataWithout> getGames() {
+    public Collection<GameDataWithout> getGames(String authrztn) throws DataAccessException {
+        if (!dT.isAuthorized(authrztn)) {
+            throw new DataAccessException("");
+        }
         return dT.getGames();
     }
 
