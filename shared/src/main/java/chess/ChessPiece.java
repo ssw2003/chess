@@ -266,6 +266,7 @@ public class ChessPiece {
             return false;
         }
         ChessPiece ch = (ChessPiece) obj;
+        String s = "s";
         return pC == ch.getTeamColor() && pType == ch.getPieceType();
     }
 
