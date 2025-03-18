@@ -139,8 +139,8 @@ public class ServiceTests {
     }
     @Test
     @Order(7)
-    @DisplayName("First Passed Test Of Clear Thingy")
-    public void firstPassedTestOfClearThingy() {
+    @DisplayName("Passed Test Of Clear Thingy")
+    public void passedTestOfClearThingy() {
         svc.clearThingy();
         String authy = null;
         boolean wentWell = true;
@@ -154,5 +154,25 @@ public class ServiceTests {
         Assertions.assertNotNull(authy);
         svc.clearThingy();
         Assertions.assertFalse(svc.isAuthorized(authy));
+    }
+    @Test
+    @Order(8)
+    @DisplayName("Second Passed Test Of Logout")
+    public void secondPassedTestOfLogout() {
+        String authy = null;
+        boolean wentWell = true;
+        try {
+            authy = svc.regUsr("Vladimir", "Kramnik", "kramnik@kramnik.kramnik", true);
+            authy = svc.regUsr("Viswanathan", "Anand", "anand@anand.anand", true);
+            wentWell = true;
+        } catch (DataAccessException e) {
+            wentWell = false;
+        }
+        try {
+            svc.logout(authy);
+        } catch (DataAccessException e) {
+            wentWell = false;
+        }
+        Assertions.assertFalse(svc.isAuthorized(authy) || (!wentWell));
     }
 }
