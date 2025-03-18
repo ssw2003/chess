@@ -175,4 +175,27 @@ public class ServiceTests {
         }
         Assertions.assertFalse(svc.isAuthorized(authy) || (!wentWell));
     }
+    @Test
+    @Order(9)
+    @DisplayName("Passed Test Of Is Authorized")
+    public void PassedTestOfIsAuthorized() {
+        svc.clearThingy();
+        String authy = null;
+        boolean wentWell = true;
+        try {
+            authy = svc.regUsr("Vladimir", "Kramnik", "kramnik@kramnik.kramnik", true);
+            authy = svc.regUsr("Viswanathan", "Anand", "anand@anand.anand", true) + authy;
+            wentWell = true;
+        } catch (DataAccessException e) {
+            wentWell = false;
+        }
+        try {
+            svc.logout(authy);
+            wentWell = false;
+        } catch (DataAccessException e) {
+            wentWell = true;
+        }
+        Assertions.assertFalse(svc.isAuthorized(authy + "a") || (!wentWell));
+        svc.clearThingy();
+    }
 }
