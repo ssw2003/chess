@@ -1,5 +1,7 @@
 package dataaccess;
 
+import chess.ChessGame;
+import model.GameData;
 import model.GameDataWithout;
 import model.UserData;
 
@@ -13,7 +15,15 @@ public class DatabaseClass implements DatabaseThingy {
     }
     @Override
     public int addGame(String gD) {
-        return 0;
+        try (var cn = DatabaseManager.getConnection()) {
+            var sqlAsk = "INSERT INTO games (gameName) VALUES (?)";
+            try (var pS = cn.prepareStatement(sqlAsk)) {
+                var i = pS.executeUpdate(gD);
+                return i;
+            }
+        } catch (Exception e) {
+            return 0;
+        }
     }
 
     @Override
