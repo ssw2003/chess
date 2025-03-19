@@ -7,9 +7,13 @@ import java.util.Collection;
 import java.util.UUID;
 
 public class Service {
-    private DatabaseThingy dT;
+    private DatabaseClass dT;
     public Service() {
-        dT = new DatabaseThingy();
+        try {
+            dT = new DatabaseClass();
+        } catch (DataAccessException e) {
+            boolean b = true;
+        }
     }
 
 

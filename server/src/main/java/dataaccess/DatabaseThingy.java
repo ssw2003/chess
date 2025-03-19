@@ -9,7 +9,7 @@ import model.UserData;
 import java.util.ArrayList;
 import java.util.Collection;
 
-public class DatabaseThingy {
+public interface DatabaseThingy {
     private Collection<AuthData> auths;
     private Collection<GameData> games;
     private Collection<UserData> users;
