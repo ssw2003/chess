@@ -7,7 +7,7 @@ import java.sql.SQLException;
 import java.util.Collection;
 import java.util.List;
 
-public class DatabaijseClass implements DatabaseThingy {
+public class DatabaseClass implements DatabaseThingy {
     public DatabaseClass() throws DataAccessException {
         tableStarter();
     }
