@@ -6,6 +6,7 @@ import com.google.gson.JsonSyntaxException;
 import com.sun.tools.javac.Main;
 import dataaccess.DataAccessException;
 import model.*;
+import org.mindrot.jbcrypt.BCrypt;
 import spark.*;
 
 import java.util.ArrayList;
@@ -158,6 +159,7 @@ public class Server {
             if (psw == null) {
                 throw new DataAccessException("");
             }
+            psw = BCrypt.hashpw(psw, BCrypt.gensalt());
         } catch (Exception exc) {
             response.status(400);
             var c = Map.of("message", "Error: bad request");
@@ -238,6 +240,7 @@ public class Server {
             if (eml == null) {
                 throw new DataAccessException("");
             }
+            psw = BCrypt.hashpw(psw, BCrypt.gensalt());
         } catch (Exception exc) {
             response.status(400);
             var c = Map.of("message", "Error: bad request");
