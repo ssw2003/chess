@@ -16,7 +16,7 @@ public class DatabaseClass implements DatabaseThingy {
     @Override
     public int addGame(String gD) {
         try (var cn = DatabaseManager.getConnection()) {
-            var sqlAsk = "INSERT INTO games (gameName) VALUES (?)";
+            var sqlAsk = "INSERT INTO games gameName VALUES ?";
             try (var pS = cn.prepareStatement(sqlAsk)) {
                 var i = pS.executeUpdate(gD);
                 return i;
@@ -53,31 +53,15 @@ public class DatabaseClass implements DatabaseThingy {
 
     @Override
     public boolean logout(String authrztn) {
-        boolean whatToReturn = true;
-        if (true) {
-            for (AuthData aD: auths) {
-                if (aD.authToken().equals(authrztn)) {
-                    whatToReturn = false;
-                }
+        try (var cn = DatabaseManager.getConnection()) {
+            var sqlAsk = "DELETE FROM auths WHERE authToken = ?";
+            try (var pS = cn.prepareStatement(sqlAsk)) {
+                pS.executeUpdate(authrztn);
+                return false;
             }
+        } catch (Exception e) {
+            return true;
         }
-        Collection<AuthData> authDataCollection = new ArrayList<>();
-
-        if (!whatToReturn) {
-
-            for (AuthData aD: auths) {
-                if (!aD.authToken().equals(authrztn)) {
-                    authDataCollection.add(new AuthData(aD.authToken(), aD.username()));
-                }
-            }
-        }
-        if (!whatToReturn) {
-            auths = new ArrayList<>();
-            for (AuthData aD: authDataCollection) {
-                auths.add(new AuthData(aD.authToken(), aD.username()));
-            }
-        }
-        return whatToReturn;
     }
 
     @Override
