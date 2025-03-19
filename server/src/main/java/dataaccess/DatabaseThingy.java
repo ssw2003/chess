@@ -10,6 +10,26 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 public interface DatabaseThingy {
+    public int addGame(String gD);
+    public boolean addUser(UserData uD, String aM, boolean b);
+    public boolean logout(String authrztn);
+    public void clearThingy();
+    public boolean isAuthorized(String authy);
+    public Collection<GameDataWithout> getGames();
+    public boolean joinGame(int ident, boolean isWhite, String authrztn);
+}
+//package dataaccess;
+//
+//import chess.ChessGame;
+//import model.AuthData;
+//import model.GameData;
+//import model.GameDataWithout;
+//import model.UserData;
+//
+//import java.util.ArrayList;
+//import java.util.Collection;
+//
+//public interface DatabaseThingy {
 //    private Collection<AuthData> auths;
 //    private Collection<GameData> games;
 //    private Collection<UserData> users;
@@ -22,8 +42,6 @@ public interface DatabaseThingy {
 //        games.add(new GameData(games.size() + 1, null, null, gD, new ChessGame()));
 //        return games.size();
 //    }
-    public int addGame(String gD);
-    public boolean addUser(UserData uD, String aM, boolean b);
 //    public boolean addUser(UserData uD, String aM, boolean b) {
 //        if (!b) {
 //            boolean c = false;
@@ -47,8 +65,7 @@ public interface DatabaseThingy {
 //        users.add(new UserData(uD.username(), uD.password(), uD.email()));
 //        return true;
 //    }
-
-    public boolean logout(String authrztn);
+//
 //    public boolean logout(String authrztn) {
 //        boolean whatToReturn = true;
 //        if (true) {
@@ -76,15 +93,13 @@ public interface DatabaseThingy {
 //        }
 //        return whatToReturn;
 //    }
-
-    public void clearThingy();
+//
 //    public void clearThingy() {
 //        auths = new ArrayList<>();
 //        games = new ArrayList<>();
 //        users = new ArrayList<>();
 //    }
-
-    public boolean isAuthorized(String authy);
+//
 //    public boolean isAuthorized(String authy) {
 //        for (AuthData aD: auths) {
 //            if (aD.authToken().equals(authy)) {
@@ -93,8 +108,7 @@ public interface DatabaseThingy {
 //        }
 //        return false;
 //    }
-
-    public Collection<GameDataWithout> getGames();
+//
 //    public Collection<GameDataWithout> getGames() {
 //        Collection<GameDataWithout> cGD = new ArrayList<>();
 //        for (GameData i: games) {
@@ -102,7 +116,6 @@ public interface DatabaseThingy {
 //        }
 //        return cGD;
 //    }
-    public boolean joinGame(int ident, boolean isWhite, String authrztn);
 //    public boolean joinGame(int ident, boolean isWhite, String authrztn) {
 //        String usnm = null;
 //        for (AuthData aD: auths) {
@@ -138,4 +151,4 @@ public interface DatabaseThingy {
 //        }
 //        return true;
 //    }
-}
+//}

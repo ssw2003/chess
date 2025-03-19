@@ -16,9 +16,9 @@ public class DatabaseClass implements DatabaseThingy {
     @Override
     public int addGame(String gD) {
         try (var cn = DatabaseManager.getConnection()) {
-            var sqlAsk = "INSERT INTO games gameName VALUES ?";
+            var sqlAsk = "INSERT INTO games gameName VALUES " + gD;
             try (var pS = cn.prepareStatement(sqlAsk)) {
-                var i = pS.executeUpdate(gD);
+                var i = pS.executeUpdate();
                 return i;
             }
         } catch (Exception e) {
@@ -28,37 +28,37 @@ public class DatabaseClass implements DatabaseThingy {
 
     @Override
     public boolean addUser(UserData uD, String aM, boolean b) {
-        if (!b) {
-            boolean c = false;
-            for (UserData v: users) {
-                if (v.username().equals(uD.username()) && v.password().equals(uD.password())) {
-                    c = true;
-                }
-            }
-            if (!c) {
-                return true;
-            }
-            auths.add(new AuthData(aM, uD.username()));
-            return false;
-        }
-        for (UserData u: users) {
-            if (u.username().equals(uD.username())) {
-                return false;
-            }
-        }
-        auths.add(new AuthData(aM, uD.username()));
-        users.add(new UserData(uD.username(), uD.password(), uD.email()));
+//        if (!b) {
+//            boolean c = false;
+//            for (UserData v: users) {
+//                if (v.username().equals(uD.username()) && v.password().equals(uD.password())) {
+//                    c = true;
+//                }
+//            }
+//            if (!c) {
+//                return true;
+//            }
+//            auths.add(new AuthData(aM, uD.username()));
+//            return false;
+//        }
+//        for (UserData u: users) {
+//            if (u.username().equals(uD.username())) {
+//                return false;
+//            }
+//        }
+//        auths.add(new AuthData(aM, uD.username()));
+//        users.add(new UserData(uD.username(), uD.password(), uD.email()));
         return true;
     }
 
     @Override
     public boolean logout(String authrztn) {
         try (var cn = DatabaseManager.getConnection()) {
-            var sqlAsk = "DELETE FROM auths WHERE authToken = ?";
+            var sqlAsk = "DELETE FROM auths WHERE authToken = " + authrztn;
             try (var pS = cn.prepareStatement(sqlAsk)) {
-                pS.executeUpdate(authrztn);
-                return false;
+                pS.executeUpdate();
             }
+            return false;
         } catch (Exception e) {
             return true;
         }
@@ -66,7 +66,7 @@ public class DatabaseClass implements DatabaseThingy {
 
     @Override
     public void clearThingy() {
-
+        String stri = "stri";
     }
 
     @Override
@@ -85,21 +85,22 @@ public class DatabaseClass implements DatabaseThingy {
     }
     private final String[] init = {
         """
-        CREATE TABLE  IF NOT EXISTS auths (
+        CREATE TABLE IF NOT EXISTS auths (
         authToken VARCHAR(256) NOT NULL,
         username VARCHAR(256) NOT NULL
         )""", """
-        CREATE TABLE  IF NOT EXISTS games (
+        CREATE TABLE IF NOT EXISTS games (
         gameID INT AUTO_INCREMENT,
         whiteUsername VARCHAR(256),
         blackUsername VARCHAR(256),
-        gameName VARCHAR(256),
+        gameName VARCHAR(256) NOT NULL,
         game TEXT,
+        PRIMARY KEY (gameID)
         )""", """
-        CREATE TABLE  IF NOT EXISTS users (
-        username VARCHAR(256),
-        password VARCHAR(256),
-        email VARCHAR(256)
+        CREATE TABLE IF NOT EXISTS users (
+        username VARCHAR(256) NOT NULL,
+        password VARCHAR(256) NOT NULL,
+        email VARCHAR(256) NOT NULL
         """
     };
     private void tableStarter() throws DataAccessException {
