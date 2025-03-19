@@ -28,12 +28,56 @@ public class DatabaseClass implements DatabaseThingy {
 
     @Override
     public boolean addUser(UserData uD, String aM, boolean b) {
-        return false;
+        if (!b) {
+            boolean c = false;
+            for (UserData v: users) {
+                if (v.username().equals(uD.username()) && v.password().equals(uD.password())) {
+                    c = true;
+                }
+            }
+            if (!c) {
+                return true;
+            }
+            auths.add(new AuthData(aM, uD.username()));
+            return false;
+        }
+        for (UserData u: users) {
+            if (u.username().equals(uD.username())) {
+                return false;
+            }
+        }
+        auths.add(new AuthData(aM, uD.username()));
+        users.add(new UserData(uD.username(), uD.password(), uD.email()));
+        return true;
     }
 
     @Override
     public boolean logout(String authrztn) {
-        return false;
+        boolean whatToReturn = true;
+        if (true) {
+            for (AuthData aD: auths) {
+                if (aD.authToken().equals(authrztn)) {
+                    whatToReturn = false;
+                }
+            }
+        }
+        Collection<AuthData> authDataCollection = new ArrayList<>();
+
+        if (!whatToReturn) {
+
+            for (AuthData aD: auths) {
+                if (!aD.authToken().equals(authrztn)) {
+                    authDataCollection.add(new AuthData(aD.authToken(), aD.username()));
+                }
+            }
+        }
+        if (!whatToReturn) {
+            auths = new ArrayList<>();
+            for (AuthData aD: authDataCollection) {
+                auths.add(new AuthData(aD.authToken(), aD.username()));
+            }
+        }
+        return whatToReturn;
     }
 
     @Override
