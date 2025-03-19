@@ -10,42 +10,43 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 public interface DatabaseThingy {
-    private Collection<AuthData> auths;
-    private Collection<GameData> games;
-    private Collection<UserData> users;
-    public DatabaseThingy() {
-        auths = new ArrayList<>();
-        games = new ArrayList<>();
-        users = new ArrayList<>();
-    }
+//    private Collection<AuthData> auths;
+//    private Collection<GameData> games;
+//    private Collection<UserData> users;
+//    public DatabaseThingy() {
+//        auths = new ArrayList<>();
+//        games = new ArrayList<>();
+//        users = new ArrayList<>();
+//    }
 //    public int addGame(String gD) {
 //        games.add(new GameData(games.size() + 1, null, null, gD, new ChessGame()));
 //        return games.size();
 //    }
     public int addGame(String gD);
-    public boolean addUser(UserData uD, String aM, boolean b) {
-        if (!b) {
-            boolean c = false;
-            for (UserData v: users) {
-                if (v.username().equals(uD.username()) && v.password().equals(uD.password())) {
-                    c = true;
-                }
-            }
-            if (!c) {
-                return true;
-            }
-            auths.add(new AuthData(aM, uD.username()));
-            return false;
-        }
-        for (UserData u: users) {
-            if (u.username().equals(uD.username())) {
-                return false;
-            }
-        }
-        auths.add(new AuthData(aM, uD.username()));
-        users.add(new UserData(uD.username(), uD.password(), uD.email()));
-        return true;
-    }
+    public boolean addUser(UserData uD, String aM, boolean b);
+//    public boolean addUser(UserData uD, String aM, boolean b) {
+//        if (!b) {
+//            boolean c = false;
+//            for (UserData v: users) {
+//                if (v.username().equals(uD.username()) && v.password().equals(uD.password())) {
+//                    c = true;
+//                }
+//            }
+//            if (!c) {
+//                return true;
+//            }
+//            auths.add(new AuthData(aM, uD.username()));
+//            return false;
+//        }
+//        for (UserData u: users) {
+//            if (u.username().equals(uD.username())) {
+//                return false;
+//            }
+//        }
+//        auths.add(new AuthData(aM, uD.username()));
+//        users.add(new UserData(uD.username(), uD.password(), uD.email()));
+//        return true;
+//    }
 
     public boolean logout(String authrztn) {
         boolean whatToReturn = true;
