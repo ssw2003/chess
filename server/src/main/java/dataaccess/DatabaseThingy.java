@@ -18,10 +18,11 @@ public interface DatabaseThingy {
         games = new ArrayList<>();
         users = new ArrayList<>();
     }
-    public int addGame(String gD) {
-        games.add(new GameData(games.size() + 1, null, null, gD, new ChessGame()));
-        return games.size();
-    }
+//    public int addGame(String gD) {
+//        games.add(new GameData(games.size() + 1, null, null, gD, new ChessGame()));
+//        return games.size();
+//    }
+    public int addGame(String gD);
     public boolean addUser(UserData uD, String aM, boolean b) {
         if (!b) {
             boolean c = false;
