@@ -12,8 +12,10 @@ import java.util.Collection;
 import java.util.List;
 
 public class DatabaseClass implements DatabaseThingy {
-    public DatabaseClass() throws DataAccessException {
-        tableStarter();
+    public DatabaseClass() {
+        try {
+            tableStarter();
+        } catch (DataAccessException e) {}
     }
     @Override
     public int addGame(String gD) {
@@ -87,7 +89,19 @@ public class DatabaseClass implements DatabaseThingy {
 
     @Override
     public boolean isAuthorized(String authy) {
-        return false;
+        boolean isAuthorized = false;
+        try (var cn = DatabaseManager.getConnection()) {
+            var sqlAsk = "SELECT * FROM auths";
+            try (var pS = cn.prepareStatement(sqlAsk)) {
+                var i = pS.executeQuery();
+                while (i.next()) {
+                    isAuthorized = isAuthorized || (authy.equals(i.getString("authToken")));
+                }
+            }
+        } catch (Exception e) {
+            return false;
+        }
+        return isAuthorized;
     }
 
     @Override
@@ -110,7 +124,7 @@ public class DatabaseClass implements DatabaseThingy {
 
     @Override
     public boolean joinGame(int ident, boolean isWhite, String authrztn) {
-        return false;
+        String usnm = null;
     }
 
     @Override
@@ -121,6 +135,21 @@ public class DatabaseClass implements DatabaseThingy {
                 pS.setString(1, usn);
                 try (var i = pS.executeQuery()) {
                     return i.getString("password");
+                }
+            }
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    @Override
+    public String retrieveUsn(String authToken) {
+        try (var cn = DatabaseManager.getConnection()) {
+            var sqlAsk = "SELECT username FROM auths WHERE authToken = ?";
+            try (var pS = cn.prepareStatement(sqlAsk)) {
+                pS.setString(1, authToken);
+                try (var i = pS.executeQuery()) {
+                    return i.getString("username");
                 }
             }
         } catch (Exception e) {

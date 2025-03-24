@@ -9,11 +9,12 @@ import java.util.UUID;
 public class Service {
     private DatabaseClass dT;
     public Service() {
-        try {
-            dT = new DatabaseClass();
-        } catch (DataAccessException e) {
-            boolean b = true;
-        }
+        dT = new DatabaseClass();
+//        try {
+//            dT = new DatabaseClass();
+//        } catch (DataAccessException e) {
+//            boolean b = true;
+//        }
     }
 
 
