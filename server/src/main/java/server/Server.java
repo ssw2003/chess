@@ -159,14 +159,20 @@ public class Server {
             if (psw == null) {
                 throw new DataAccessException("");
             }
-            psw = BCrypt.hashpw(psw, BCrypt.gensalt());
         } catch (Exception exc) {
             response.status(400);
             var c = Map.of("message", "Error: bad request");
             return gson.toJson(c);
         }
         try {
-            var f = Map.of("username", usn, "authToken", svc.regUsr(usn, psw, "", false));
+            String pswRetrieved = svc.getPsw(usn);
+            if (pswRetrieved == null) {
+                throw new DataAccessException("");
+            }
+            if (!BCrypt.checkpw(psw, pswRetrieved)) {
+                throw new DataAccessException("");
+            }
+            var f = Map.of("username", usn, "authToken", svc.logUsr(usn));
             response.status(200);
             return gson.toJson(f);
         } catch (Exception exc) {
@@ -247,7 +253,7 @@ public class Server {
             return gson.toJson(c);
         }
         try {
-            var f = Map.of("username", usn, "authToken", svc.regUsr(usn, psw, eml, true));
+            var f = Map.of("username", usn, "authToken", svc.regUsr(usn, psw, eml));
             response.status(200);
             return gson.toJson(f);
         } catch (Exception exc) {

@@ -28,6 +28,9 @@ public class Service {
         }
         throw new DataAccessException("");
     }
+    public String getPsw(String usn) {
+        return dT.retrievePsw(usn);
+    }
 
     public void logout(String authrztn) throws DataAccessException {
         if (dT.logout(authrztn)) {
@@ -57,5 +60,11 @@ public class Service {
         if (!dT.joinGame(ident, isWhite, authrztn)) {
             throw new DataAccessException("");
         }
+    }
+
+    public String logUsr(String usn) {
+        String aM = "";
+        String authMy = UUID.randomUUID().toString();
+        aM = authMy + aM;
     }
 }
