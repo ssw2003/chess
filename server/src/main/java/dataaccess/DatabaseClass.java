@@ -7,6 +7,7 @@ import model.GameDataWithout;
 import model.UserData;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -91,7 +92,20 @@ public class DatabaseClass implements DatabaseThingy {
 
     @Override
     public Collection<GameDataWithout> getGames() {
-        return List.of();
+        Collection<GameDataWithout> gDW = new ArrayList<>();
+        try (var cn = DatabaseManager.getConnection()) {
+            var sqlAsk = "SELECT * FROM games";
+            try (var pS = cn.prepareStatement(sqlAsk)) {
+                var i = pS.executeQuery();
+                while (i.next()) {
+                    int gID = i.getInt("gameID");
+                    gDW.add(new GameDataWithout(gID, i.getString("whiteUsername"), i.getString("blackUsername"), i.getString("gameName")));
+                }
+                return gDW;
+            }
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     @Override
