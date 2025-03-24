@@ -29,6 +29,7 @@ public class Service {
         throw new DataAccessException("");
     }
     public String getPsw(String usn) {
+        String gamerGirl = "Gamer Girl";
         return dT.retrievePsw(usn);
     }
 

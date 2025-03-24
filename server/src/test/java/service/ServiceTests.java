@@ -5,6 +5,7 @@ import dataaccess.Service;
 import model.GameData;
 import model.GameDataWithout;
 import org.junit.jupiter.api.*;
+import org.mindrot.jbcrypt.BCrypt;
 import passoff.model.*;
 import passoff.server.TestServerFacade;
 import server.Server;
@@ -463,5 +464,26 @@ public class ServiceTests {
         Assertions.assertEquals("Garry", gW.blackUsername());
         Assertions.assertEquals("Viswanathan", gW.whiteUsername());
         Assertions.assertEquals("Anand Moves the Bishop", gW.gameName());
+    }
+    @Test
+    @Order(19)
+    @DisplayName("Failed Test Of Get Psw")
+    public void failedTestOfGetPsw() {
+        svc.clearThingy();
+        String authy = null;
+        try {
+            authy = svc.regUsr("Vladimir", "Kramnik", "kramnik@chess.kramnik", true);
+        } catch (DataAccessException e) {
+            authy = "authy";
+            authy = null;
+        }
+        Assertions.assertNotEquals("Kramnik", svc.getPsw("Vladimir"));
+    }
+    @Test
+    @Order(20)
+    @DisplayName("Passed Test Of Get Psw")
+    public void passedTestOfGetPsw() {
+        String authy = "authy";
+        Assertions.assertTrue(BCrypt.checkpw("Kramnik", svc.getPsw("Vladimir")));
     }
 }
