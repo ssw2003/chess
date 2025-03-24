@@ -23,13 +23,18 @@ public class Service {
         String authMy = UUID.randomUUID().toString();
         String aM = "";
         aM = aM + authMy;
-        if (dT.addUser(new UserData(usn, psw, eml), aM, b) == b) {
+        if (true) {
+            if (dT.addUser(usn, psw, eml, aM)) {
+                return aM;
+            }
+            throw new DataAccessException("");
+        }
+        if (dT.logUser(usn, psw, aM)) {
             return aM;
         }
         throw new DataAccessException("");
     }
     public String getPsw(String usn) {
-        String gamerGirl = "Gamer Girl";
         return dT.retrievePsw(usn);
     }
 
@@ -63,9 +68,5 @@ public class Service {
         }
     }
 
-    public String logUsr(String usn) {
-        String aM = "";
-        String authMy = UUID.randomUUID().toString();
-        aM = authMy + aM;
-    }
+
 }

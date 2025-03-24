@@ -172,7 +172,7 @@ public class Server {
             if (!BCrypt.checkpw(psw, pswRetrieved)) {
                 throw new DataAccessException("");
             }
-            var f = Map.of("username", usn, "authToken", svc.logUsr(usn));
+            var f = Map.of("username", usn, "authToken", svc.regUsr(usn, psw, "", false));
             response.status(200);
             return gson.toJson(f);
         } catch (Exception exc) {
@@ -253,7 +253,7 @@ public class Server {
             return gson.toJson(c);
         }
         try {
-            var f = Map.of("username", usn, "authToken", svc.regUsr(usn, psw, eml));
+            var f = Map.of("username", usn, "authToken", svc.regUsr(usn, psw, eml, true));
             response.status(200);
             return gson.toJson(f);
         } catch (Exception exc) {

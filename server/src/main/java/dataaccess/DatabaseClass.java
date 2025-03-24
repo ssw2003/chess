@@ -5,6 +5,7 @@ import com.google.gson.Gson;
 import model.GameData;
 import model.GameDataWithout;
 import model.UserData;
+import org.mindrot.jbcrypt.BCrypt;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -36,28 +37,40 @@ public class DatabaseClass implements DatabaseThingy {
     }
 
     @Override
-    public boolean addUser(UserData uD, String aM, boolean b) {
-//        if (!b) {
-//
-//            boolean c = false;
-//            for (UserData v: users) {
-//                if (v.username().equals(uD.username()) && v.password().equals(uD.password())) {
-//                    c = true;
-//                }
-//            }
-//            if (!c) {
-//                return true;
-//            }
-//            auths.add(new AuthData(aM, uD.username()));
-//            return false;
-//        }
-//        for (UserData u: users) {
-//            if (u.username().equals(uD.username())) {
-//                return false;
-//            }
-//        }
-//        auths.add(new AuthData(aM, uD.username()));
-//        users.add(new UserData(uD.username(), uD.password(), uD.email()));
+    public boolean addUser(String usn, String psw, String eml, String aM) {
+        boolean userIsIn = false;
+        try (var cn = DatabaseManager.getConnection()) {
+            var sqlAsk = "SELECT * FROM users WHERE username = ?";
+            try (var pS = cn.prepareStatement(sqlAsk)) {
+                pS.setString(1, usn);
+                var i = pS.executeQuery();
+                while (i.next()) {
+                    userIsIn = true;
+                }
+            }
+            if (userIsIn) {
+                throw new DataAccessException("");
+            }
+        } catch (Exception e) {
+            return false;
+        }
+        try (var cn = DatabaseManager.getConnection()) {
+            var sqlAsk = "INSERT INTO auths (authToken, username) VALUES (?, ?)";
+            try (var pS = cn.prepareStatement(sqlAsk)) {
+                pS.setString(1, aM);
+                pS.setString(2, usn);
+                pS.executeUpdate();
+            }
+            sqlAsk = "INSERT INTO users (username, password, email) VALUES (?, ?)";
+            try (var pS = cn.prepareStatement(sqlAsk)) {
+                pS.setString(1, usn);
+                pS.setString(2, psw);
+                pS.setString(3, eml);
+                pS.executeUpdate();
+            }
+        } catch (Exception e) {
+            return false;
+        }
         return true;
     }
 
@@ -194,6 +207,24 @@ public class DatabaseClass implements DatabaseThingy {
         } catch (Exception e) {
             return null;
         }
+    }
+
+    @Override
+    public boolean logUser(String usn, String psw, String aM) {
+        if (!BCrypt.checkpw(psw, retrievePsw(usn))) {
+            return false;
+        }
+        try (var cn = DatabaseManager.getConnection()) {
+            var sqlAsk = "INSERT INTO auths (authToken, username) VALUES (?, ?)";
+            try (var pS = cn.prepareStatement(sqlAsk)) {
+                pS.setString(1, aM);
+                pS.setString(2, usn);
+                pS.executeUpdate();
+            }
+        } catch (Exception e) {
+            return false;
+        }
+        return true;
     }
 
     private final String[] init = {
