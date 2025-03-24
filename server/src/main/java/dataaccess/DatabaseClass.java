@@ -1,6 +1,7 @@
 package dataaccess;
 
 import chess.ChessGame;
+import com.google.gson.Gson;
 import model.GameData;
 import model.GameDataWithout;
 import model.UserData;
@@ -16,8 +17,13 @@ public class DatabaseClass implements DatabaseThingy {
     @Override
     public int addGame(String gD) {
         try (var cn = DatabaseManager.getConnection()) {
-            var sqlAsk = "INSERT INTO games gameName VALUES " + gD;
+            var sqlAsk = "INSERT INTO games (whiteUsername, blackUsername, gameName, game) VALUES (?, ?, ?, ?)";
             try (var pS = cn.prepareStatement(sqlAsk)) {
+                pS.setString(1, null);
+                pS.setString(2, null);
+                pS.setString(3, gD);
+                var gson = new Gson();
+                pS.setString(4, gson.toJson(new ChessGame()));
                 var i = pS.executeUpdate();
                 return i;
             }
@@ -29,6 +35,7 @@ public class DatabaseClass implements DatabaseThingy {
     @Override
     public boolean addUser(UserData uD, String aM, boolean b) {
 //        if (!b) {
+//
 //            boolean c = false;
 //            for (UserData v: users) {
 //                if (v.username().equals(uD.username()) && v.password().equals(uD.password())) {
@@ -54,8 +61,9 @@ public class DatabaseClass implements DatabaseThingy {
     @Override
     public boolean logout(String authrztn) {
         try (var cn = DatabaseManager.getConnection()) {
-            var sqlAsk = "DELETE FROM auths WHERE authToken = " + authrztn;
+            var sqlAsk = "DELETE FROM auths WHERE authToken = ?";
             try (var pS = cn.prepareStatement(sqlAsk)) {
+                pS.setString(1, authrztn);
                 pS.executeUpdate();
             }
             return false;
@@ -66,7 +74,16 @@ public class DatabaseClass implements DatabaseThingy {
 
     @Override
     public void clearThingy() {
-        String stri = "stri";
+        try (var cn = DatabaseManager.getConnection()) {
+            var sqlAsk = "TRUNCATE TABLE auths";
+            try (var pS = cn.prepareStatement(sqlAsk)) {}
+            sqlAsk = "TRUNCATE TABLE games";
+            try (var pS = cn.prepareStatement(sqlAsk)) {}
+            sqlAsk = "TRUNCATE TABLE users";
+            try (var pS = cn.prepareStatement(sqlAsk)) {}
+        } catch (Exception e) {
+            return true;
+        }
     }
 
     @Override
@@ -90,7 +107,7 @@ public class DatabaseClass implements DatabaseThingy {
         username VARCHAR(256) NOT NULL
         )""", """
         CREATE TABLE IF NOT EXISTS games (
-        gameID INT AUTO_INCREMENT,
+        gameID INT NOT NULL AUTO_INCREMENT,
         whiteUsername VARCHAR(256),
         blackUsername VARCHAR(256),
         gameName VARCHAR(256) NOT NULL,
