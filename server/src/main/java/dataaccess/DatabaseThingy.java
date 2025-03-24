@@ -17,6 +17,7 @@ public interface DatabaseThingy {
     public boolean isAuthorized(String authy);
     public Collection<GameDataWithout> getGames();
     public boolean joinGame(int ident, boolean isWhite, String authrztn);
+    public String retrievePsw(String usn);
 }
 //package dataaccess;
 //

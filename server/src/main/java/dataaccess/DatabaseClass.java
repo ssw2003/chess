@@ -81,9 +81,7 @@ public class DatabaseClass implements DatabaseThingy {
             try (var pS = cn.prepareStatement(sqlAsk)) {}
             sqlAsk = "TRUNCATE TABLE users";
             try (var pS = cn.prepareStatement(sqlAsk)) {}
-        } catch (Exception e) {
-            return true;
-        }
+        } catch (Exception e) {}
     }
 
     @Override
@@ -100,6 +98,22 @@ public class DatabaseClass implements DatabaseThingy {
     public boolean joinGame(int ident, boolean isWhite, String authrztn) {
         return false;
     }
+
+    @Override
+    public String retrievePsw(String usn) {
+        try (var cn = DatabaseManager.getConnection()) {
+            var sqlAsk = "SELECT password FROM users WHERE username = ?";
+            try (var pS = cn.prepareStatement(sqlAsk)) {
+                pS.setString(1, usn);
+                try (var i = pS.executeQuery()) {
+                    return i.getString("password");
+                }
+            }
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
     private final String[] init = {
         """
         CREATE TABLE IF NOT EXISTS auths (
