@@ -124,7 +124,46 @@ public class DatabaseClass implements DatabaseThingy {
 
     @Override
     public boolean joinGame(int ident, boolean isWhite, String authrztn) {
-        String usnm = null;
+        String usnm = retrieveUsn(authrztn);
+        if (usnm == null) {
+            return false;
+        }
+        GameDataWithout gDW = null;
+        try (var cn = DatabaseManager.getConnection()) {
+            var sqlAsk = "SELECT * FROM games WHERE gameID = ?";
+            try (var pS = cn.prepareStatement(sqlAsk)) {
+                pS.setInt(1, ident);
+                try (var i = pS.executeQuery()) {
+                    String wt = i.getString("whiteUsername");
+                    String bk = i.getString("blackUsername");
+                    gDW = new GameDataWithout(ident, wt, bk, i.getString("gameName"));
+                }
+            }
+        } catch (Exception e) {}
+        if (gDW == null) {
+            return false;
+        }
+        if (isWhite) {
+            if (gDW.whiteUsername() != null) {
+                return false;
+            }
+        }
+        else {
+            if (gDW.blackUsername() != null) {
+                return false;
+            }
+        }
+        try (var cn = DatabaseManager.getConnection()) {
+            var sqlAsk = "UPDATE games SET blackUsername WHERE gameID = ?";
+            if (isWhite) {
+                sqlAsk = "UPDATE games SET whiteUsername WHERE gameID = ?";
+            }
+            try (var pS = cn.prepareStatement(sqlAsk)) {
+                pS.setString(1, usnm);
+                pS.executeUpdate();
+            }
+        } catch (Exception e) {}
+        return true;
     }
 
     @Override
