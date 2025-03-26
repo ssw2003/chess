@@ -16,7 +16,9 @@ public class DatabaseClass implements DatabaseThingy {
     public DatabaseClass() {
         try {
             tableStarter();
-        } catch (DataAccessException e) {}
+        } catch (DataAccessException e) {
+            String s = "s";
+        }
     }
     @Override
     public int addGame(String gD) {
@@ -28,12 +30,29 @@ public class DatabaseClass implements DatabaseThingy {
                 pS.setString(3, gD);
                 var gson = new Gson();
                 pS.setString(4, gson.toJson(new ChessGame()));
-                var i = pS.executeUpdate();
-                return i;
+                pS.executeUpdate();
+                //var i = pS.executeUpdate();
+                //return i;
             }
+            sqlAsk = "SELECT gameID FROM games";
+            int hgh = 0;
+            try (var pS = cn.prepareStatement(sqlAsk)) {
+                var i = pS.executeQuery();
+                while (i.next()) {
+                    hgh = goUp(i.getInt("gameID"), hgh);
+                }
+            }
+            return hgh;
         } catch (Exception e) {
             return 0;
         }
+    }
+
+    private int goUp(int a, int b) {
+        if (a > b) {
+            return a;
+        }
+        return b;
     }
 
     @Override
@@ -61,7 +80,7 @@ public class DatabaseClass implements DatabaseThingy {
                 pS.setString(2, usn);
                 pS.executeUpdate();
             }
-            sqlAsk = "INSERT INTO users (username, password, email) VALUES (?, ?)";
+            sqlAsk = "INSERT INTO users (username, password, email) VALUES (?, ?, ?)";
             try (var pS = cn.prepareStatement(sqlAsk)) {
                 pS.setString(1, usn);
                 pS.setString(2, psw);
@@ -77,7 +96,19 @@ public class DatabaseClass implements DatabaseThingy {
     @Override
     public boolean logout(String authrztn) {
         try (var cn = DatabaseManager.getConnection()) {
-            var sqlAsk = "DELETE FROM auths WHERE authToken = ?";
+            boolean foundIt = false;
+            var sqlAsk = "SELECT * FROM auths WHERE authToken = ?";
+            try (var pS = cn.prepareStatement(sqlAsk)) {
+                pS.setString(1, authrztn);
+                var i = pS.executeQuery();
+                while (i.next()) {
+                    foundIt = true;
+                }
+            }
+            if (!foundIt) {
+                throw new DataAccessException("");
+            }
+            sqlAsk = "DELETE FROM auths WHERE authToken = ?";
             try (var pS = cn.prepareStatement(sqlAsk)) {
                 pS.setString(1, authrztn);
                 pS.executeUpdate();
@@ -92,11 +123,17 @@ public class DatabaseClass implements DatabaseThingy {
     public void clearThingy() {
         try (var cn = DatabaseManager.getConnection()) {
             var sqlAsk = "TRUNCATE TABLE auths";
-            try (var pS = cn.prepareStatement(sqlAsk)) {}
+            try (var pS = cn.prepareStatement(sqlAsk)) {
+                pS.executeUpdate();
+            }
             sqlAsk = "TRUNCATE TABLE games";
-            try (var pS = cn.prepareStatement(sqlAsk)) {}
+            try (var pS = cn.prepareStatement(sqlAsk)) {
+                pS.executeUpdate();
+            }
             sqlAsk = "TRUNCATE TABLE users";
-            try (var pS = cn.prepareStatement(sqlAsk)) {}
+            try (var pS = cn.prepareStatement(sqlAsk)) {
+                pS.executeUpdate();
+            }
         } catch (Exception e) {}
     }
 
@@ -147,6 +184,7 @@ public class DatabaseClass implements DatabaseThingy {
             try (var pS = cn.prepareStatement(sqlAsk)) {
                 pS.setInt(1, ident);
                 try (var i = pS.executeQuery()) {
+                    i.next();
                     String wt = i.getString("whiteUsername");
                     String bk = i.getString("blackUsername");
                     gDW = new GameDataWithout(ident, wt, bk, i.getString("gameName"));
@@ -167,12 +205,13 @@ public class DatabaseClass implements DatabaseThingy {
             }
         }
         try (var cn = DatabaseManager.getConnection()) {
-            var sqlAsk = "UPDATE games SET blackUsername WHERE gameID = ?";
+            var sqlAsk = "UPDATE games SET blackUsername = ? WHERE gameID = ?";
             if (isWhite) {
-                sqlAsk = "UPDATE games SET whiteUsername WHERE gameID = ?";
+                sqlAsk = "UPDATE games SET whiteUsername = ? WHERE gameID = ?";
             }
             try (var pS = cn.prepareStatement(sqlAsk)) {
                 pS.setString(1, usnm);
+                pS.setInt(2, gDW.gameID());
                 pS.executeUpdate();
             }
         } catch (Exception e) {}
@@ -186,6 +225,7 @@ public class DatabaseClass implements DatabaseThingy {
             try (var pS = cn.prepareStatement(sqlAsk)) {
                 pS.setString(1, usn);
                 try (var i = pS.executeQuery()) {
+                    i.next();
                     return i.getString("password");
                 }
             }
@@ -201,6 +241,7 @@ public class DatabaseClass implements DatabaseThingy {
             try (var pS = cn.prepareStatement(sqlAsk)) {
                 pS.setString(1, authToken);
                 try (var i = pS.executeQuery()) {
+                    i.next();
                     return i.getString("username");
                 }
             }
@@ -211,7 +252,7 @@ public class DatabaseClass implements DatabaseThingy {
 
     @Override
     public boolean logUser(String usn, String psw, String aM) {
-        if (!BCrypt.checkpw(psw, retrievePsw(usn))) {
+        if (!psw.equals(retrievePsw(usn))) {
             return false;
         }
         try (var cn = DatabaseManager.getConnection()) {
@@ -227,8 +268,8 @@ public class DatabaseClass implements DatabaseThingy {
         return true;
     }
 
-    private final String[] init = {
-        """
+
+    private final String[] init = {"""
         CREATE TABLE IF NOT EXISTS auths (
         authToken VARCHAR(256) NOT NULL,
         username VARCHAR(256) NOT NULL
@@ -245,7 +286,7 @@ public class DatabaseClass implements DatabaseThingy {
         username VARCHAR(256) NOT NULL,
         password VARCHAR(256) NOT NULL,
         email VARCHAR(256) NOT NULL
-        """
+        )"""
     };
     private void tableStarter() throws DataAccessException {
         DatabaseManager.createDatabase();

@@ -172,7 +172,7 @@ public class Server {
             if (!BCrypt.checkpw(psw, pswRetrieved)) {
                 throw new DataAccessException("");
             }
-            var f = Map.of("username", usn, "authToken", svc.regUsr(usn, psw, "", false));
+            var f = Map.of("username", usn, "authToken", svc.regUsr(usn, pswRetrieved, "", false));
             response.status(200);
             return gson.toJson(f);
         } catch (Exception exc) {

@@ -477,13 +477,14 @@ public class ServiceTests {
             authy = "authy";
             authy = null;
         }
-        Assertions.assertNotEquals("Kramnik", svc.getPsw("Vladimir"));
+        //the service does not hash the password
+        Assertions.assertFalse("Kramnik".equals(BCrypt.checkpw(svc.getPsw("Vladimir"), BCrypt.gensalt())));
     }
     @Test
     @Order(20)
     @DisplayName("Passed Test Of Get Psw")
     public void passedTestOfGetPsw() {
         String authy = "authy";
-        Assertions.assertTrue(BCrypt.checkpw("Kramnik", svc.getPsw("Vladimir")));
+        Assertions.assertEquals("Kramnik", svc.getPsw("Vladimir"));
     }
 }

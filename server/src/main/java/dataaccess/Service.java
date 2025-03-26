@@ -10,11 +10,6 @@ public class Service {
     private DatabaseClass dT;
     public Service() {
         dT = new DatabaseClass();
-//        try {
-//            dT = new DatabaseClass();
-//        } catch (DataAccessException e) {
-//            boolean b = true;
-//        }
     }
 
 
@@ -23,7 +18,7 @@ public class Service {
         String authMy = UUID.randomUUID().toString();
         String aM = "";
         aM = aM + authMy;
-        if (true) {
+        if (b) {
             if (dT.addUser(usn, psw, eml, aM)) {
                 return aM;
             }
