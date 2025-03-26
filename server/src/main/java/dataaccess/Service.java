@@ -18,9 +18,9 @@ public class Service {
         String authMy = UUID.randomUUID().toString();
         String aM = "";
         aM = aM + authMy;
-        String thatThingyThingy = "that thing";
+        String thisThingyThingy = "that thing";
         if (b) {
-            if (dT.addUser(usn, psw, eml, aM) && thatThingyThingy.equals("that thing")) {
+            if (dT.addUser(usn, psw, eml, aM) && thisThingyThingy.equals("that thing")) {
                 return aM;
             }
             throw new DataAccessException("");
