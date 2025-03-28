@@ -25,6 +25,7 @@ public class Client {
         int gameNumber = 0;
         Scanner getThing = new Scanner(System.in);
         while (!height.equals("quit")) {
+            printPrompt(height);
             String theirInput = capitalizeLetters(getThing.nextLine());
             if (height.equals("not logged in")) {
                 height = evaluateNotLoggedIn(theirInput);
@@ -35,6 +36,15 @@ public class Client {
             else {
                 height = evaluateGame(theirInput);
             }
+        }
+    }
+
+    private void printPrompt(String height) {
+        if (height.equals("not logged in")) {
+            System.out.println("Login\nRegister\nQuit\nHelp\n");
+        }
+        else {
+            System.out.println("Play Game\nHelp\nLogout\nCreate Game\nList Games\nObserve Game\n");
         }
     }
 
@@ -57,7 +67,20 @@ public class Client {
     }
 
     private String evaluateGame(String theirInput) {
-        if (theirInput.equals())
+        if (theirInput.equals("QUIT")) {
+            return "quit";
+        }
+        if (!theirInput.equals("LOGIN") && !theirInput.equals("REGISTER")) {
+            if (!theirInput.equals("HELP")) {
+                System.out.println("Bad command");
+            }
+            printPrompt("not logged in");
+            return "not logged in";
+        }
+        if (theirInput.equals("REGISTER")) {
+            return "logged in";
+        }
+        return "logged in";
     }
 
     private String evaluateLoggedIn(String theirInput) {
