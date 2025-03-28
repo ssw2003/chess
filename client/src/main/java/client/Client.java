@@ -84,6 +84,15 @@ public class Client {
                 return "logged in";
             }
         }
+        if (iC.equals("LOGOUT")) {
+            boolean attemptWorked = false;
+            //attempt to log out
+            if (!attemptWorked) {
+                System.out.println("Bad Auth Token\n");
+                return "logged in";
+            }
+            return "not logged in";
+        }
     }
 
     private String evaluateNotLoggedIn(String theirInput) {
