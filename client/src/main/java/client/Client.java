@@ -7,6 +7,8 @@ import java.net.URISyntaxException;
 import java.util.Scanner;
 
 public class Client {
+    private Scanner getThing;
+    private String authToken;
 //    private HttpURLConnection cn = null;
     public int run(int desiredPort) {
 //        try {
@@ -20,10 +22,10 @@ public class Client {
     }
 
     private void runLoop() {
+        getThing = new Scanner(System.in);
+        authToken = null;
         String height = "not logged in";
-        String authToken = null;
         int gameNumber = 0;
-        Scanner getThing = new Scanner(System.in);
         while (!height.equals("quit")) {
             printPrompt(height);
             String theirInput = capitalizeLetters(getThing.nextLine());
@@ -67,6 +69,14 @@ public class Client {
     }
 
     private String evaluateGame(String theirInput) {
+        return "logged in";
+    }
+
+    private String evaluateLoggedIn(String theirInput) {
+
+    }
+
+    private String evaluateNotLoggedIn(String theirInput) {
         if (theirInput.equals("QUIT")) {
             return "quit";
         }
@@ -74,18 +84,26 @@ public class Client {
             if (!theirInput.equals("HELP")) {
                 System.out.println("Bad command");
             }
-            printPrompt("not logged in");
             return "not logged in";
         }
+        String email = null;
+        String username = null;
+        String password = null;
         if (theirInput.equals("REGISTER")) {
+            System.out.println("Email:");
+            email = getThing.nextLine();
+            System.out.println("Username:");
+            username = getThing.nextLine();
+            System.out.println("Password:");
+            password = getThing.nextLine();
+            //authToken = attempt to register [username, password, email]
             return "logged in";
         }
+        System.out.println("Username:");
+        username = getThing.nextLine();
+        System.out.println("Password:");
+        password = getThing.nextLine();
+        //authToken = attempt to log in [username, password]
         return "logged in";
-    }
-
-    private String evaluateLoggedIn(String theirInput) {
-    }
-
-    private String evaluateNotLoggedIn(String theirInput) {
     }
 }
