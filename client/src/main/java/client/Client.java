@@ -1,9 +1,12 @@
 package client;
 
+import model.GameData;
+
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Collection;
 import java.util.Scanner;
 
 public class Client {
@@ -72,8 +75,15 @@ public class Client {
         return "logged in";
     }
 
-    private String evaluateLoggedIn(String theirInput) {
-
+    private String evaluateLoggedIn(String iC) {
+        if ((!iC.equals("PLAY GAME")) && (!iC.equals("CREATE GAME")) && (!iC.equals("OBSERVE GAME"))) {
+            if ((!iC.equals("LIST GAMES")) && (!iC.equals("LOGOUT"))) {
+                if (!iC.equals("HELP")) {
+                    System.out.println("Bad command\n");
+                }
+                return "logged in";
+            }
+        }
     }
 
     private String evaluateNotLoggedIn(String theirInput) {
@@ -82,7 +92,7 @@ public class Client {
         }
         if (!theirInput.equals("LOGIN") && !theirInput.equals("REGISTER")) {
             if (!theirInput.equals("HELP")) {
-                System.out.println("Bad command");
+                System.out.println("Bad command\n");
             }
             return "not logged in";
         }
@@ -105,5 +115,8 @@ public class Client {
         password = getThing.nextLine();
         //authToken = attempt to log in [username, password]
         return "logged in";
+    }
+    private int getGame(int g, Collection<GameData> cG) {
+        return 0;
     }
 }
