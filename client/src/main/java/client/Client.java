@@ -100,23 +100,78 @@ public class Client {
         String username = null;
         String password = null;
         if (theirInput.equals("REGISTER")) {
-            System.out.println("Email:");
+            System.out.println("Email:\n");
             email = getThing.nextLine();
-            System.out.println("Username:");
+            System.out.println("Username:\n");
             username = getThing.nextLine();
-            System.out.println("Password:");
+            System.out.println("Password:\n");
             password = getThing.nextLine();
+            authToken = null;
             //authToken = attempt to register [username, password, email]
+            if (authToken == null) {
+                System.out.println("Taken\n");
+                return "not logged in";
+            }
             return "logged in";
         }
-        System.out.println("Username:");
+        System.out.println("Username:\n");
         username = getThing.nextLine();
-        System.out.println("Password:");
+        System.out.println("Password:\n");
         password = getThing.nextLine();
+        authToken = null;
         //authToken = attempt to log in [username, password]
+        if (authToken == null) {
+            System.out.println("Bad Password\n");
+            return "not logged in";
+        }
         return "logged in";
     }
     private int getGame(int g, Collection<GameData> cG) {
+        if (g <= 0) {
+            return 0;
+        }
+        if (g > cG.size()) {
+            return 0;
+        }
+        for (GameData cGD: cG) {
+            int i = 0;
+            for (GameData cGE: cG) {
+                if (!cmpGames(cGE, cGD).equals(">")) {
+                    i++;
+                }
+            }
+            if (i == g) {
+                return cGD.gameID();
+            }
+        }
         return 0;
+    }
+
+    private String cmpGames(GameData cGE, GameData cGD) {
+        if (cGE.gameName().equals(cGD.gameName())) {
+            if (cGE.gameID() < cGD.gameID()) {
+                return "<";
+            }
+            if (cGE.gameID() == cGD.gameID()) {
+                return "=";
+            }
+            return ">";
+        }
+        if (cGE.gameName().length() > cGD.gameName().length()) {
+            return "<";
+        }
+        if (cGE.gameName().length() < cGD.gameName().length()) {
+            return ">";
+        }
+        int i = 0;
+        while (i < cGE.gameName().length()) {
+            if (cGE.gameName().charAt(i) < cGD.gameName().charAt(i)) {
+                return "<";
+            }
+            else if (cGE.gameName().charAt(i) > cGD.gameName().charAt(i)) {
+                return ">";
+            }
+        }
+        return "=";
     }
 }
