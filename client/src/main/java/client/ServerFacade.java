@@ -3,6 +3,8 @@ package client;
 import chess.ChessGame;
 import chess.InvalidMoveException;
 import com.google.gson.Gson;
+import model.AuthData;
+import model.UserPass;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -58,6 +60,15 @@ public class ServerFacade {
             try (OutputStream os = huck.getOutputStream()) {
                 os.write(rD.getBytes());
             }
+        }
+    }
+
+    public String loginRequest(String username, String password) {
+        try {
+            AuthData aD = requests("POST", "/session", new Gson().toJson(new UserPass(username, password)), AuthData.class);
+            return aD.authToken();
+        } catch (InvalidMoveException e) {
+            return null;
         }
     }
 }

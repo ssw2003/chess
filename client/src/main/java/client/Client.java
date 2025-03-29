@@ -162,8 +162,7 @@ public class Client {
         username = getThing.nextLine();
         System.out.println("Password:");
         password = getThing.nextLine();
-        authToken = null;
-        //authToken = attempt to log in [username, password]
+        authToken = sF.loginRequest(username, password);
         if (authToken == null) {
             System.out.println("Bad Password");
             return "not logged in";
