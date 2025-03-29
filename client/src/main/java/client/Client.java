@@ -82,17 +82,20 @@ public class Client {
             }
         }
         if (iC.equals("LOGOUT")) {
-            boolean attemptWorked = false;
-            //attempt to log out
-            if (!attemptWorked) {
-                System.out.println("Bad Auth Token");
-                return "logged in";
+            if (sF.logoutRequest(authToken)) {
+                return "not logged in";
             }
-            return "not logged in";
+            System.out.println("Bad Auth Token");
+            return "logged in";
         }
         if (iC.equals("LIST GAMES")) {
             Collection<GameData> gamesListing = new ArrayList<>();
-            //get the games
+            boolean itWorked = false;
+            try {
+                gamesListing = sF.gameListRequest(authToken);
+            } catch (Exception e) {
+                System.out.println("Invalid Auth Token");
+            }
             System.out.println("Games List:");
             if (gamesListing.isEmpty()) {
                 System.out.println("Empty");

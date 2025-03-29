@@ -16,6 +16,8 @@ public class ChessGame {
     private boolean whiteQueenRookMoved;
     private boolean blackKingRookMoved;
     private boolean blackQueenRookMoved;
+    private boolean whiteHasResigned;
+    private boolean blackHasResigned;
     private int lastMove;
 
     public ChessGame() {
@@ -26,6 +28,8 @@ public class ChessGame {
         whiteQueenRookMoved = false;
         blackQueenRookMoved = false;
         blackKingRookMoved = false;
+        whiteHasResigned = false;
+        blackHasResigned = false;
         lastMove = 0;
 
     }
@@ -260,6 +264,17 @@ public class ChessGame {
             theTurn = TeamColor.WHITE;
         }
     }
+    public void attemptResign(TeamColor tC) throws InvalidMoveException {
+        if (whiteHasResigned || blackHasResigned) {
+            throw new InvalidMoveException();
+        }
+        if (tC == TeamColor.WHITE) {
+            whiteHasResigned = true;
+        }
+        else {
+            blackHasResigned = true;
+        }
+    }
 
     /**
      * Determines if the given team is in check
@@ -358,6 +373,8 @@ public class ChessGame {
         whiteKingRookMoved = whiteQueenRookMoved;
         blackQueenRookMoved = whiteQueenRookMoved;
         blackKingRookMoved = whiteQueenRookMoved;
+        whiteHasResigned = whiteQueenRookMoved;
+        blackHasResigned = whiteQueenRookMoved;
         lastMove = 0;
     }
 
@@ -398,17 +415,20 @@ public class ChessGame {
         return 0;
     }
     public int getInfo(int m) {
-        if (m == 144) {
-            int f = convertBoolean(whiteKingRookMoved) * 8 + 4 * convertBoolean(whiteQueenRookMoved);
-            f = f + convertBoolean(blackKingRookMoved) * 2 + convertBoolean(blackQueenRookMoved);
-            return 16 * lastMove + f;
+        if (m == 576) {
+            int f = convertBoolean(whiteKingRookMoved) * 32 + 16 * convertBoolean(whiteQueenRookMoved);
+            f = f + convertBoolean(blackKingRookMoved) * 8 + convertBoolean(blackQueenRookMoved) * 4;
+            f = f + convertBoolean(whiteHasResigned) * 2 + convertBoolean(blackHasResigned);
+            return 64 * lastMove + f;
         }
-        lastMove = m / 16;
-        whiteKingRookMoved = convertBoolean(m / 8);
-        whiteQueenRookMoved = convertBoolean(m / 4);
-        blackKingRookMoved = convertBoolean(m / 2);
-        blackQueenRookMoved = convertBoolean(m);
-        return 144;
+        lastMove = m / 64;
+        whiteKingRookMoved = convertBoolean(m / 32);
+        whiteQueenRookMoved = convertBoolean(m / 16);
+        blackKingRookMoved = convertBoolean(m / 8);
+        blackQueenRookMoved = convertBoolean(m / 4);
+        whiteHasResigned = convertBoolean(m / 2);
+        blackHasResigned = convertBoolean(m);
+        return 576;
     }
     @Override
     public boolean equals(Object obj) {
@@ -419,7 +439,7 @@ public class ChessGame {
             return false;
         }
         ChessGame ch = (ChessGame) obj;
-        if (ch.getInfo(144) != getInfo(144)) {
+        if (ch.getInfo(576) != getInfo(576)) {
             return false;
         }
         if (ch.getTeamTurn() != theTurn) {
@@ -435,7 +455,7 @@ public class ChessGame {
     public ChessGame clone() {
         ChessGame cg = new ChessGame();
         cg.setBoard(theBoard);
-        if (cg.getInfo(getInfo(144)) == 144) {
+        if (cg.getInfo(getInfo(576)) == 576) {
             cg.setTeamTurn(theTurn);
         }
         return cg;

@@ -3,18 +3,15 @@ package client;
 import chess.ChessGame;
 import chess.InvalidMoveException;
 import com.google.gson.Gson;
-import model.AuthData;
-import model.UserData;
-import model.UserPass;
+import model.*;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.net.HttpURLConnection;
-import java.net.ResponseCache;
-import java.net.URI;
-import java.net.URL;
+import java.net.*;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 
 public class ServerFacade {
@@ -22,13 +19,16 @@ public class ServerFacade {
     public ServerFacade(String url) {
         svurl = url;
     }
-    private <T> T requests(String me, String pt, Object p, Class<T> re) throws InvalidMoveException {
+    private <T> T requests(String me, String pt, Object p, Class<T> re, String hd) throws InvalidMoveException {
         try {
             URL place = (new URI(svurl + pt)).toURL();
             HttpURLConnection huck = (HttpURLConnection) place.openConnection();
             huck.setRequestMethod(me);
             huck.setDoOutput(true);
             wB(huck, p);
+            if (hd != null) {
+                //place headers
+            }
             huck.connect();
             thrower(huck);
             return getBody(re, huck);
@@ -66,19 +66,47 @@ public class ServerFacade {
 
     public String loginRequest(String username, String password) {
         try {
-            AuthData aD = requests("POST", "/session", new Gson().toJson(new UserPass(username, password)), AuthData.class);
+            AuthData aD = requests("POST", "/session", new Gson().toJson(new UserPass(username, password)), AuthData.class, null);
+            return aD.authToken();
+        } catch (InvalidMoveException e) {
+            return null;
+        }
+    }
+    public boolean logoutRequest(String headerField) {
+        try {
+            Object aD = requests("DELETE", "/session", null, null, headerField);
+            return true;
+        } catch (InvalidMoveException e) {
+            return false;
+        }
+    }
+
+    public String registerAttempt(String username, String password, String email) {
+        try {
+            AuthData aD = requests("POST", "/user", new Gson().toJson(new UserData(username, password, email)), AuthData.class, null);
             return aD.authToken();
         } catch (InvalidMoveException e) {
             return null;
         }
     }
 
-    public String registerAttempt(String username, String password, String email) {
+    public Collection<GameData> gameListRequest(String authToken) {
         try {
-            AuthData aD = requests("POST", "/user", new Gson().toJson(new UserData(username, password, email)), AuthData.class);
-            return aD.authToken();
+            Collection<GameDataWithout> aD = requests("GET", "/game", null, Collection<GameDataWithout>.class, authToken);
+            Collection<GameData> aE = new ArrayList<>();
+            for (GameDataWithout aG: aD) {
+                aE.add(new GameData(aG.gameID(), aG.whiteUsername(), aG.blackUsername(), aG.gameName(), new ChessGame()));
+            }
         } catch (InvalidMoveException e) {
             return null;
+        }
+    }
+    public boolean clear() {
+        try {
+            requests("DELETE", "/db", null, null, null);
+            return true;
+        } catch (InvalidMoveException e) {
+            return false;
         }
     }
 }
