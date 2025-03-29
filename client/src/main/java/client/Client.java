@@ -1,25 +1,20 @@
 package client;
 
+import chess.ChessGame;
 import model.GameData;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Scanner;
 
 public class Client {
     private Scanner getThing;
     private String authToken;
-//    private HttpURLConnection cn = null;
     public int run(int desiredPort) {
-//        try {
-//            URI url = new URI("http://localhost:" + desiredPort);
-//            cn = (HttpURLConnection) url.toURL().openConnection();
-//        } catch (Exception e) {
-//            System.out.println("Bad");
-//        }
         runLoop();
         return desiredPort;
     }
@@ -46,10 +41,10 @@ public class Client {
 
     private void printPrompt(String height) {
         if (height.equals("not logged in")) {
-            System.out.println("Login\nRegister\nQuit\nHelp\n");
+            System.out.println("Login\nRegister\nQuit\nHelp");
         }
         else {
-            System.out.println("Play Game\nHelp\nLogout\nCreate Game\nList Games\nObserve Game\n");
+            System.out.println("Play Game\nHelp\nLogout\nCreate Game\nList Games\nObserve Game");
         }
     }
 
@@ -79,7 +74,7 @@ public class Client {
         if ((!iC.equals("PLAY GAME")) && (!iC.equals("CREATE GAME")) && (!iC.equals("OBSERVE GAME"))) {
             if ((!iC.equals("LIST GAMES")) && (!iC.equals("LOGOUT"))) {
                 if (!iC.equals("HELP")) {
-                    System.out.println("Bad command\n");
+                    System.out.println("Bad command");
                 }
                 return "logged in";
             }
@@ -88,10 +83,41 @@ public class Client {
             boolean attemptWorked = false;
             //attempt to log out
             if (!attemptWorked) {
-                System.out.println("Bad Auth Token\n");
+                System.out.println("Bad Auth Token");
                 return "logged in";
             }
             return "not logged in";
+        }
+        if (iC.equals("LIST GAMES")) {
+            Collection<GameData> gamesListing = new ArrayList<>();
+            //get the games
+            System.out.println("Games List:");
+            if (gamesListing.isEmpty()) {
+                System.out.println("Empty");
+            }
+            int i = 1;
+            while (getInt(i + "", gamesListing) != 0) {
+                int j = getInt(i + "", gamesListing);
+                GameData gD = retrieveGame(j, gamesListing);
+                if (gD == null) {
+                    gD = new GameData(j, null, null, "", new ChessGame());
+                }
+                String k = i + " ";
+                if (gD.whiteUsername() == null) {
+                    k = k + "NULL";
+                }
+                else {
+                    k = k + gD.whiteUsername();
+                }
+                if (gD.blackUsername() == null) {
+                    k = k + " NULL";
+                }
+                else {
+                    k = k + " " + gD.blackUsername();
+                }
+                i++;
+            }
+            return "logged in";
         }
     }
 
@@ -101,7 +127,7 @@ public class Client {
         }
         if (!theirInput.equals("LOGIN") && !theirInput.equals("REGISTER")) {
             if (!theirInput.equals("HELP")) {
-                System.out.println("Bad command\n");
+                System.out.println("Bad command");
             }
             return "not logged in";
         }
@@ -109,28 +135,28 @@ public class Client {
         String username = null;
         String password = null;
         if (theirInput.equals("REGISTER")) {
-            System.out.println("Email:\n");
+            System.out.println("Email:");
             email = getThing.nextLine();
-            System.out.println("Username:\n");
+            System.out.println("Username:");
             username = getThing.nextLine();
-            System.out.println("Password:\n");
+            System.out.println("Password:");
             password = getThing.nextLine();
             authToken = null;
             //authToken = attempt to register [username, password, email]
             if (authToken == null) {
-                System.out.println("Taken\n");
+                System.out.println("Taken");
                 return "not logged in";
             }
             return "logged in";
         }
-        System.out.println("Username:\n");
+        System.out.println("Username:");
         username = getThing.nextLine();
-        System.out.println("Password:\n");
+        System.out.println("Password:");
         password = getThing.nextLine();
         authToken = null;
         //authToken = attempt to log in [username, password]
         if (authToken == null) {
-            System.out.println("Bad Password\n");
+            System.out.println("Bad Password");
             return "not logged in";
         }
         return "logged in";
@@ -154,6 +180,26 @@ public class Client {
             }
         }
         return 0;
+    }
+    private int getInt(String m, Collection<GameData> cG) {
+        int gameLen = cG.size();
+        int i = 1;
+        while (i <= gameLen) {
+            String j = i + "";
+            if (j.equals(m)) {
+                return getGame(i, cG);
+            }
+            i++;
+        }
+        return 0;
+    }
+    private GameData retrieveGame(int i, Collection<GameData> cG) {
+        for (GameData cGD: cG) {
+            if (cGD.gameID() == i) {
+                return cGD;
+            }
+        }
+        return null;
     }
 
     private String cmpGames(GameData cGE, GameData cGD) {
