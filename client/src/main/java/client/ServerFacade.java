@@ -4,6 +4,7 @@ import chess.ChessGame;
 import chess.InvalidMoveException;
 import com.google.gson.Gson;
 import model.AuthData;
+import model.UserData;
 import model.UserPass;
 
 import java.io.IOException;
@@ -66,6 +67,15 @@ public class ServerFacade {
     public String loginRequest(String username, String password) {
         try {
             AuthData aD = requests("POST", "/session", new Gson().toJson(new UserPass(username, password)), AuthData.class);
+            return aD.authToken();
+        } catch (InvalidMoveException e) {
+            return null;
+        }
+    }
+
+    public String registerAttempt(String username, String password, String email) {
+        try {
+            AuthData aD = requests("POST", "/user", new Gson().toJson(new UserData(username, password, email)), AuthData.class);
             return aD.authToken();
         } catch (InvalidMoveException e) {
             return null;

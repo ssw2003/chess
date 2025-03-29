@@ -150,8 +150,7 @@ public class Client {
             username = getThing.nextLine();
             System.out.println("Password:");
             password = getThing.nextLine();
-            authToken = null;
-            //authToken = attempt to register [username, password, email]
+            authToken = sF.registerAttempt(username, password, email);
             if (authToken == null) {
                 System.out.println("Taken");
                 return "not logged in";
