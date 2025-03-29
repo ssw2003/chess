@@ -12,9 +12,11 @@ import java.util.Collection;
 import java.util.Scanner;
 
 public class Client {
+    private ServerFacade sF;
     private Scanner getThing;
     private String authToken;
     public int run(int desiredPort) {
+        sF = new ServerFacade("http://localhost:" + desiredPort);
         runLoop();
         return desiredPort;
     }
@@ -115,8 +117,15 @@ public class Client {
                 else {
                     k = k + " " + gD.blackUsername();
                 }
+                k = k + " " + gD.gameName();
                 i++;
+                System.out.println(k);
             }
+            return "logged in";
+        }
+        if (iC.equals("PLAY GAME")) {
+            System.out.println("Game to Play:");
+            //
             return "logged in";
         }
     }
