@@ -265,8 +265,15 @@ public class ChessGame {
         }
     }
     public void attemptResign(TeamColor tC) throws InvalidMoveException {
+        InvalidMoveException thrower = new InvalidMoveException();
         if (whiteHasResigned || blackHasResigned) {
-            throw new InvalidMoveException();
+            throw thrower;
+        }
+        if (isInCheckmate(TeamColor.WHITE) || isInStalemate(TeamColor.BLACK)) {
+            throw thrower;
+        }
+        if (isInCheckmate(TeamColor.BLACK) || isInStalemate(TeamColor.WHITE)) {
+            throw thrower;
         }
         if (tC == TeamColor.WHITE) {
             whiteHasResigned = true;
