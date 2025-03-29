@@ -128,9 +128,34 @@ public class Client {
         }
         if (iC.equals("PLAY GAME")) {
             System.out.println("Game to Play:");
-            //
+            String gameNameCreate = getThing.nextLine();
+            Collection<GameData> gD = sF.gameListRequest(authToken);
+            if (gD == null) {
+                gD = new ArrayList<>();
+            }
+            int joined = getInt(gameNameCreate, gD);
+            System.out.println("Player Color:");
+            gameNameCreate = getThing.nextLine();
+            if (!sF.joinGame(authToken, joined, gameNameCreate)) {
+                System.out.println("Bad Game Number");
+            }
+            else {
+                //print board
+            }
             return "logged in";
         }
+        if (iC.equals("CREATE GAME")) {
+            System.out.println("Game Name:");
+            String gameNameCreate = getThing.nextLine();
+            if (sF.createGame(authToken, gameNameCreate)) {
+                System.out.println("Thank You");
+            }
+            else {
+                System.out.println("Bad Auth Token");
+            }
+            return "logged in";
+        }
+        return "";
     }
 
     private String evaluateNotLoggedIn(String theirInput) {

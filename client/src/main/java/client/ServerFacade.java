@@ -19,7 +19,7 @@ public class ServerFacade {
     public ServerFacade(String url) {
         svurl = url;
     }
-    private <T> T requests(String me, String pt, Object p, Class<T> re, String hd) throws InvalidMoveException {
+    private <T> T requests(String me, String pt, String p, Class<T> re, String hd) throws InvalidMoveException {
         try {
             URL place = (new URI(svurl + pt)).toURL();
             HttpURLConnection huck = (HttpURLConnection) place.openConnection();
@@ -57,12 +57,10 @@ public class ServerFacade {
             throw new IOException();
         }
     }
-    private void wB(HttpURLConnection huck, Object p) throws IOException {
+    private void wB(HttpURLConnection huck, String p) throws IOException {
         if (p != null) {
-            huck.addRequestProperty("Content-Type", "application/json");
-            String rD = new Gson().toJson(p);
             try (OutputStream os = huck.getOutputStream()) {
-                os.write(rD.getBytes());
+                os.write(p.getBytes());
             }
         }
     }
@@ -119,6 +117,14 @@ public class ServerFacade {
             if (i.gameID() == 0) {
                 return false;
             }
+            return true;
+        } catch (InvalidMoveException e) {
+            return false;
+        }
+    }
+    public boolean joinGame(String authToken, int gameName, String tC) {
+        try {
+            requests("PUT", "/game", new Gson().toJson(new ColorAndNumber(tC, gameName)), null, authToken);
             return true;
         } catch (InvalidMoveException e) {
             return false;
