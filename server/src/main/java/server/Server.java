@@ -55,8 +55,6 @@ public class Server {
             return gson.toJson(c);
         }
         String gN;
-        String psw;
-        String eml;
         try {
             var json = gson.fromJson(request.body(), GameNameData.class);
             gN = json.gameName();

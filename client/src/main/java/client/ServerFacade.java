@@ -25,12 +25,15 @@ public class ServerFacade {
             HttpURLConnection huck = (HttpURLConnection) place.openConnection();
             huck.setRequestMethod(me);
             huck.setDoOutput(true);
-            wB(huck, p);
             if (hd != null) {
-                //place headers
+                huck.addRequestProperty("authorization", hd);
             }
+            wB(huck, p);
             huck.connect();
             thrower(huck);
+            if (re == null) {
+                return null;
+            }
             return getBody(re, huck);
         } catch (Exception e) {
             throw new InvalidMoveException();
@@ -74,7 +77,7 @@ public class ServerFacade {
     }
     public boolean logoutRequest(String headerField) {
         try {
-            Object aD = requests("DELETE", "/session", null, null, headerField);
+            requests("DELETE", "/session", null, null, headerField);
             return true;
         } catch (InvalidMoveException e) {
             return false;
@@ -91,19 +94,31 @@ public class ServerFacade {
     }
 
     public Collection<GameData> gameListRequest(String authToken) {
+        Collection<GameData> aE = new ArrayList<>();
         try {
-            Collection<GameDataWithout> aD = requests("GET", "/game", null, Collection<GameDataWithout>.class, authToken);
-            Collection<GameData> aE = new ArrayList<>();
-            for (GameDataWithout aG: aD) {
+            ListGameDataWithout aD = requests("GET", "/game", null, ListGameDataWithout.class, authToken);
+            for (GameDataWithout aG: aD.games()) {
                 aE.add(new GameData(aG.gameID(), aG.whiteUsername(), aG.blackUsername(), aG.gameName(), new ChessGame()));
             }
         } catch (InvalidMoveException e) {
             return null;
         }
+        return aE;
     }
     public boolean clear() {
         try {
             requests("DELETE", "/db", null, null, null);
+            return true;
+        } catch (InvalidMoveException e) {
+            return false;
+        }
+    }
+    public boolean createGame(String authToken, String gameName) {
+        try {
+            GameInteger i = requests("POST", "/game", new Gson().toJson(new GameNameData(gameName)), GameInteger.class, authToken);
+            if (i.gameID() == 0) {
+                return false;
+            }
             return true;
         } catch (InvalidMoveException e) {
             return false;
