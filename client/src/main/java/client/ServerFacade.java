@@ -5,6 +5,8 @@ import chess.InvalidMoveException;
 import com.google.gson.Gson;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.ResponseCache;
@@ -25,13 +27,23 @@ public class ServerFacade {
             huck.setDoOutput(true);
             wB(huck, p);
             huck.connect();
+            thrower(huck);
             return getBody(re, huck);
         } catch (Exception e) {
             throw new InvalidMoveException();
         }
     }
-    private <T> T getBody(Class<T> p, HttpURLConnection huck) {
+    private <T> T getBody(Class<T> p, HttpURLConnection huck) throws IOException {
         T thisThing = null;
+        if (huck.getContentLength() < 0) {
+            try (InputStream is = huck.getInputStream()) {
+                InputStreamReader isr = new InputStreamReader(is);
+                if (p != null) {
+                    thisThing = new Gson().fromJson(isr, p);
+                }
+            }
+        }
+        return thisThing;
     }
     private void thrower(HttpURLConnection huck) throws IOException {
         var st = huck.getResponseCode();
