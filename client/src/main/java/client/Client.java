@@ -1,12 +1,9 @@
 package client;
 
 import chess.ChessGame;
+import chess.ChessPosition;
 import model.GameData;
 
-import java.io.IOException;
-import java.net.HttpURLConnection;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Scanner;
@@ -15,8 +12,10 @@ public class Client {
     private ServerFacade sF;
     private Scanner getThing;
     private String authToken;
+    private BoardDrawingClass bDC;
     public int run(int desiredPort) {
         sF = new ServerFacade("http://localhost:" + desiredPort);
+        bDC = new BoardDrawingClass();
         runLoop();
         return desiredPort;
     }
@@ -81,66 +80,40 @@ public class Client {
                 return "logged in";
             }
         }
-        if (iC.equals("LOGOUT")) {
-            if (sF.logoutRequest(authToken)) {
-                return "not logged in";
-            }
-            System.out.println("Bad Auth Token");
-            return "logged in";
+        if (iC.equals("LOGOUT") || iC.equals("LIST GAMES")) {
+            return evaluateOut(iC);
         }
-        if (iC.equals("LIST GAMES")) {
-            Collection<GameData> gamesListing = new ArrayList<>();
-            boolean itWorked = false;
-            try {
-                gamesListing = sF.gameListRequest(authToken);
-            } catch (Exception e) {
-                System.out.println("Invalid Auth Token");
-            }
-            System.out.println("Games List:");
-            if (gamesListing.isEmpty()) {
-                System.out.println("Empty");
-            }
-            int i = 1;
-            while (getInt(i + "", gamesListing) != 0) {
-                int j = getInt(i + "", gamesListing);
-                GameData gD = retrieveGame(j, gamesListing);
-                if (gD == null) {
-                    gD = new GameData(j, null, null, "", new ChessGame());
-                }
-                String k = i + " ";
-                if (gD.whiteUsername() == null) {
-                    k = k + "NULL";
-                }
-                else {
-                    k = k + gD.whiteUsername();
-                }
-                if (gD.blackUsername() == null) {
-                    k = k + " NULL";
-                }
-                else {
-                    k = k + " " + gD.blackUsername();
-                }
-                k = k + " " + gD.gameName();
-                i++;
-                System.out.println(k);
-            }
-            return "logged in";
-        }
+        Collection<GameData> gD = null;
         if (iC.equals("PLAY GAME")) {
             System.out.println("Game to Play:");
             String gameNameCreate = getThing.nextLine();
-            Collection<GameData> gD = sF.gameListRequest(authToken);
+            gD = sF.gameListRequest(authToken);
             if (gD == null) {
                 gD = new ArrayList<>();
             }
             int joined = getInt(gameNameCreate, gD);
+            if (joined == 0) {
+                System.out.println("Bad Game Number");
+                return "logged in";
+            }
             System.out.println("Player Color:");
             gameNameCreate = getThing.nextLine();
-            if (!sF.joinGame(authToken, joined, gameNameCreate)) {
-                System.out.println("Bad Game Number");
+            ChessGame.TeamColor tC = ChessGame.TeamColor.WHITE;
+            if (capitalizeLetters(gameNameCreate).equals("BLACK")) {
+                tC = ChessGame.TeamColor.BLACK;
             }
-            else {
-                //print board
+            else if (!capitalizeLetters(gameNameCreate).equals("WHITE")) {
+                System.out.println("Bad Color");
+                return "logged in";
+            }
+            if (!sF.joinGame(authToken, joined, gameNameCreate)) {
+                System.out.println("Taken");
+            }
+            else if (tC == ChessGame.TeamColor.WHITE) {
+                drawBoard(gD, joined, null, BoardDrawingClass.Role.WHITE);
+            }
+            else  {
+                drawBoard(gD, joined, null, BoardDrawingClass.Role.BLACK);
             }
             return "logged in";
         }
@@ -155,7 +128,65 @@ public class Client {
             }
             return "logged in";
         }
+        System.out.println("Game to Observe:");
+        String gNC = getThing.nextLine();
+        gD = sF.gameListRequest(authToken);
+        if (gD == null) {
+            gD = new ArrayList<>();
+        }
+        int joined = getInt(gNC, gD);
+        if (joined == 0) {
+            System.out.println("Bad Game Number");
+        }
+        else {
+            drawBoard(gD, joined, null, BoardDrawingClass.Role.OBSERVER);
+        }
         return "";
+    }
+    private String evaluateOut(String iC) {
+        if (iC.equals("LOGOUT")) {
+            if (sF.logoutRequest(authToken)) {
+                return "not logged in";
+            }
+            System.out.println("Bad Auth Token");
+            return "logged in";
+        }
+        Collection<GameData> gamesListing = new ArrayList<>();
+        boolean itWorked = false;
+        try {
+            gamesListing = sF.gameListRequest(authToken);
+        } catch (Exception e) {
+            System.out.println("Invalid Auth Token");
+        }
+        System.out.println("Games List:");
+        if (gamesListing.isEmpty()) {
+            System.out.println("NULL");
+        }
+        int i = 1;
+        while (getInt(i + "", gamesListing) != 0) {
+            int j = getInt(i + "", gamesListing);
+            GameData gD = retrieveGame(j, gamesListing);
+            if (gD == null) {
+                gD = new GameData(j, null, null, "", new ChessGame());
+            }
+            String k = i + " ";
+            if (gD.whiteUsername() == null) {
+                k = k + "NULL";
+            }
+            else {
+                k = k + gD.whiteUsername();
+            }
+            if (gD.blackUsername() == null) {
+                k = k + " NULL";
+            }
+            else {
+                k = k + " " + gD.blackUsername();
+            }
+            k = k + " " + gD.gameName();
+            i++;
+            System.out.println(k);
+        }
+        return "logged in";
     }
 
     private String evaluateNotLoggedIn(String theirInput) {
@@ -261,7 +292,17 @@ public class Client {
             else if (cGE.gameName().charAt(i) > cGD.gameName().charAt(i)) {
                 return ">";
             }
+            i++;
         }
         return "=";
+    }
+    private void drawBoard(Collection<GameData> gD, int jd, ChessPosition ch, BoardDrawingClass.Role rl) {
+        ChessGame cg = null;
+        for (GameData gd: gD) {
+            if (gd.gameID() == jd) {
+                cg = gd.game().clone();
+            }
+        }
+        bDC.dB(cg, ch, rl);
     }
 }
