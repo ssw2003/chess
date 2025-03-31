@@ -235,20 +235,14 @@ public class Client {
         return "logged in";
     }
     private int getGame(int g, Collection<GameData> cG) {
-        if (g <= 0) {
-            return 0;
-        }
-        if (g > cG.size()) {
-            return 0;
-        }
         for (GameData cGD: cG) {
-            int i = 0;
-            for (GameData cGE: cG) {
-                if (!cmpGames(cGE, cGD).equals(">")) {
-                    i++;
+            int j = g - 1;
+            for (GameData myGame: cG) {
+                if (cmpGames(myGame, cGD).equals("<")) {
+                    j--;
                 }
             }
-            if (i == g) {
+            if (j == 0) {
                 return cGD.gameID();
             }
         }
