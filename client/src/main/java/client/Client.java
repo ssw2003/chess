@@ -2,6 +2,7 @@ package client;
 
 import chess.ChessGame;
 import chess.ChessPosition;
+import chess.InvalidMoveException;
 import model.GameData;
 
 import java.util.ArrayList;
@@ -163,11 +164,18 @@ public class Client {
             System.out.println("NULL");
         }
         int i = 1;
+        ChessGame chGam = new ChessGame();
+        try {
+            chGam.attemptResign(ChessGame.TeamColor.WHITE);
+            chGam.attemptResign(ChessGame.TeamColor.WHITE);
+        } catch (InvalidMoveException e) {
+            chGam = new ChessGame();
+        }
         while (getInt(i + "", gamesListing) != 0) {
             int j = getInt(i + "", gamesListing);
             GameData gD = retrieveGame(j, gamesListing);
             if (gD == null) {
-                gD = new GameData(j, null, null, "", new ChessGame());
+                gD = new GameData(j, null, null, "", chGam.clone());
             }
             String k = i + "-" + gD.gameName() + "; White: ";
             if (gD.whiteUsername() == null) {
