@@ -169,7 +169,7 @@ public class Client {
             if (gD == null) {
                 gD = new GameData(j, null, null, "", new ChessGame());
             }
-            String k = i + " ";
+            String k = i + "-" + gD.gameName() + "; White: ";
             if (gD.whiteUsername() == null) {
                 k = k + "NULL";
             }
@@ -177,12 +177,11 @@ public class Client {
                 k = k + gD.whiteUsername();
             }
             if (gD.blackUsername() == null) {
-                k = k + " NULL";
+                k = k + "; Black: NULL";
             }
             else {
-                k = k + " " + gD.blackUsername();
+                k = k + "; Black: " + gD.blackUsername();
             }
-            k = k + " " + gD.gameName();
             i++;
             System.out.println(k);
         }
