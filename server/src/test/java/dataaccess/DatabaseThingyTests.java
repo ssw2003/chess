@@ -1,6 +1,10 @@
 package dataaccess;
 
+import chess.ChessMove;
+import chess.ChessPosition;
+import model.GameData;
 import model.GameDataWithout;
+import model.InfoJoinExt;
 import org.junit.jupiter.api.*;
 
 import java.util.Collection;
@@ -266,13 +270,14 @@ public class DatabaseThingyTests {
     @Order(30)
     @DisplayName("Passed Test Of Join Game")
     public void passedTestOfJoinGame() {
-        Assertions.assertTrue(svcDt.joinGame(1, true, "abcdefg"));
+        ChessMove mh = new ChessMove(new ChessPosition(1, 1), new ChessPosition(1, 1), null);
+        Assertions.assertTrue(svcDt.joinGame(1, true, "abcdefg", new InfoJoinExt(0, mh)));
     }
     @Test
     @Order(31)
     @DisplayName("Passed Test Of Get Games")
     public void passedTestOfGetGames() {
-        Collection<GameDataWithout> gW = svcDt.getGames();
+        Collection<GameData> gW = svcDt.getGames();
         Assertions.assertEquals(2, gW.size());
     }
     @Test
@@ -281,20 +286,21 @@ public class DatabaseThingyTests {
     public void failedTestOfAddGame() {
         svcDt.addGame("here");
         svcDt.clearThingy();
-        Collection<GameDataWithout> gW = svcDt.getGames();
+        Collection<GameData> gW = svcDt.getGames();
         Assertions.assertEquals(0, gW.size());
     }
     @Test
     @Order(33)
     @DisplayName("Failed Test Of Join Game")
     public void failedTestOfJoinGame() {
-        Assertions.assertFalse(svcDt.joinGame(1, true, "abcdefg"));
+        ChessMove mh = new ChessMove(new ChessPosition(1, 1), new ChessPosition(1, 1), null);
+        Assertions.assertFalse(svcDt.joinGame(1, true, "abcdefg", new InfoJoinExt(0, mh)));
     }
     @Test
     @Order(34)
     @DisplayName("Failed Test Of Get Games")
     public void failedTestOfGetGames() {
-        Collection<GameDataWithout> gW = svcDt.getGames();
+        Collection<GameData> gW = svcDt.getGames();
         Assertions.assertEquals(0, gW.size());
         svcDt.clearThingy();
     }

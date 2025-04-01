@@ -1,6 +1,10 @@
 package dataaccess;
 
+import chess.ChessMove;
+import chess.ChessPosition;
+import model.GameData;
 import model.GameDataWithout;
+import model.InfoJoinExt;
 import model.UserData;
 
 import java.util.Collection;
@@ -18,9 +22,8 @@ public class Service {
         String authMy = UUID.randomUUID().toString();
         String aM = "";
         aM = aM + authMy;
-        String thisThingyThingy = "that thing";
         if (b) {
-            if (dT.addUser(usn, psw, eml, aM) && thisThingyThingy.equals("that thing")) {
+            if (dT.addUser(usn, psw, eml, aM)) {
                 return aM;
             }
             throw new DataAccessException("");
@@ -30,8 +33,11 @@ public class Service {
         }
         throw new DataAccessException("");
     }
-    public String getPsw(String usn) {
-        return dT.retrievePsw(usn);
+    public String getPsw(String usn, boolean b) {
+        if (b) {
+            return dT.retrievePsw(usn);
+        }
+        return dT.retrieveUsn(usn);
     }
 
     public void logout(String authrztn) throws DataAccessException {
@@ -51,7 +57,7 @@ public class Service {
         return dT.addGame(gN);
     }
 
-    public Collection<GameDataWithout> getGames(String authrztn) throws DataAccessException {
+    public Collection<GameData> getGames(String authrztn) throws DataAccessException {
         if (!dT.isAuthorized(authrztn)) {
             throw new DataAccessException("");
         }
@@ -59,7 +65,8 @@ public class Service {
     }
 
     public void joinGame(int ident, boolean isWhite, String authrztn) throws DataAccessException {
-        if (!dT.joinGame(ident, isWhite, authrztn)) {
+        ChessMove mh = new ChessMove(new ChessPosition(1, 1), new ChessPosition(1, 1), null);
+        if (!dT.joinGame(ident, isWhite, authrztn, new InfoJoinExt(0, mh))) {
             throw new DataAccessException("");
         }
     }

@@ -161,7 +161,7 @@ public class Client {
         }
         System.out.println("Games List:");
         if (gamesListing.isEmpty()) {
-            System.out.println("NULL");
+            System.out.println("   There are 0 games.");
         }
         int i = 1;
         ChessGame chGam = new ChessGame();
@@ -177,15 +177,15 @@ public class Client {
             if (gD == null) {
                 gD = new GameData(j, null, null, "", chGam.clone());
             }
-            String k = i + "-" + gD.gameName() + "; White: ";
+            String k = "   " + i + "-" + gD.gameName() + "; White: ";
             if (gD.whiteUsername() == null) {
-                k = k + "NULL";
+                k = k + "[Nobody]";
             }
             else {
                 k = k + gD.whiteUsername();
             }
             if (gD.blackUsername() == null) {
-                k = k + "; Black: NULL";
+                k = k + "; Black: [Nobody]";
             }
             else {
                 k = k + "; Black: " + gD.blackUsername();

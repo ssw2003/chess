@@ -1,9 +1,11 @@
 package dataaccess;
 
 import chess.ChessGame;
+import chess.ChessMove;
 import com.google.gson.Gson;
 import model.GameData;
 import model.GameDataWithout;
+import model.InfoJoinExt;
 import model.UserData;
 import org.mindrot.jbcrypt.BCrypt;
 
@@ -155,15 +157,18 @@ public class DatabaseClass implements DatabaseThingy {
     }
 
     @Override
-    public Collection<GameDataWithout> getGames() {
-        Collection<GameDataWithout> gDW = new ArrayList<>();
+    public Collection<GameData> getGames() {
+        Collection<GameData> gDW = new ArrayList<>();
         try (var cn = DatabaseManager.getConnection()) {
             var sqlAsk = "SELECT * FROM games";
             try (var pS = cn.prepareStatement(sqlAsk)) {
                 var i = pS.executeQuery();
                 while (i.next()) {
                     int gID = i.getInt("gameID");
-                    gDW.add(new GameDataWithout(gID, i.getString("whiteUsername"), i.getString("blackUsername"), i.getString("gameName")));
+                    var cga = i.getString("game");
+                    var gs = new Gson();
+                    ChessGame cGM = gs.fromJson(cga, ChessGame.class);
+                    gDW.add(new GameData(gID, i.getString("whiteUsername"), i.getString("blackUsername"), i.getString("gameName"), cGM.clone()));
                 }
                 return gDW;
             }
@@ -173,8 +178,21 @@ public class DatabaseClass implements DatabaseThingy {
     }
 
     @Override
-    public boolean joinGame(int ident, boolean isWhite, String authrztn) {
-        String usnm = retrieveUsn(authrztn);
+    public boolean joinGame(int ident, boolean isWhite, String authrztn, InfoJoinExt iJE) {
+        if (iJE.cmd() == 1) {
+            if (isWhite) {
+                return lvGmWh(ident, authrztn);
+            }
+            return lvGmBk(ident, authrztn);
+        }
+        if (iJE.cmd() == 2) {
+            return rsGm(ident, isWhite, authrztn);
+        }
+        if (iJE.cmd() == 3) {
+            return mkMv(ident, isWhite, authrztn, iJE.mv());
+        }
+        String usnm = authrztn;
+        //String usnm = retrieveUsn(authrztn);
         if (usnm == null) {
             return false;
         }
@@ -218,6 +236,76 @@ public class DatabaseClass implements DatabaseThingy {
         return true;
     }
 
+    private boolean mkMv(int ident, boolean isWhite, String authrztn, ChessMove mv) {
+        return true;
+    }
+
+    private boolean rsGm(int ident, boolean isWhite, String authrztn) {
+        return true;
+    }
+
+    private boolean lvGmBk(int ident, String authrztn) {
+        if (authrztn == null) {
+            return false;
+        }
+        String bk = null;
+        try (var cn = DatabaseManager.getConnection()) {
+            var sqlAsk = "SELECT blackUsername FROM games WHERE gameID = ?";
+            try (var pS = cn.prepareStatement(sqlAsk)) {
+                pS.setInt(1, ident);
+                try (var i = pS.executeQuery()) {
+                    i.next();
+                    bk = i.getString("blackUsername");
+                }
+            }
+        } catch (Exception e) {}
+        if (bk == null) {
+            return false;
+        }
+        if (!bk.equals(authrztn)) {
+            return false;
+        }
+        try (var cn = DatabaseManager.getConnection()) {
+            var sqlAsk = "UPDATE games SET blackUsername = ? WHERE gameID = ?";
+            try (var pS = cn.prepareStatement(sqlAsk)) {
+                pS.setString(1, null);
+                pS.setInt(2, ident);
+                pS.executeUpdate();
+            }
+        } catch (Exception e) {}
+        return true;
+    }
+
+    private boolean lvGmWh(int ident, String authrztn) {
+        if (authrztn == null) {
+            return false;
+        }
+        String wt = null;
+        try (var cn = DatabaseManager.getConnection()) {
+            try (var pS = cn.prepareStatement("SELECT * FROM games WHERE gameID = ?")) {
+                pS.setInt(1, ident);
+                try (var i = pS.executeQuery()) {
+                    i.next();
+                    wt = i.getString("whiteUsername");
+                }
+            }
+        } catch (Exception e) {}
+        if (wt == null) {
+            return false;
+        }
+        if (!wt.equals(authrztn)) {
+            return false;
+        }
+        try (var cn = DatabaseManager.getConnection()) {
+            try (var pS = cn.prepareStatement("UPDATE games SET whiteUsername = ? WHERE gameID = ?")) {
+                pS.setString(1, null);
+                pS.setInt(2, ident);
+                pS.executeUpdate();
+            }
+        } catch (Exception e) {}
+        return true;
+    }
+
     @Override
     public String retrievePsw(String usn) {
         try (var cn = DatabaseManager.getConnection()) {
@@ -236,6 +324,9 @@ public class DatabaseClass implements DatabaseThingy {
 
     @Override
     public String retrieveUsn(String authToken) {
+        if (authToken == null) {
+            return null;
+        }
         try (var cn = DatabaseManager.getConnection()) {
             var sqlAsk = "SELECT username FROM auths WHERE authToken = ?";
             try (var pS = cn.prepareStatement(sqlAsk)) {

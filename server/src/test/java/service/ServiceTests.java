@@ -220,7 +220,10 @@ public class ServiceTests {
         }
         Collection<GameDataWithout> gD = new ArrayList<>();
         try {
-            gD = svc.getGames(authy);
+            Collection<GameData> gE = svc.getGames(authy);
+            for (GameData gF: gE) {
+                gD.add(new GameDataWithout(gF.gameID(), gF.whiteUsername(), gF.blackUsername(), gF.gameName()));
+            }
         } catch (DataAccessException e) {
             i = 0;
         }
@@ -231,7 +234,7 @@ public class ServiceTests {
         }
         Assertions.assertNotNull(gW);
         Assertions.assertEquals(1, gW.gameID());
-        Assertions.assertEquals("Viswanathan", gW.whiteUsername());
+        Assertions.assertEquals(authy, gW.whiteUsername());
         Assertions.assertNull(gW.blackUsername());
         Assertions.assertEquals("Anand is Champion", gW.gameName());
     }
@@ -247,10 +250,13 @@ public class ServiceTests {
             authy = "authy";
             authy = null;
         }
-        int i = svc.addGame("Anand is Champion");
         Collection<GameDataWithout> gD = new ArrayList<>();
+        int i = svc.addGame("Anand is Champion");
         try {
-            gD = svc.getGames(authy);
+            Collection<GameData> gE = svc.getGames(authy);
+            for (GameData gF: gE) {
+                gD.add(new GameDataWithout(gF.gameID(), gF.whiteUsername(), gF.blackUsername(), gF.gameName()));
+            }
         } catch (DataAccessException e) {
             i = 0;
         }
@@ -277,13 +283,16 @@ public class ServiceTests {
             authy = "authy";
             authy = null;
         }
+        Collection<GameDataWithout> gD = new ArrayList<>();
         int i = svc.addGame("Kasparov is Champion");
         int j = svc.addGame("Kasparov is Chess Player");
         int k = svc.addGame("Kasparov is Bad At Chess");
         int l = svc.addGame("Kasparov is Good At Chess");
-        Collection<GameDataWithout> gD = new ArrayList<>();
         try {
-            gD = svc.getGames(authy);
+            Collection<GameData> gE = svc.getGames(authy);
+            for (GameData gF: gE) {
+                gD.add(new GameDataWithout(gF.gameID(), gF.whiteUsername(), gF.blackUsername(), gF.gameName()));
+            }
         } catch (DataAccessException e) {
             i = 0;
             j = 0;
@@ -389,7 +398,10 @@ public class ServiceTests {
         int j = svc.addGame("Bad game");
         Collection<GameDataWithout> gD = new ArrayList<>();
         try {
-            gD = svc.getGames(authy);
+            Collection<GameData> gE = svc.getGames(authy);
+            for (GameData gF: gE) {
+                gD.add(new GameDataWithout(gF.gameID(), gF.whiteUsername(), gF.blackUsername(), gF.gameName()));
+            }
         } catch (DataAccessException e) {
             authy = "";
         }
@@ -411,8 +423,11 @@ public class ServiceTests {
     public void failedTestOfJoinGame() {
         svc.clearThingy();
         String authy = null;
+        String authyKasparov = null;
+        String authyAnand = null;
         try {
             authy = svc.regUsr("Viswanathan", "Anand", "anand@chess.anand", true);
+            authyAnand = authy;
         } catch (DataAccessException e) {
             authy = "authy";
             authy = null;
@@ -425,6 +440,7 @@ public class ServiceTests {
         }
         try {
             authy = svc.regUsr("Garry", "Kasparov", "kasparov@chess.kasparov", true);
+            authyKasparov = authy;
         } catch (DataAccessException e) {
             authy = null;
         }
@@ -450,7 +466,10 @@ public class ServiceTests {
         Assertions.assertEquals(0, j);
         Collection<GameDataWithout> gD = new ArrayList<>();
         try {
-            gD = svc.getGames(authy + "");
+            Collection<GameData> gE = svc.getGames(authy);
+            for (GameData gF: gE) {
+                gD.add(new GameDataWithout(gF.gameID(), gF.whiteUsername(), gF.blackUsername(), gF.gameName()));
+            }
         } catch (DataAccessException e) {
             i = j;
         }
@@ -461,8 +480,8 @@ public class ServiceTests {
         }
         Assertions.assertNotNull(gW);
         Assertions.assertEquals(1, gW.gameID());
-        Assertions.assertEquals("Garry", gW.blackUsername());
-        Assertions.assertEquals("Viswanathan", gW.whiteUsername());
+        Assertions.assertEquals(authyKasparov, gW.blackUsername());
+        Assertions.assertEquals(authyAnand, gW.whiteUsername());
         Assertions.assertEquals("Anand Moves the Bishop", gW.gameName());
     }
     @Test
@@ -478,13 +497,13 @@ public class ServiceTests {
             authy = null;
         }
         //the service does not hash the password
-        Assertions.assertFalse("Kramnik".equals(BCrypt.checkpw(svc.getPsw("Vladimir"), BCrypt.gensalt())));
+        Assertions.assertFalse("Kramnik".equals(BCrypt.checkpw(svc.getPsw("Vladimir", true), BCrypt.gensalt())));
     }
     @Test
     @Order(20)
     @DisplayName("Passed Test Of Get Psw")
     public void passedTestOfGetPsw() {
         String authy = "authy";
-        Assertions.assertEquals("Kramnik", svc.getPsw("Vladimir"));
+        Assertions.assertEquals("Kramnik", svc.getPsw("Vladimir", true));
     }
 }

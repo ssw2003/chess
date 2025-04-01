@@ -163,7 +163,7 @@ public class Server {
             return gson.toJson(c);
         }
         try {
-            String pswRetrieved = svc.getPsw(usn);
+            String pswRetrieved = svc.getPsw(usn, true);
             if (pswRetrieved == null) {
                 throw new DataAccessException("");
             }
@@ -198,8 +198,13 @@ public class Server {
         }
         try {
             var e = Map.of();
-            Collection<GameDataWithout> cGD = svc.getGames(authrztn);
-            var f = Map.of("games", cGD);
+            Collection<GameData> cGD = svc.getGames(authrztn);
+            Collection<GameDataWithout> cGE = new ArrayList<>();
+            for (GameData gaDw: cGD) {
+                String wu = svc.getPsw(gaDw.whiteUsername(), false);
+                cGE.add(new GameDataWithout(gaDw.gameID(), wu, svc.getPsw(gaDw.blackUsername(), false), gaDw.gameName()));
+            }
+            var f = Map.of("games", cGE);
             response.status(200);
             return gson.toJson(f);
         } catch (Exception exc) {

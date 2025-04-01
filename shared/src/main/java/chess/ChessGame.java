@@ -172,7 +172,7 @@ public class ChessGame {
     public void makeMove(ChessMove move) throws InvalidMoveException {
         InvalidMoveException thrower = new InvalidMoveException();
         Collection<ChessMove> ccm = validMoves(move.getStartPosition());
-        if (ccm == null) {
+        if (ccm == null || whiteHasResigned || blackHasResigned) {
             throw thrower;
         }
         boolean canMakeIt = false;
