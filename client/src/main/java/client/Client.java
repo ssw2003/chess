@@ -14,9 +14,15 @@ public class Client {
     private Scanner getThing;
     private String authToken;
     private BoardDrawingClass bDC;
+    private int wGI;
+    private BoardDrawingClass.Role role;
+    private MisterClient mC;
     public int run(int desiredPort) {
         sF = new ServerFacade("http://localhost:" + desiredPort);
         bDC = new BoardDrawingClass();
+        wGI = 0;
+        role = BoardDrawingClass.Role.WHITE;
+        mC = new MisterClient(wGI, role);
         runLoop();
         return desiredPort;
     }
@@ -68,9 +74,7 @@ public class Client {
         return t;
     }
 
-    private String evaluateGame(String theirInput) {
-        return "logged in";
-    }
+
 
     private String evaluateLoggedIn(String iC) {
         if ((!iC.equals("PLAY GAME")) && (!iC.equals("CREATE GAME")) && (!iC.equals("OBSERVE GAME"))) {
@@ -93,30 +97,26 @@ public class Client {
                 gD = new ArrayList<>();
             }
             int joined = getInt(gameNameCreate, gD);
-            if (joined == 0) {
-                System.out.println("Bad Game Number");
-                return "logged in";
-            }
             System.out.println("Player Color:");
             gameNameCreate = getThing.nextLine();
             ChessGame.TeamColor tC = ChessGame.TeamColor.WHITE;
             if (capitalizeLetters(gameNameCreate).equals("BLACK")) {
                 tC = ChessGame.TeamColor.BLACK;
             }
-            else if (!capitalizeLetters(gameNameCreate).equals("WHITE")) {
-                System.out.println("Bad Color");
-                return "logged in";
+            role = BoardDrawingClass.Role.BLACK;
+            if (tC == ChessGame.TeamColor.WHITE) {
+                role = BoardDrawingClass.Role.WHITE;
             }
+            wGI = joined;
+            mC = new MisterClient(wGI, role);
             if (!sF.joinGame(authToken, joined, gameNameCreate)) {
                 System.out.println("Taken");
+                wGI = 0;
+                role = BoardDrawingClass.Role.WHITE;
+                mC = new MisterClient(wGI, role);
+                return "logged in";
             }
-            else if (tC == ChessGame.TeamColor.WHITE) {
-                drawBoard(gD, joined, null, BoardDrawingClass.Role.WHITE);
-            }
-            else  {
-                drawBoard(gD, joined, null, BoardDrawingClass.Role.BLACK);
-            }
-            return "logged in";
+            return "";
         }
         if (iC.equals("CREATE GAME")) {
             System.out.println("Game Name:");
@@ -136,12 +136,14 @@ public class Client {
             gD = new ArrayList<>();
         }
         int joined = getInt(gNC, gD);
+        role = BoardDrawingClass.Role.OBSERVER;
+        wGI = joined;
         if (joined == 0) {
             System.out.println("Bad Game Number");
+            role = BoardDrawingClass.Role.WHITE;
+            wGI = 0;
         }
-        else {
-            drawBoard(gD, joined, null, BoardDrawingClass.Role.OBSERVER);
-        }
+        mC = new MisterClient(wGI, role);
         return "";
     }
     private String evaluateOut(String iC) {
@@ -305,5 +307,12 @@ public class Client {
             }
         }
         bDC.dB(cg, ch, rl);
+    }
+
+    private String evaluateGame(String theirInput) {
+        wGI = 0;
+        role = BoardDrawingClass.Role.WHITE;
+        mC = new MisterClient(wGI, role);
+        return "logged in";
     }
 }

@@ -108,7 +108,9 @@ public class Server {
         }
         var ce = Map.of();
         try {
-            svc.joinGame(ident, pC.equals("WHITE"), authrztn);
+            if (!pC.equals("OBSERVER")) {
+                svc.joinGame(ident, pC.equals("WHITE"), authrztn);
+            }
         } catch (DataAccessException e) {
             ce = Map.of("message", "Error: already taken");
             response.status(403);
@@ -269,6 +271,9 @@ public class Server {
     private String getColor(String s) {
         if (s == null) {
             return null;
+        }
+        if (s.equals("OBSERVER")) {
+            return "OBSERVER";
         }
         if (s.equals("W") || s.equals("w")) {
             return "WHITE";
