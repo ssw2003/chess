@@ -2,6 +2,7 @@ package dataaccess;
 
 import chess.ChessGame;
 import chess.ChessMove;
+import chess.InvalidMoveException;
 import com.google.gson.Gson;
 import model.GameData;
 import model.GameDataWithout;
@@ -33,8 +34,6 @@ public class DatabaseClass implements DatabaseThingy {
                 var gson = new Gson();
                 pS.setString(4, gson.toJson(new ChessGame()));
                 pS.executeUpdate();
-                //var i = pS.executeUpdate();
-                //return i;
             }
             sqlAsk = "SELECT gameID FROM games";
             int hgh = 0;
@@ -192,7 +191,6 @@ public class DatabaseClass implements DatabaseThingy {
             return mkMv(ident, isWhite, authrztn, iJE.mv());
         }
         String usnm = authrztn;
-        //String usnm = retrieveUsn(authrztn);
         if (usnm == null) {
             return false;
         }
@@ -237,10 +235,107 @@ public class DatabaseClass implements DatabaseThingy {
     }
 
     private boolean mkMv(int ident, boolean isWhite, String authrztn, ChessMove mv) {
+        ChessGame gm = null;
+        String usn = null;
+        String busn = "blackUsername";
+        ChessGame.TeamColor tU = ChessGame.TeamColor.BLACK;
+        if (isWhite) {
+            busn = "whiteUsername";
+            tU = ChessGame.TeamColor.WHITE;
+        }
+        try (var cn = DatabaseManager.getConnection()) {
+            var sqlAsk = "SELECT * FROM games WHERE gameID = ?";
+            try (var pS = cn.prepareStatement(sqlAsk)) {
+                pS.setInt(1, ident);
+                try (var i = pS.executeQuery()) {
+                    i.next();
+                    ChessGame cga = new Gson().fromJson(i.getString("game"), ChessGame.class);
+                    usn = i.getString(busn);
+                    gm = cga.clone();
+                }
+            }
+        } catch (Exception e) {}
+        if (gm == null || mv == null || usn == null) {
+            return false;
+        }
+        if ((!usn.equals(authrztn)) || tU != gm.getTeamTurn()) {
+            return false;
+        }
+        try {
+            gm.makeMove(mv);
+        } catch (InvalidMoveException e) {
+            return false;
+        }
+        try (var cn = DatabaseManager.getConnection()) {
+            var sqlAsk = "UPDATE games SET game = ? WHERE gameID = ?";
+            try (var pS = cn.prepareStatement(sqlAsk)) {
+                ChessGame ga = gm.clone();
+                pS.setString(1, new Gson().toJson(ga.clone()));
+                pS.setInt(2, ident);
+                pS.executeUpdate();
+            }
+        } catch (Exception e) {
+            return false;
+        }
         return true;
     }
 
     private boolean rsGm(int ident, boolean isWhite, String authrztn) {
+        ChessGame gm = null;
+        String usnw = null;
+        String busn = null;
+        try (var cn = DatabaseManager.getConnection()) {
+            var sqlAsk = "SELECT * FROM games WHERE gameID = ?";
+            try (var pS = cn.prepareStatement(sqlAsk)) {
+                pS.setInt(1, ident);
+                try (var i = pS.executeQuery()) {
+                    i.next();
+                    ChessGame cga = new Gson().fromJson(i.getString("game"), ChessGame.class);
+                    usnw = i.getString("whiteUsername");
+                    busn = i.getString("blackUsername");
+                    gm = cga.clone();
+                }
+            }
+        } catch (Exception e) {}
+        if (isWhite) {
+            if (usnw == null) {
+                return false;
+            }
+            else if (!usnw.equals(authrztn)) {
+                return false;
+            }
+        }
+        if (gm == null) {
+            return false;
+        }
+        if (!isWhite) {
+            if (busn == null) {
+                return false;
+            }
+            else if (!busn.equals(authrztn)) {
+                return false;
+            }
+        }
+        ChessGame.TeamColor tC = ChessGame.TeamColor.BLACK;
+        if (isWhite) {
+            tC = ChessGame.TeamColor.WHITE;
+        }
+        try {
+            gm.attemptResign(tC);
+        } catch (InvalidMoveException e) {
+            return false;
+        }
+        try (var cn = DatabaseManager.getConnection()) {
+            var sqlAsk = "UPDATE games SET game = ? WHERE gameID = ?";
+            try (var pS = cn.prepareStatement(sqlAsk)) {
+                ChessGame ga = gm.clone();
+                pS.setString(1, new Gson().toJson(ga));
+                pS.setInt(2, ident);
+                pS.executeUpdate();
+            }
+        } catch (Exception e) {
+            return false;
+        }
         return true;
     }
 
