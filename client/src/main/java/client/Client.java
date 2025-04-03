@@ -22,7 +22,7 @@ public class Client {
         bDC = new BoardDrawingClass();
         wGI = 0;
         role = BoardDrawingClass.Role.WHITE;
-        mC = new MisterClient(wGI, role);
+        mC = new MisterClient();
         runLoop();
         return desiredPort;
     }
@@ -108,12 +108,12 @@ public class Client {
                 role = BoardDrawingClass.Role.WHITE;
             }
             wGI = joined;
-            mC = new MisterClient(wGI, role);
+            mC = new MisterClient();
             if (!sF.joinGame(authToken, joined, gameNameCreate)) {
                 System.out.println("Taken");
                 wGI = 0;
                 role = BoardDrawingClass.Role.WHITE;
-                mC = new MisterClient(wGI, role);
+                mC = new MisterClient();
                 return "logged in";
             }
             return "";
@@ -143,7 +143,7 @@ public class Client {
             role = BoardDrawingClass.Role.WHITE;
             wGI = 0;
         }
-        mC = new MisterClient(wGI, role);
+        mC = new MisterClient();
         return "";
     }
     private String evaluateOut(String iC) {
@@ -312,7 +312,7 @@ public class Client {
     private String evaluateGame(String theirInput) {
         wGI = 0;
         role = BoardDrawingClass.Role.WHITE;
-        mC = new MisterClient(wGI, role);
+        mC = new MisterClient();
         return "logged in";
     }
 }
