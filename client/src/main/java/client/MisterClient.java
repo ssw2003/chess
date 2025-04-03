@@ -1,5 +1,10 @@
 package client;
 
+import chess.ChessMove;
+import com.google.gson.Gson;
+import websocket.commands.MakeMoveCommand;
+import websocket.commands.UserGameCommand;
+
 import javax.websocket.ContainerProvider;
 import javax.websocket.MessageHandler;
 import javax.websocket.Session;
@@ -26,9 +31,16 @@ public class MisterClient {
     private void doThing(String s) {
     }
 
-    public void sendNotification(String p) {
+    public void sendNotification(UserGameCommand.CommandType p, String aT, int mv, ChessMove cmv) {
         try {
-            ss.getBasicRemote().sendText(p);
+            Gson gson = new Gson();
+            String s = gson.toJson(new UserGameCommand(p, aT, mv));
+            if (p == UserGameCommand.CommandType.MAKE_MOVE) {
+                MakeMoveCommand fmc = new MakeMoveCommand(p, aT, mv);
+                fmc.setMove(cmv.clone());
+                s = gson.toJson(fmc);
+            }
+            ss.getBasicRemote().sendText(s);
         } catch (IOException e) {}
     }
     public void stopIt() {

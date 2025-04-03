@@ -4,6 +4,7 @@ import chess.ChessGame;
 import chess.ChessPosition;
 import chess.InvalidMoveException;
 import model.GameData;
+import websocket.commands.UserGameCommand;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -22,7 +23,7 @@ public class Client {
         bDC = new BoardDrawingClass();
         wGI = 0;
         role = BoardDrawingClass.Role.WHITE;
-        mC = new MisterClient();
+        mC = null;
         runLoop();
         return desiredPort;
     }
@@ -110,11 +111,9 @@ public class Client {
             wGI = joined;
             mC = new MisterClient();
             if (!sF.joinGame(authToken, joined, gameNameCreate)) {
-                System.out.println("Taken");
                 wGI = 0;
                 role = BoardDrawingClass.Role.WHITE;
                 mC = new MisterClient();
-                return "logged in";
             }
             return "";
         }
@@ -310,9 +309,10 @@ public class Client {
     }
 
     private String evaluateGame(String theirInput) {
+        mC.sendNotification(new UserGameCommand(UserGameCommand.CommandType.CONNECT, authToken, wGI));
         wGI = 0;
         role = BoardDrawingClass.Role.WHITE;
-        mC = new MisterClient();
+        mC = null;
         return "logged in";
     }
 }
