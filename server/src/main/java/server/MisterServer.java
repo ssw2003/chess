@@ -36,9 +36,19 @@ public class MisterServer {
         }
     }
     private int gameNum(Session sess) {
-        int i = 0;
+        for (SessionAuthToken sat: ss) {
+            if (sat.session() == sess) {
+                return sat.gameNumber();
+            }
+        }
+        return 0;
     }
     private String authData(Session sess) {
-        String i = null;
+        for (SessionAuthToken sat: ss) {
+            if (sat.session() == sess) {
+                return sat.authToken();
+            }
+        }
+        return null;
     }
 }

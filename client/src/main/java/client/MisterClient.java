@@ -58,8 +58,8 @@ public class MisterClient {
         if (serverMessageType == ServerMessage.ServerMessageType.ERROR) {
             System.out.println("Bad command");
         }
-        else if (serverMessageType == ServerMessage.ServerMessageType.LOAD_GAME) {
-            //
+        else {
+            System.out.println(mssg);
         }
         if (c) {
             try {
@@ -67,6 +67,7 @@ public class MisterClient {
             } catch (Exception e) {}
         }
     }
+
 
 
 
