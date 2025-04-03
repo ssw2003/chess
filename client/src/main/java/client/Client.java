@@ -309,7 +309,7 @@ public class Client {
     }
 
     private String evaluateGame(String theirInput) {
-        mC.sendNotification(new UserGameCommand(UserGameCommand.CommandType.CONNECT, authToken, wGI));
+        mC.sendNotification(UserGameCommand.CommandType.CONNECT, authToken, wGI, null);
         wGI = 0;
         role = BoardDrawingClass.Role.WHITE;
         mC = null;
