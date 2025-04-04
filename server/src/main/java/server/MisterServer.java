@@ -11,6 +11,7 @@ import websocket.messages.ErrorMessage;
 import websocket.messages.ServerMessage;
 
 import javax.websocket.Session;
+import java.io.IOException;
 import java.util.Collection;
 @WebSocket
 public class MisterServer {
@@ -33,7 +34,9 @@ public class MisterServer {
             ErrorMessage em = new ErrorMessage(ServerMessage.ServerMessageType.ERROR);
             em.setError("Error");
             sess.getBasicRemote().sendText(new Gson().toJson(em));
+            return;
         }
+        if ()
     }
     private int gameNum(Session sess) {
         for (SessionAuthToken sat: ss) {
@@ -50,5 +53,22 @@ public class MisterServer {
             }
         }
         return null;
+    }
+    private void sendIt(Session sat, boolean towardsMe, String g) {
+        if (towardsMe) {
+            try {
+                sat.getBasicRemote().sendText(g);
+            } catch (IOException e) {}
+            return;
+        }
+        int gd = gameNum(sat);
+        String at = authData(sat);
+        for (SessionAuthToken st: ss) {
+            if (st.gameNumber() == gd && !st.authToken().equals(at)) {
+                try {
+                    st.session().getBasicRemote().sendText(g);
+                } catch (Exception e) {}
+            }
+        }
     }
 }
