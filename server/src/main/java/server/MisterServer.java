@@ -46,13 +46,22 @@ public class MisterServer {
         if (ct == UserGameCommand.CommandType.CONNECT) {
             ss.add(new SessionAuthToken(sess, auth, gameID));
             Collection<GameData> gd = sve.getGames(auth);
-            ChessGame cgcg = null;
+            GameData cgcg = null;
             for (GameData gdgd: gd) {
                 if (gdgd.gameID() == gameID) {
-                    cgcg = gdgd.game().clone();
+                    cgcg = gdgd;
                 }
             }
-            sendIt(sess, true, ServerMessage.ServerMessageType.LOAD_GAME, null, cgcg);
+            sendIt(sess, true, ServerMessage.ServerMessageType.LOAD_GAME, null, cgcg.game());
+            String str = sve.getPsw(auth, false) + " joins as ";
+            if (cgcg.whiteUsername().equals(auth)) {
+                str = str + "white.";
+            } else if (cgcg.blackUsername().equals(auth)) {
+                str = str + "black.";
+            } else {
+                str = str + "observer.";
+            }
+            sendIt(sess, false, ServerMessage.ServerMessageType.NOTIFICATION, str, null);
         }
     }
     private int gameNum(Session sess) {
