@@ -22,10 +22,12 @@ public class MisterClient {
     private Session ss;
     private boolean b;
     private boolean c;
-    public MisterClient() {
+    private BoardDrawingClass.Role rl;
+    public MisterClient(BoardDrawingClass.Role rol) {
         WebSocketContainer wsc = ContainerProvider.getWebSocketContainer();
         b = false;
         c = false;
+        rl = rol;
         try {
             ss = wsc.connectToServer(this, new URI("ws://localhost:8080/ws"));
         } catch (Exception e) {}
@@ -58,8 +60,12 @@ public class MisterClient {
         if (serverMessageType == ServerMessage.ServerMessageType.ERROR) {
             System.out.println("Bad command");
         }
-        else {
+        else if (serverMessageType == ServerMessage.ServerMessageType.NOTIFICATION) {
             System.out.println(mssg);
+        }
+        else {
+            BoardDrawingClass bdc = new BoardDrawingClass();
+            bdc.dB(cssg, null, rl);
         }
         if (c) {
             try {

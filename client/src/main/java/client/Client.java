@@ -109,12 +109,12 @@ public class Client {
                 role = BoardDrawingClass.Role.WHITE;
             }
             wGI = joined;
-            mC = new MisterClient();
             if (!sF.joinGame(authToken, joined, gameNameCreate)) {
                 wGI = 0;
                 role = BoardDrawingClass.Role.WHITE;
-                mC = new MisterClient();
             }
+            mC = new MisterClient(role);
+            mC.sendNotification(UserGameCommand.CommandType.CONNECT, authToken, wGI, null);
             return "";
         }
         if (iC.equals("CREATE GAME")) {
@@ -138,11 +138,11 @@ public class Client {
         role = BoardDrawingClass.Role.OBSERVER;
         wGI = joined;
         if (joined == 0) {
-            System.out.println("Bad Game Number");
             role = BoardDrawingClass.Role.WHITE;
             wGI = 0;
         }
-        mC = new MisterClient();
+        mC = new MisterClient(role);
+        mC.sendNotification(UserGameCommand.CommandType.CONNECT, authToken, wGI, null);
         return "";
     }
     private String evaluateOut(String iC) {
