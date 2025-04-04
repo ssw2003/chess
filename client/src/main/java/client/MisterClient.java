@@ -23,11 +23,13 @@ public class MisterClient {
     private boolean b;
     private boolean c;
     private BoardDrawingClass.Role rl;
-    public MisterClient(BoardDrawingClass.Role rol) {
+    private ChessGame lg;
+    public MisterClient(BoardDrawingClass.Role rle) {
         WebSocketContainer wsc = ContainerProvider.getWebSocketContainer();
         b = false;
         c = false;
-        rl = rol;
+        rl = rle;
+        lg = null;
         try {
             ss = wsc.connectToServer(this, new URI("ws://localhost:8080/ws"));
         } catch (Exception e) {}
@@ -65,7 +67,8 @@ public class MisterClient {
         }
         else {
             BoardDrawingClass bdc = new BoardDrawingClass();
-            bdc.dB(cssg, null, rl);
+            lg = cssg.clone();
+            bdc.dB(lg, null, rl);
         }
         if (c) {
             try {
@@ -97,5 +100,8 @@ public class MisterClient {
             }
             ss.close();
         } catch (Exception e) {}
+    }
+    public ChessGame getGame() {
+        return lg.clone();
     }
 }

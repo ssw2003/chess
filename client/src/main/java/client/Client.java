@@ -114,7 +114,6 @@ public class Client {
                 role = BoardDrawingClass.Role.WHITE;
             }
             mC = new MisterClient(role);
-            mC.sendNotification(UserGameCommand.CommandType.CONNECT, authToken, wGI, null);
             return "";
         }
         if (iC.equals("CREATE GAME")) {
@@ -142,7 +141,6 @@ public class Client {
             wGI = 0;
         }
         mC = new MisterClient(role);
-        mC.sendNotification(UserGameCommand.CommandType.CONNECT, authToken, wGI, null);
         return "";
     }
     private String evaluateOut(String iC) {
