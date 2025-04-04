@@ -15,10 +15,12 @@ import java.util.Map;
 
 public class Server {
     private dataaccess.Service svc;
+    private MisterServer ms;
 
     public int run(int desiredPort) {
         svc = new dataaccess.Service();
         Spark.port(desiredPort);
+        ms = new MisterServer(svc);
 
         Spark.staticFiles.location("web");
 

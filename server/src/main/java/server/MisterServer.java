@@ -1,13 +1,18 @@
 package server;
 
+import chess.ChessGame;
 import chess.ChessMove;
 import com.google.gson.Gson;
+import dataaccess.Service;
+import model.GameData;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import org.eclipse.jetty.websocket.api.annotations.WebSocket;
 import spark.Spark;
 import websocket.commands.MakeMoveCommand;
 import websocket.commands.UserGameCommand;
 import websocket.messages.ErrorMessage;
+import websocket.messages.LoadGameMessage;
+import websocket.messages.NotificationMessage;
 import websocket.messages.ServerMessage;
 
 import javax.websocket.Session;
@@ -16,9 +21,11 @@ import java.util.Collection;
 @WebSocket
 public class MisterServer {
     private Collection<SessionAuthToken> ss;
-    public MisterServer() {
+    private Service sve;
+    public MisterServer(Service sv) {
         Spark.port(8080);
         Spark.webSocket("/ws", MisterServer.class);
+        sve = sv;
     }
     @OnWebSocketMessage
     public void onMessage(Session sess, String s) throws Exception {
@@ -36,7 +43,17 @@ public class MisterServer {
             sess.getBasicRemote().sendText(new Gson().toJson(em));
             return;
         }
-        if ()
+        if (ct == UserGameCommand.CommandType.CONNECT) {
+            ss.add(new SessionAuthToken(sess, auth, gameID));
+            Collection<GameData> gd = sve.getGames(auth);
+            ChessGame cgcg = null;
+            for (GameData gdgd: gd) {
+                if (gdgd.gameID() == gameID) {
+                    cgcg = gdgd.game().clone();
+                }
+            }
+            sendIt(sess, true, ServerMessage.ServerMessageType.LOAD_GAME, null, cgcg);
+        }
     }
     private int gameNum(Session sess) {
         for (SessionAuthToken sat: ss) {
@@ -54,7 +71,23 @@ public class MisterServer {
         }
         return null;
     }
-    private void sendIt(Session sat, boolean towardsMe, String g) {
+    private void sendIt(Session sat, boolean towardsMe, ServerMessage.ServerMessageType smt, String ga, ChessGame cgm) {
+        String g;
+        Gson gson = new Gson();
+        if (smt == ServerMessage.ServerMessageType.ERROR) {
+            ErrorMessage em = new ErrorMessage(ServerMessage.ServerMessageType.ERROR);
+            em.setError(ga);
+            g = gson.toJson(em);
+        } else if (smt == ServerMessage.ServerMessageType.NOTIFICATION) {
+            NotificationMessage em = new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION);
+            em.setNotification(ga);
+            g = gson.toJson(em);
+        } else {
+            LoadGameMessage em = new LoadGameMessage(smt);
+            em.setGame(cgm);
+            g = gson.toJson(em);
+
+        }
         if (towardsMe) {
             try {
                 sat.getBasicRemote().sendText(g);
