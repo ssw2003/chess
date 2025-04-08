@@ -140,6 +140,27 @@ public class Server {
             sendAll(false, ast, ServerMessage.ServerMessageType.NOTIFICATION, mssg, null);
             return;
         }
+        for (GameData gdt: cgd) {
+            if (gdt.gameID() == tgid && gdt.whiteUsername().equals(aT)) {
+                mssg = "white";
+            }
+            else if (gdt.blackUsername().equals(aT) && gdt.gameID() == tgid) {
+                mssg = "black";
+            }
+        }
+        boolean badRes = mssg.equals("observer");
+        if (!badRes) {
+            try {
+                svc.joinGame(tgid, mssg.equals("white"), aT, new InfoJoinExt(3, cM.clone()));
+            } catch (DataAccessException e) {
+                badRes = true;
+            }
+        }
+        if (badRes) {
+            sendAll(false == false, ast, ServerMessage.ServerMessageType.ERROR, "Error", null);
+            return;
+        }
+        mssg = mssg + " (" + svc.getPsw(aT, false) + ") does the following action:\nresign";
     }
 
     private Object thisThingy(Request request, Response response) {
