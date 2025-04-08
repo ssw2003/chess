@@ -131,6 +131,14 @@ public class Server {
                     badRes = true;
                 }
             }
+            if (badRes) {
+                sendAll(true, ast, ServerMessage.ServerMessageType.ERROR, "Error", null);
+                return;
+            }
+            mssg = mssg + " (" + svc.getPsw(aT, false) + ") does the following action:\nresign";
+            sendAll(true, ast, ServerMessage.ServerMessageType.NOTIFICATION, mssg, null);
+            sendAll(false, ast, ServerMessage.ServerMessageType.NOTIFICATION, mssg, null);
+            return;
         }
     }
 
