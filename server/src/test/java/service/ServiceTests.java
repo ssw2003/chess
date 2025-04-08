@@ -214,7 +214,7 @@ public class ServiceTests {
         }
         int i = svc.addGame("Anand is Champion");
         try {
-            svc.joinGame(i, true, authy);
+            svc.joinGame(i, true, authy, null);
         } catch (DataAccessException e) {
             i = 0;
         }
@@ -434,7 +434,7 @@ public class ServiceTests {
         }
         int i = svc.addGame("Anand Moves the Bishop");
         try {
-            svc.joinGame(i, true, authy);
+            svc.joinGame(i, true, authy, null);
         } catch (DataAccessException e) {
             i = 0;
         }
@@ -445,7 +445,7 @@ public class ServiceTests {
             authy = null;
         }
         try {
-            svc.joinGame(i, false, authy);
+            svc.joinGame(i, false, authy, null);
         } catch (DataAccessException e) {
             i = 0;
         }
@@ -456,7 +456,7 @@ public class ServiceTests {
         }
         int j = 1;
         try {
-            svc.joinGame(1, true, authy);
+            svc.joinGame(1, true, authy, null);
             Assertions.fail();
         } catch (DataAccessException e) {
             j = 1 - i;

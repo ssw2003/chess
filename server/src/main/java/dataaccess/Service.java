@@ -64,9 +64,13 @@ public class Service {
         return dT.getGames();
     }
 
-    public void joinGame(int ident, boolean isWhite, String authrztn) throws DataAccessException {
+    public void joinGame(int ident, boolean isWhite, String authrztn, InfoJoinExt ije) throws DataAccessException {
         ChessMove mh = new ChessMove(new ChessPosition(1, 1), new ChessPosition(1, 1), null);
-        if (!dT.joinGame(ident, isWhite, authrztn, new InfoJoinExt(0, mh))) {
+        InfoJoinExt ijem = new InfoJoinExt(0, mh);
+        if (ije != null) {
+            ijem = ije;
+        }
+        if (!dT.joinGame(ident, isWhite, authrztn, ijem)) {
             throw new DataAccessException("");
         }
     }

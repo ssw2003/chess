@@ -70,6 +70,12 @@ public class Server {
             ast.getRemote().sendString(new Gson().toJson(em, ErrorMessage.class));
             return;
         }
+        if (tgid == 0) {
+            ErrorMessage em = new ErrorMessage(ServerMessage.ServerMessageType.ERROR);
+            em.setError("Error");
+            ast.getRemote().sendString(new Gson().toJson(em, ErrorMessage.class));
+            return;
+        }
         Collection<GameData> cgd = svc.getGames(aT);
         String mssg = "observer";
         if (uct == UserGameCommand.CommandType.LEAVE) {
@@ -81,9 +87,14 @@ public class Server {
                     mssg = "black";
                 }
             }
+            String mssge = mssg;
             mssg = svc.getPsw(aT, false) + " leaves from " + mssg;
             sendAll(false, ast, ServerMessage.ServerMessageType.NOTIFICATION, mssg, null);
             sat.remove(new SessionAuthToken(ast, aT, tgid));
+            if (!mssge.equals("observer")) {
+                svc.joinGame(tgid, mssge.equals("white"), aT, new InfoJoinExt(1, null));
+            }
+            return;
         }
         else if (uct == UserGameCommand.CommandType.CONNECT) {
             sat.add(new SessionAuthToken(ast, aT, tgid));
@@ -101,6 +112,25 @@ public class Server {
             }
             sendAll(false, ast, ServerMessage.ServerMessageType.NOTIFICATION, svc.getPsw(aT, false) + " joins as " + mssg, null);
             sendAll(true, ast, ServerMessage.ServerMessageType.LOAD_GAME, null, chg);
+            return;
+        }
+        else if (uct == UserGameCommand.CommandType.RESIGN) {
+            for (GameData gdt: cgd) {
+                if (gdt.whiteUsername().equals(aT) && gdt.gameID() == tgid) {
+                    mssg = "white";
+                }
+                else if (gdt.blackUsername().equals(aT) && gdt.gameID() == tgid) {
+                    mssg = "black";
+                }
+            }
+            boolean badRes = mssg.equals("observer");
+            if (!badRes) {
+                try {
+                    svc.joinGame(tgid, mssg.equals("white"), aT, new InfoJoinExt(2, null));
+                } catch (DataAccessException e) {
+                    badRes = true;
+                }
+            }
         }
     }
 
@@ -176,7 +206,7 @@ public class Server {
         var ce = Map.of();
         try {
             if (!pC.equals("OBSERVER")) {
-                svc.joinGame(ident, pC.equals("WHITE"), authrztn);
+                svc.joinGame(ident, pC.equals("WHITE"), authrztn, null);
             }
         } catch (DataAccessException e) {
             ce = Map.of("message", "Error: already taken");
