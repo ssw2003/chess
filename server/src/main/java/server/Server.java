@@ -160,7 +160,35 @@ public class Server {
             sendAll(false == false, ast, ServerMessage.ServerMessageType.ERROR, "Error", null);
             return;
         }
-        mssg = mssg + " (" + svc.getPsw(aT, false) + ") does the following action:\nresign";
+        mssg = mssg + " (" + svc.getPsw(aT, false) + ") does the following action:\nmove ";
+        mssg = mssg + "abcdefgh".charAt(cM.getStartPosition().getColumn() - 1);
+        mssg = mssg + cM.getStartPosition().getRow() + " -> ";
+        mssg = mssg + "abcdefgh".charAt(cM.getEndPosition().getColumn() - 1);
+        mssg = mssg + cM.getEndPosition().getRow();
+        if (cM.getPromotionPiece() != null) {
+            mssg = mssg + " promoting to " + cM.getPromotionPiece();
+        }
+        ChessGame cgdg = new ChessGame();
+        cgd = svc.getGames(aT);
+        for (GameData gdt: cgd) {
+            if (gdt.gameID() == tgid) {
+                cgdg = gdt.game().clone();
+            }
+        }
+        sendAll(true, ast, ServerMessage.ServerMessageType.LOAD_GAME, null, cgdg);
+        sendAll(false, ast, ServerMessage.ServerMessageType.LOAD_GAME, null, cgdg);
+        sendAll(false, ast, ServerMessage.ServerMessageType.NOTIFICATION, mssg, null);
+        boolean sendCheck = false;
+        if (cgdg.isInCheck(ChessGame.TeamColor.WHITE) || cgdg.isInCheck(ChessGame.TeamColor.BLACK)) {
+            sendCheck = true;
+        }
+        else if (cgdg.isInStalemate(ChessGame.TeamColor.WHITE) || cgdg.isInStalemate(ChessGame.TeamColor.BLACK)) {
+            sendCheck = true;
+        }
+        if (sendCheck) {
+            sendAll(true, ast, ServerMessage.ServerMessageType.NOTIFICATION, "Ch", null);
+            sendAll(false, ast, ServerMessage.ServerMessageType.NOTIFICATION, "Ch", null);
+        }
     }
 
     private Object thisThingy(Request request, Response response) {
