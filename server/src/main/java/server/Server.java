@@ -1,33 +1,50 @@
 package server;
 
+import chess.ChessGame;
+import chess.ChessMove;
 import com.google.gson.Gson;
 import com.google.gson.JsonNull;
 import com.google.gson.JsonSyntaxException;
 import com.sun.tools.javac.Main;
 import dataaccess.DataAccessException;
 import model.*;
+import org.eclipse.jetty.websocket.api.annotations.OnWebSocketConnect;
+import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
+import org.eclipse.jetty.websocket.api.annotations.WebSocket;
 import org.mindrot.jbcrypt.BCrypt;
 import spark.*;
+import websocket.commands.MakeMoveCommand;
+import websocket.commands.UserGameCommand;
+import websocket.messages.ErrorMessage;
+import websocket.messages.LoadGameMessage;
+import websocket.messages.NotificationMessage;
+import websocket.messages.ServerMessage;
 
+import javax.management.relation.Role;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
 
+@WebSocket
 public class Server {
     private dataaccess.Service svc;
-    private MisterServer ms;
+    private Collection<SessionAuthToken> sat;
+    //private MisterServer ms;
 
     public int run(int desiredPort) {
+        sat = new ArrayList<>();
         svc = new dataaccess.Service();
         Spark.port(desiredPort);
-        ms = new MisterServer(svc);
+        //ms = new MisterServer(svc);
 
         Spark.staticFiles.location("web");
 
         // Register your endpoints and handle exceptions here.
 
-        //This line initializes the server and can be removed once you have a functioning endpoint 
-        Spark.init();
+        //This line initializes the server and can be removed once you have a functioning endpoint
+        //Spark.init();
+        //Spark.webSocket("/ws", MisterServer.class);
+        Spark.webSocket("/ws", Server.class);
         Spark.post("/user", this::goThingy);
         Spark.delete("/db", this::goThatThingy);
         Spark.get("/game", this::goThisThingy);
@@ -37,6 +54,54 @@ public class Server {
         Spark.post("/game", this::thisThingy);
         Spark.awaitInitialization();
         return Spark.port();
+    }
+    @OnWebSocketMessage
+    public void onMessage(org.eclipse.jetty.websocket.api.Session ast, String s) throws Exception {
+        UserGameCommand.CommandType uct = new Gson().fromJson(s, UserGameCommand.class).getCommandType();
+        int tgid = new Gson().fromJson(s, UserGameCommand.class).getGameID();
+        String aT = new Gson().fromJson(s, UserGameCommand.class).getAuthToken();
+        ChessMove cM = null;
+        if (uct == UserGameCommand.CommandType.MAKE_MOVE) {
+            cM = new Gson().fromJson(s, MakeMoveCommand.class).getMove().clone();
+        }
+        if (uct == UserGameCommand.CommandType.CONNECT && tgid == 0) {
+            ErrorMessage em = new ErrorMessage(ServerMessage.ServerMessageType.ERROR);
+            em.setError("Error Bad Join");
+            ast.getRemote().sendString(new Gson().toJson(em, ErrorMessage.class));
+            return;
+        }
+        Collection<GameData> cgd = svc.getGames(aT);
+        String mssg = "observer";
+        if (uct == UserGameCommand.CommandType.LEAVE) {
+            for (GameData gdt: cgd) {
+                if (gdt.gameID() == tgid && gdt.whiteUsername().equals(aT)) {
+                    mssg = "white";
+                }
+                else if (gdt.gameID() == tgid && gdt.blackUsername().equals(aT)) {
+                    mssg = "black";
+                }
+            }
+            mssg = svc.getPsw(aT, false) + " leaves from " + mssg;
+            sendAll(false, ast, ServerMessage.ServerMessageType.NOTIFICATION, mssg, null);
+            sat.remove(new SessionAuthToken(ast, aT, tgid));
+        }
+        else if (uct == UserGameCommand.CommandType.CONNECT) {
+            sat.add(new SessionAuthToken(ast, aT, tgid));
+            ChessGame chg = null;
+            for (GameData gdt: cgd) {
+                if (gdt.gameID() == tgid && gdt.blackUsername().equals(aT)) {
+                    mssg = "black";
+                }
+                else if (gdt.gameID() == tgid && gdt.whiteUsername().equals(aT)) {
+                    mssg = "white";
+                }
+                if (gdt.gameID() == tgid) {
+                    chg = gdt.game().clone();
+                }
+            }
+            sendAll(false, ast, ServerMessage.ServerMessageType.NOTIFICATION, svc.getPsw(aT, false) + " joins as " + mssg, null);
+            sendAll(true, ast, ServerMessage.ServerMessageType.LOAD_GAME, null, chg);
+        }
     }
 
     private Object thisThingy(Request request, Response response) {
@@ -323,6 +388,46 @@ public class Server {
         }
         return null;
     }
+    private void sendAll(boolean b, org.eclipse.jetty.websocket.api.Session a, ServerMessage.ServerMessageType smt, String mss, ChessGame cg) {
+        String s;
+        if (smt == ServerMessage.ServerMessageType.ERROR) {
+            ErrorMessage em = new ErrorMessage(smt);
+            em.setError(mss);
+            s = new Gson().toJson(em, ErrorMessage.class);
+        }
+        else if (smt == ServerMessage.ServerMessageType.NOTIFICATION) {
+            NotificationMessage nm = new NotificationMessage(smt);
+            nm.setNotification(mss);
+            s = new Gson().toJson(nm, NotificationMessage.class);
+        }
+        else {
+            LoadGameMessage lgm = new LoadGameMessage(smt);
+            lgm.setGame(cg.clone());
+            s = new Gson().toJson(lgm, LoadGameMessage.class);
+        }
+        if (b) {
+            try {
+                a.getRemote().sendString(s);
+            } catch (Exception e) {}
+            return;
+        }
+        int gid = 0;
+        for (SessionAuthToken pt: sat) {
+            if (pt.session() == a) {
+                gid = pt.gameNumber();
+                break;
+            }
+        }
+        for (SessionAuthToken pt: sat) {
+            if (pt.gameNumber() == gid && gid != 0 && pt.session() != a) {
+                try {
+                    pt.session().getRemote().sendString(s);
+                } catch (Exception e) {}
+            }
+        }
+    }
+
+
 
     public void stop() {
         Spark.stop();

@@ -2,5 +2,5 @@ package server;
 
 import javax.websocket.Session;
 
-public record SessionAuthToken(Session session, String authToken, int gameNumber) {
+public record SessionAuthToken(org.eclipse.jetty.websocket.api.Session session, String authToken, int gameNumber) {
 }

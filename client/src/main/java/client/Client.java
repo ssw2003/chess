@@ -1,32 +1,99 @@
 package client;
 
 import chess.ChessGame;
+import chess.ChessMove;
 import chess.ChessPosition;
 import chess.InvalidMoveException;
+import com.google.gson.Gson;
 import model.GameData;
+import org.eclipse.jetty.websocket.api.*;
+import org.eclipse.jetty.websocket.common.WebSocketSession;
+import websocket.commands.MakeMoveCommand;
 import websocket.commands.UserGameCommand;
+import websocket.messages.ErrorMessage;
+import websocket.messages.LoadGameMessage;
+import websocket.messages.NotificationMessage;
+import websocket.messages.ServerMessage;
 
+import javax.websocket.*;
+import javax.websocket.Session;
+import java.io.IOException;
+import java.net.InetSocketAddress;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Scanner;
 
-public class Client {
+public class Client extends Endpoint {
     private ServerFacade sF;
     private Scanner getThing;
     private String authToken;
     private BoardDrawingClass bDC;
     private int wGI;
     private BoardDrawingClass.Role role;
-    private MisterClient mC;
+    //private MisterClient mC;
+    public Session ss;
+    //private MisterClient mC;
+    private int fs;
+    ChessGame cg;
     public int run(int desiredPort) {
         sF = new ServerFacade("http://localhost:" + desiredPort);
         bDC = new BoardDrawingClass();
         wGI = 0;
+        cg = null;
         role = BoardDrawingClass.Role.WHITE;
-        mC = null;
+        //mC = null;
         runLoop();
         return desiredPort;
     }
+
+    public Client() throws Exception {
+        ss = ContainerProvider.getWebSocketContainer().connectToServer(this, new URI("ws://localhost:8080/ws"));
+        ss.addMessageHandler(new MessageHandler.Whole<String>() {
+            @Override
+            public void onMessage(String e) {
+                ServerMessage.ServerMessageType sMT = new Gson().fromJson(e, ServerMessage.class).getServerMessageType();
+                if (sMT == ServerMessage.ServerMessageType.NOTIFICATION) {
+                    dealWithIt(new Gson().fromJson(e, NotificationMessage.class));
+                }
+                else if (sMT == ServerMessage.ServerMessageType.ERROR) {
+                    dealWithError(new Gson().fromJson(e, ErrorMessage.class));
+                }
+                else {
+                    dealWithGame(new Gson().fromJson(e, LoadGameMessage.class));
+                }
+            }
+        });
+//        ss = ContainerProvider.getWebSocketContainer().connectToServer(this, new URI("ws://localhost:8080/ws"));
+//        ss.addMessageHandler(new MessageHandler() {
+//            public void onMessage(String e) {
+//                System.out.println(e);
+//            }
+//        });
+    }
+
+    private void dealWithGame(LoadGameMessage s) {
+        cg = s.getGame().clone();
+        bDC.dB(cg, null, role);
+    }
+
+    private void dealWithError(ErrorMessage s) {
+        System.out.println("Error");
+        if (s.getError().equals("Error")) {
+            fs = 1;
+        }
+        else {
+            fs = 0;
+        }
+    }
+
+    private void dealWithIt(NotificationMessage s) {
+        System.out.println(s.getNotification());
+    }
+
+    @Override
+    public void onOpen(Session session, EndpointConfig endpointConfig) {}
 
     private void runLoop() {
         getThing = new Scanner(System.in);
@@ -113,7 +180,8 @@ public class Client {
                 wGI = 0;
                 role = BoardDrawingClass.Role.WHITE;
             }
-            mC = new MisterClient(role);
+            //mC = new MisterClient(role);
+            //mC = new MisterClient(role);
             return "";
         }
         if (iC.equals("CREATE GAME")) {
@@ -140,7 +208,8 @@ public class Client {
             role = BoardDrawingClass.Role.WHITE;
             wGI = 0;
         }
-        mC = new MisterClient(role);
+        //mC = new MisterClient(role);
+        //mC = new MisterClient(role);
         return "";
     }
     private String evaluateOut(String iC) {
@@ -305,12 +374,37 @@ public class Client {
         }
         bDC.dB(cg, ch, rl);
     }
+    private void sendCommand(UserGameCommand.CommandType uct, String auth, int gameID, ChessMove cm) {
+        if (uct == UserGameCommand.CommandType.MAKE_MOVE) {
+            try {
+                MakeMoveCommand mmc = new MakeMoveCommand(uct, auth, gameID);
+                mmc.setMove(cm.clone());
+                ss.getBasicRemote().sendText(new Gson().toJson(mmc, MakeMoveCommand.class));
+            } catch (Exception e) {}
+        }
+        else {
+            try {
+                ss.getBasicRemote().sendText(new Gson().toJson(new UserGameCommand(uct, auth, gameID), UserGameCommand.class));
+            } catch (Exception e) {}
+        }
+    }
 
     private String evaluateGame(String theirInput) {
-        mC.sendNotification(UserGameCommand.CommandType.CONNECT, authToken, wGI, null);
-        wGI = 0;
+        fs = 2;
+        sendCommand(UserGameCommand.CommandType.CONNECT, authToken, wGI, null);
+        while (fs == 2) {}
+        if (fs == 0) {
+            wGI = 0;
+            role = BoardDrawingClass.Role.WHITE;
+            return "logged in";
+        }
+        //mC.sendNotification(UserGameCommand.CommandType.CONNECT, authToken, wGI, null);
         role = BoardDrawingClass.Role.WHITE;
-        mC = null;
+        wGI = 0;
+        //mC = null;
         return "logged in";
     }
+
+//    @Override
+//    public void onOpen(Session session, EndpointConfig endpointConfig) {}
 }
