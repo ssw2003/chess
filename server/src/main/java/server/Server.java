@@ -7,6 +7,7 @@ import com.google.gson.JsonNull;
 import com.google.gson.JsonSyntaxException;
 import com.sun.tools.javac.Main;
 import dataaccess.DataAccessException;
+import dataaccess.Service;
 import model.*;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketConnect;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
@@ -30,10 +31,13 @@ public class Server {
     private dataaccess.Service svc;
     private Collection<SessionAuthToken> sat;
     //private MisterServer ms;
+    public Server() {
+        svc = new Service();
+        sat = new ArrayList<>();
+    }
 
     public int run(int desiredPort) {
-        sat = new ArrayList<>();
-        svc = new dataaccess.Service();
+        //svc = new dataaccess.Service();
         Spark.port(desiredPort);
         //ms = new MisterServer(svc);
 
@@ -76,7 +80,10 @@ public class Server {
             ast.getRemote().sendString(new Gson().toJson(em, ErrorMessage.class));
             return;
         }
-        Collection<GameData> cgd = svc.getGames(aT);
+        Collection<GameData> cgd = new ArrayList<>();
+        try {
+            cgd = svc.getGames(aT);
+        } catch (DataAccessException e) {}
         String mssg = "observer";
         if (uct == UserGameCommand.CommandType.LEAVE) {
             for (GameData gdt: cgd) {

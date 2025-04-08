@@ -398,11 +398,25 @@ public class Client extends Endpoint {
             role = BoardDrawingClass.Role.WHITE;
             return "logged in";
         }
+        String commands = "HELP";
+        System.out.println("Help\nDraw Board\nLeave\nMake Non-Promoting Move\nMake Promoting Move\nResign\nHighlight Legal Moves");
+        while (true) {
+            commands = getThing.nextLine();
+            if (commands.equals("LEAVE")) {
+                sendCommand(UserGameCommand.CommandType.LEAVE, authToken, wGI, null);
+                role = BoardDrawingClass.Role.WHITE;
+                wGI = 0;
+                return "logged in";
+            }
+            if (commands.equals("HELP")) {
+                System.out.println("Help\nDraw Board\nLeave\nMake Non-Promoting Move\nMake Promoting Move\nResign\nHighlight Legal Moves");
+            }
+        }
         //mC.sendNotification(UserGameCommand.CommandType.CONNECT, authToken, wGI, null);
-        role = BoardDrawingClass.Role.WHITE;
-        wGI = 0;
+        //role = BoardDrawingClass.Role.WHITE;
+        //wGI = 0;
         //mC = null;
-        return "logged in";
+        //return "logged in";
     }
 
 //    @Override
