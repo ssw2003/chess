@@ -65,25 +65,26 @@ public class Server {
         int tgid = new Gson().fromJson(s, UserGameCommand.class).getGameID();
         String aT = new Gson().fromJson(s, UserGameCommand.class).getAuthToken();
         ChessMove cM = null;
+        Collection<GameData> cgd = new ArrayList<>();
+        try {
+            cgd = svc.getGames(aT);
+        } catch (DataAccessException e) {}
         if (uct == UserGameCommand.CommandType.MAKE_MOVE) {
             cM = new Gson().fromJson(s, MakeMoveCommand.class).getMove().clone();
         }
-        if (uct == UserGameCommand.CommandType.CONNECT && tgid == 0) {
+        boolean mmm = false;
+        for (GameData ggdd: cgd) {
+            if (ggdd.gameID() == tgid) {
+                mmm = true;
+            }
+        }
+        String usn = svc.getPsw(aT, false);
+        if (!mmm || usn == null) {
             ErrorMessage em = new ErrorMessage(ServerMessage.ServerMessageType.ERROR);
             em.setError("Error Bad Join");
             ast.getRemote().sendString(new Gson().toJson(em, ErrorMessage.class));
             return;
         }
-        if (tgid == 0) {
-            ErrorMessage em = new ErrorMessage(ServerMessage.ServerMessageType.ERROR);
-            em.setError("Error");
-            ast.getRemote().sendString(new Gson().toJson(em, ErrorMessage.class));
-            return;
-        }
-        Collection<GameData> cgd = new ArrayList<>();
-        try {
-            cgd = svc.getGames(aT);
-        } catch (DataAccessException e) {}
         String mssg = "observer";
         if (uct == UserGameCommand.CommandType.LEAVE) {
             for (GameData gdt: cgd) {

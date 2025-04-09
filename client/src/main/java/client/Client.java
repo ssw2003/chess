@@ -1,9 +1,6 @@
 package client;
 
-import chess.ChessGame;
-import chess.ChessMove;
-import chess.ChessPosition;
-import chess.InvalidMoveException;
+import chess.*;
 import com.google.gson.Gson;
 import model.GameData;
 import org.eclipse.jetty.websocket.api.*;
@@ -419,10 +416,39 @@ public class Client extends Endpoint {
                 bDC.dB(cg, null, role);
             }
             else if (commands.equals("MAKE NON-PROMOTING MOVE")) {
-                //
+                System.out.println("Starting position?");
+                ChessPosition st = getPs(getThing.nextLine());
+                if (st == null) {
+                    System.out.println("Square does not exist\n");
+                    continue;
+                }
+                System.out.println("Moving to?");
+                ChessPosition ce = getPs(getThing.nextLine());
+                if (ce == null) {
+                    System.out.println("Square does not exist\n");
+                    continue;
+                }
+                sendCommand(UserGameCommand.CommandType.MAKE_MOVE, authToken, wGI, new ChessMove(st, ce, null));
             }
             else if (commands.equals("MAKE PROMOTING MOVE")) {
-                //
+                System.out.println("Starting position?");
+                ChessPosition ce = getPs(getThing.nextLine());
+                if (ce == null) {
+                    System.out.println("Square does not exist\n");
+                    continue;
+                }
+                System.out.println("Moving to?");
+                ChessPosition st = getPs(getThing.nextLine());
+                if (st == null) {
+                    System.out.println("Square does not exist\n");
+                    continue;
+                }
+                System.out.println("Promotion?");
+                ChessPiece.PieceType pp = getPp(capitalizeLetters(getThing.nextLine()));
+                if (pp == null) {
+                    continue;
+                }
+                sendCommand(UserGameCommand.CommandType.MAKE_MOVE, authToken, wGI, new ChessMove(ce, st, pp));
             }
             else if (commands.equals("RESIGN")) {
                 System.out.println("Confirm?");
@@ -433,18 +459,13 @@ public class Client extends Endpoint {
             }
             else if (commands.equals("HIGHLIGHT LEGAL MOVES")) {
                 System.out.println("Square");
-                String sq = getThing.nextLine();
-                sq = capitalizeLetters(sq);
-                if (sq.length() != 2) {
-                    System.out.println("Bad command\n");
-                }
-                else if (sq.charAt(0) < 'A' || sq.charAt(0) > 'H' || sq.charAt(1) < '1' || sq.charAt(1) > '8') {
-                    System.out.println("Bad command\n");
+                ChessPosition sq = getPs(getThing.nextLine());
+                if (sq == null) {
+                    System.out.println("Square does not exist\n");
                 }
                 else {
-                    bDC.dB(cg, new ChessPosition((sq.charAt(0) - 'E') + 5, (sq.charAt(1) - '3') + 3), role);
+                    bDC.dB(cg, sq, role);
                 }
-                bDC.dB(cg, null, role);
             }
             else {
                 System.out.println("Bad command\n");
@@ -455,6 +476,29 @@ public class Client extends Endpoint {
         //wGI = 0;
         //mC = null;
         //return "logged in";
+    }
+
+    private ChessPiece.PieceType getPp(String s) {
+        return switch (s) {
+            case "KING" -> ChessPiece.PieceType.KING;
+            case "QUEEN" -> ChessPiece.PieceType.QUEEN;
+            case "PAWN" -> ChessPiece.PieceType.PAWN;
+            case "BISHOP" -> ChessPiece.PieceType.BISHOP;
+            case "KNIGHT" -> ChessPiece.PieceType.KNIGHT;
+            case "ROOK" -> ChessPiece.PieceType.ROOK;
+            default -> null;
+        };
+    }
+
+    private ChessPosition getPs(String h) {
+        if (h.length() != 2) {
+            return null;
+        }
+        String i = capitalizeLetters(h);
+        if (i.charAt(0) < 'A' || i.charAt(0) > 'H' || i.charAt(1) < '1' || i.charAt(1) > '8') {
+            return null;
+        }
+        return new ChessPosition((i.charAt(1) - '3') + 3, (i.charAt(0) - 'E') + 5);
     }
 
 //    @Override
