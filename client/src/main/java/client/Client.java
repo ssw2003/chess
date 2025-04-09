@@ -87,7 +87,21 @@ public class Client extends Endpoint {
     }
 
     private void dealWithIt(NotificationMessage s) {
-        System.out.println(s.getNotification());
+        String t = s.getNotification();
+        if (!t.equals("Ch")) {
+            System.out.println(s.getNotification());
+        }
+        if ((!t.startsWith(">>")) && t.endsWith(".")) {
+            if (t.startsWith("black")) {
+                try {
+                    cg.attemptResign(ChessGame.TeamColor.BLACK);
+                } catch (InvalidMoveException e) {}
+            }
+            try {
+                cg.attemptResign(ChessGame.TeamColor.WHITE);
+            } catch (InvalidMoveException e) {}
+            bDC.dB(cg, null, role);
+        }
     }
 
     @Override
@@ -402,7 +416,7 @@ public class Client extends Endpoint {
         String commands = "HELP";
         System.out.println("Help\nDraw Board\nLeave\nMake Non-Promoting Move\nMake Promoting Move\nResign\nHighlight Legal Moves");
         while (true) {
-            commands = getThing.nextLine();
+            commands = capitalizeLetters(getThing.nextLine());
             if (commands.equals("LEAVE")) {
                 sendCommand(UserGameCommand.CommandType.LEAVE, authToken, wGI, null);
                 role = BoardDrawingClass.Role.WHITE;

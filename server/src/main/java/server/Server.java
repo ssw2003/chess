@@ -97,7 +97,7 @@ public class Server {
             }
             String mssge = mssg;
             mssg = svc.getPsw(aT, false) + " leaves from " + mssg;
-            sendAll(false, ast, ServerMessage.ServerMessageType.NOTIFICATION, mssg, null);
+            sendAll(false, ast, ServerMessage.ServerMessageType.NOTIFICATION, ">>" + mssg, null);
             sat.remove(new SessionAuthToken(ast, aT, tgid));
             if (!mssge.equals("observer")) {
                 svc.joinGame(tgid, mssge.equals("white"), aT, new InfoJoinExt(1, null));
@@ -118,7 +118,7 @@ public class Server {
                     chg = gdt.game().clone();
                 }
             }
-            sendAll(false, ast, ServerMessage.ServerMessageType.NOTIFICATION, svc.getPsw(aT, false) + " joins as " + mssg, null);
+            sendAll(false, ast, ServerMessage.ServerMessageType.NOTIFICATION, ">>" + svc.getPsw(aT, false) + " joins as " + mssg, null);
             sendAll(true, ast, ServerMessage.ServerMessageType.LOAD_GAME, null, chg);
             return;
         }
@@ -143,7 +143,7 @@ public class Server {
                 sendAll(true, ast, ServerMessage.ServerMessageType.ERROR, "Error", null);
                 return;
             }
-            mssg = mssg + " (" + svc.getPsw(aT, false) + ") does the following action:\nresign";
+            mssg = mssg + " (" + svc.getPsw(aT, false) + ") does the following action:\nresign.";
             sendAll(true, ast, ServerMessage.ServerMessageType.NOTIFICATION, mssg, null);
             sendAll(false, ast, ServerMessage.ServerMessageType.NOTIFICATION, mssg, null);
             return;
