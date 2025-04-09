@@ -1,5 +1,4 @@
 package server;
-
 import chess.ChessGame;
 import chess.ChessMove;
 import com.google.gson.Gson;
@@ -177,8 +176,16 @@ public class Server {
             sendCheck = true;
         }
         if (sendCheck) {
-            sendAll(true, ast, ServerMessage.ServerMessageType.NOTIFICATION, "Ch", null);
-            sendAll(false, ast, ServerMessage.ServerMessageType.NOTIFICATION, "Ch", null);
+            //sendAll(true, ast, ServerMessage.ServerMessageType.NOTIFICATION, "Ch", null);
+            //sendAll(false, ast, ServerMessage.ServerMessageType.NOTIFICATION, "Ch", null);
+            String b = null; String c = b; for (GameData a: cgd) { if (a.gameID() == i) { b = svc.getPsw(a.whiteUsername(), false);
+                c = svc.getPsw(a.blackUsername(), false); } }
+            if (b == null) { b = "White (Nobody)"; } else { b = "White (" + b + ")"; } if (c == null) { c = "Black (Nobody)"; } else {
+                c = "Black (" + c + ")"; } String d = b + " and " + c + " are in stalemate"; if (cgdg.isInCheckmate(ChessGame.TeamColor.WHITE)) {
+                d = b + " in checkmate"; } else if (cgdg.isInCheck(ChessGame.TeamColor.WHITE)) { d = b + " in check"; }
+            if (cgdg.isInCheckmate(ChessGame.TeamColor.BLACK)) { d = c + " in checkmate"; } else if (cgdg.isInCheck(ChessGame.TeamColor.BLACK)) {
+                d = c + " in check"; } sendAll(true, ast, ServerMessage.ServerMessageType.NOTIFICATION, d, null);
+            sendAll(false, ast, ServerMessage.ServerMessageType.NOTIFICATION, d, null);
         }
     }
     private Object thisThingy(Request request, Response response) {
@@ -329,9 +336,7 @@ public class Server {
         try {
             String json = request.headers("authorization");
             authrztn = authrztn + json;
-            if (authrztn == null) {
-                throw new DataAccessException("");
-            }
+            if (authrztn == null) { throw new DataAccessException(""); }
         } catch (Exception exc) {
             response.status(401);
             var c = Map.of("message", "Error: unauthorized");
