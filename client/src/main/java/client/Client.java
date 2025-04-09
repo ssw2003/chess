@@ -11,7 +11,6 @@ import websocket.messages.ErrorMessage;
 import websocket.messages.LoadGameMessage;
 import websocket.messages.NotificationMessage;
 import websocket.messages.ServerMessage;
-
 import javax.websocket.*;
 import javax.websocket.Session;
 import java.io.IOException;
@@ -21,7 +20,6 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Scanner;
-
 public class Client extends Endpoint {
     private ServerFacade sF;
     private Scanner getThing;
@@ -29,9 +27,7 @@ public class Client extends Endpoint {
     private BoardDrawingClass bDC;
     private int wGI;
     private BoardDrawingClass.Role role;
-    //private MisterClient mC;
     public Session ss;
-    //private MisterClient mC;
     private volatile int fs;
     ChessGame cg;
     public int run(int desiredPort) {
@@ -40,11 +36,9 @@ public class Client extends Endpoint {
         wGI = 0;
         cg = null;
         role = BoardDrawingClass.Role.WHITE;
-        //mC = null;
         runLoop();
         return desiredPort;
     }
-
     public Client() throws Exception {
         ss = ContainerProvider.getWebSocketContainer().connectToServer(this, new URI("ws://localhost:8080/ws"));
         ss.addMessageHandler(new MessageHandler.Whole<String>() {
@@ -62,20 +56,12 @@ public class Client extends Endpoint {
                 }
             }
         });
-//        ss = ContainerProvider.getWebSocketContainer().connectToServer(this, new URI("ws://localhost:8080/ws"));
-//        ss.addMessageHandler(new MessageHandler() {
-//            public void onMessage(String e) {
-//                System.out.println(e);
-//            }
-//        });
     }
-
     private void dealWithGame(LoadGameMessage s) {
         cg = s.getGame().clone();
         bDC.dB(cg, null, role);
         fs = 1;
     }
-
     private void dealWithError(ErrorMessage s) {
         System.out.println("Error");
         if (s.getError().equals("Error")) {
@@ -85,7 +71,6 @@ public class Client extends Endpoint {
             fs = 0;
         }
     }
-
     private void dealWithIt(NotificationMessage s) {
         String t = s.getNotification();
         if (!t.equals("Ch")) {
@@ -106,7 +91,6 @@ public class Client extends Endpoint {
 
     @Override
     public void onOpen(Session session, EndpointConfig endpointConfig) {}
-
     private void runLoop() {
         getThing = new Scanner(System.in);
         authToken = null;
@@ -126,7 +110,6 @@ public class Client extends Endpoint {
             }
         }
     }
-
     private void printPrompt(String height) {
         if (height.equals("not logged in")) {
             System.out.println("Login\nRegister\nQuit\nHelp");
@@ -135,7 +118,6 @@ public class Client extends Endpoint {
             System.out.println("Play Game\nHelp\nLogout\nCreate Game\nList Games\nObserve Game");
         }
     }
-
     private String capitalizeLetters(String s) {
         String t = "";
         String u = "qwertyuiopasdfghjklzxcvbnm";
@@ -153,9 +135,6 @@ public class Client extends Endpoint {
         }
         return t;
     }
-
-
-
     private String evaluateLoggedIn(String iC) {
         if ((!iC.equals("PLAY GAME")) && (!iC.equals("CREATE GAME")) && (!iC.equals("OBSERVE GAME"))) {
             if ((!iC.equals("LIST GAMES")) && (!iC.equals("LOGOUT"))) {
@@ -192,8 +171,6 @@ public class Client extends Endpoint {
                 wGI = 0;
                 role = BoardDrawingClass.Role.WHITE;
             }
-            //mC = new MisterClient(role);
-            //mC = new MisterClient(role);
             return evaluateGame();
         }
         if (iC.equals("CREATE GAME")) {
@@ -485,13 +462,7 @@ public class Client extends Endpoint {
                 System.out.println("Bad command\n");
             }
         }
-        //mC.sendNotification(UserGameCommand.CommandType.CONNECT, authToken, wGI, null);
-        //role = BoardDrawingClass.Role.WHITE;
-        //wGI = 0;
-        //mC = null;
-        //return "logged in";
     }
-
     private ChessPiece.PieceType getPp(String s) {
         return switch (s) {
             case "KING" -> ChessPiece.PieceType.KING;
@@ -514,7 +485,4 @@ public class Client extends Endpoint {
         }
         return new ChessPosition((i.charAt(1) - '3') + 3, (i.charAt(0) - 'E') + 5);
     }
-
-//    @Override
-//    public void onOpen(Session session, EndpointConfig endpointConfig) {}
 }

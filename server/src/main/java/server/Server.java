@@ -20,34 +20,21 @@ import websocket.messages.ErrorMessage;
 import websocket.messages.LoadGameMessage;
 import websocket.messages.NotificationMessage;
 import websocket.messages.ServerMessage;
-
 import javax.management.relation.Role;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
-
 @WebSocket
 public class Server {
     private dataaccess.Service svc;
     private Collection<SessionAuthToken> sat;
-    //private MisterServer ms;
     public Server() {
         svc = new Service();
         sat = new ArrayList<>();
     }
-
     public int run(int desiredPort) {
-        //svc = new dataaccess.Service();
         Spark.port(desiredPort);
-        //ms = new MisterServer(svc);
-
         Spark.staticFiles.location("web");
-
-        // Register your endpoints and handle exceptions here.
-
-        //This line initializes the server and can be removed once you have a functioning endpoint
-        //Spark.init();
-        //Spark.webSocket("/ws", MisterServer.class);
         Spark.webSocket("/ws", Server.class);
         Spark.post("/user", this::goThingy);
         Spark.delete("/db", this::goThatThingy);
@@ -69,14 +56,10 @@ public class Server {
         try {
             cgd = svc.getGames(aT);
         } catch (DataAccessException e) {}
-        if (uct == UserGameCommand.CommandType.MAKE_MOVE) {
-            cM = new Gson().fromJson(s, MakeMoveCommand.class).getMove().clone();
-        }
+        if (uct == UserGameCommand.CommandType.MAKE_MOVE) { cM = new Gson().fromJson(s, MakeMoveCommand.class).getMove().clone(); }
         boolean mmm = false;
         for (GameData ggdd: cgd) {
-            if (ggdd.gameID() == tgid) {
-                mmm = true;
-            }
+            if (ggdd.gameID() == tgid) { mmm = true; }
         }
         String usn = svc.getPsw(aT, false);
         if (!mmm || usn == null) {
@@ -88,20 +71,14 @@ public class Server {
         String mssg = "observer";
         if (uct == UserGameCommand.CommandType.LEAVE) {
             for (GameData gdt: cgd) {
-                if (gdt.gameID() == tgid && thatsEqual(gdt.whiteUsername(), aT)) {
-                    mssg = "white";
-                }
-                else if (gdt.gameID() == tgid && thatsEqual(gdt.blackUsername(), aT)) {
-                    mssg = "black";
-                }
+                if (gdt.gameID() == tgid && thatsEqual(gdt.whiteUsername(), aT)) { mssg = "white"; }
+                else if (gdt.gameID() == tgid && thatsEqual(gdt.blackUsername(), aT)) { mssg = "black"; }
             }
             String mssge = mssg;
             mssg = svc.getPsw(aT, false) + " leaves from " + mssg;
             sendAll(false, ast, ServerMessage.ServerMessageType.NOTIFICATION, ">>" + mssg, null);
             sat.remove(new SessionAuthToken(ast, aT, tgid));
-            if (!mssge.equals("observer")) {
-                svc.joinGame(tgid, mssge.equals("white"), aT, new InfoJoinExt(1, null));
-            }
+            if (!mssge.equals("observer")) { svc.joinGame(tgid, mssge.equals("white"), aT, new InfoJoinExt(1, null)); }
             return;
         }
         else if (uct == UserGameCommand.CommandType.CONNECT) {
@@ -148,18 +125,21 @@ public class Server {
             sendAll(false, ast, ServerMessage.ServerMessageType.NOTIFICATION, mssg, null);
             return;
         }
+        doThatThat(cgd, tgid, mssg, aT, cM, ast);
+    }
+    private void doThatThat(Collection<GameData> cgd, int i, String s, String aT, ChessMove cM, org.eclipse.jetty.websocket.api.Session ast) {
         for (GameData gdt: cgd) {
-            if (gdt.gameID() == tgid && thatsEqual(aT, gdt.whiteUsername())) {
-                mssg = "white";
+            if (gdt.gameID() == i && thatsEqual(aT, gdt.whiteUsername())) {
+                s = "white";
             }
-            else if (thatsEqual(aT, gdt.blackUsername()) && gdt.gameID() == tgid) {
-                mssg = "black";
+            else if (thatsEqual(aT, gdt.blackUsername()) && gdt.gameID() == i) {
+                s = "black";
             }
         }
-        boolean badRes = mssg.equals("observer");
+        boolean badRes = s.equals("observer");
         if (!badRes) {
             try {
-                svc.joinGame(tgid, mssg.equals("white"), aT, new InfoJoinExt(3, cM.clone()));
+                svc.joinGame(i, s.equals("white"), aT, new InfoJoinExt(3, cM.clone()));
             } catch (DataAccessException e) {
                 badRes = true;
             }
@@ -168,24 +148,27 @@ public class Server {
             sendAll(false == false, ast, ServerMessage.ServerMessageType.ERROR, "Error", null);
             return;
         }
-        mssg = mssg + " (" + svc.getPsw(aT, false) + ") does the following action:\nmove ";
-        mssg = mssg + "abcdefgh".charAt(cM.getStartPosition().getColumn() - 1);
-        mssg = mssg + cM.getStartPosition().getRow() + " -> ";
-        mssg = mssg + "abcdefgh".charAt(cM.getEndPosition().getColumn() - 1);
-        mssg = mssg + cM.getEndPosition().getRow();
+        s = s + " (" + svc.getPsw(aT, false) + ") does the following action:\nmove ";
+        s = s + "abcdefgh".charAt(cM.getStartPosition().getColumn() - 1);
+        s = s + cM.getStartPosition().getRow() + " -> ";
+        s = s + "abcdefgh".charAt(cM.getEndPosition().getColumn() - 1);
+        s = s + cM.getEndPosition().getRow();
         if (cM.getPromotionPiece() != null) {
-            mssg = mssg + " promoting to " + cM.getPromotionPiece();
+            s = s + " promoting to " + cM.getPromotionPiece();
         }
         ChessGame cgdg = new ChessGame();
-        cgd = svc.getGames(aT);
+        cgd = new ArrayList<>();
+        try {
+            cgd = svc.getGames(aT);
+        } catch (DataAccessException e) {}
         for (GameData gdt: cgd) {
-            if (gdt.gameID() == tgid) {
+            if (gdt.gameID() == i) {
                 cgdg = gdt.game().clone();
             }
         }
         sendAll(true, ast, ServerMessage.ServerMessageType.LOAD_GAME, null, cgdg);
         sendAll(false, ast, ServerMessage.ServerMessageType.LOAD_GAME, null, cgdg);
-        sendAll(false, ast, ServerMessage.ServerMessageType.NOTIFICATION, mssg, null);
+        sendAll(false, ast, ServerMessage.ServerMessageType.NOTIFICATION, s, null);
         boolean sendCheck = false;
         if (cgdg.isInCheck(ChessGame.TeamColor.WHITE) || cgdg.isInCheck(ChessGame.TeamColor.BLACK)) {
             sendCheck = true;
@@ -198,7 +181,6 @@ public class Server {
             sendAll(false, ast, ServerMessage.ServerMessageType.NOTIFICATION, "Ch", null);
         }
     }
-
     private Object thisThingy(Request request, Response response) {
         //Create game
         var gson = new Gson();
@@ -233,7 +215,6 @@ public class Server {
         response.status(200);
         return gson.toJson(ce);
     }
-
     private Object thingyThing(Request request, Response response) {
         //Join game
         String authrztn = "";
@@ -281,7 +262,6 @@ public class Server {
         response.status(200);
         return gson.toJson(ce);
     }
-
     private Object thatThingy(Request request, Response response) {
         //LOGOUT
         var gson = new Gson();
@@ -305,7 +285,6 @@ public class Server {
             return gson.toJson(e);
         }
     }
-
     private Object thingy(Request request, Response response) {
         //LOGIN
         String usn;
@@ -343,9 +322,7 @@ public class Server {
             return gson.toJson(e);
         }
     }
-
     private Object goThisThingy(Request request, Response response) {
-
         //Games listing
         var gson = new Gson();
         String authrztn = "";
@@ -377,7 +354,6 @@ public class Server {
             return gson.toJson(c);
         }
     }
-
     private Object goThatThingy(Request request, Response response) {
         //Clear
         var gson = new Gson();
@@ -392,7 +368,6 @@ public class Server {
             return gson.toJson(c);
         }
     }
-
     private Object goThingy(Request request, Response response) {
         //register
         String usn;
@@ -429,7 +404,6 @@ public class Server {
             return gson.toJson(e);
         }
     }
-
     private String getColor(String s) {
         if (s == null) {
             return null;
@@ -450,33 +424,17 @@ public class Server {
             String sd = s.substring(3, 4);
             String se = s.substring(4, 5);
             if (sa.equals("W") || sa.equals("w")) {
-                if (!sb.equals("H") && !sb.equals("h")) {
-                    return null;
-                }
-                if (!sc.equals("I") && !sc.equals("i")) {
-                    return null;
-                }
-                if (!sd.equals("T") && !sd.equals("t")) {
-                    return null;
-                }
-                if (!se.equals("E") && !se.equals("e")) {
-                    return null;
-                }
+                if (!sb.equals("H") && !sb.equals("h")) { return null; }
+                if (!sc.equals("I") && !sc.equals("i")) { return null; }
+                if (!sd.equals("T") && !sd.equals("t")) { return null; }
+                if (!se.equals("E") && !se.equals("e")) { return null; }
                 return "WHITE";
             }
             if (sa.equals("B") || sa.equals("b")) {
-                if (!sb.equals("L") && !sb.equals("l")) {
-                    return null;
-                }
-                if (!sc.equals("A") && !sc.equals("a")) {
-                    return null;
-                }
-                if (!sd.equals("C") && !sd.equals("c")) {
-                    return null;
-                }
-                if (!se.equals("K") && !se.equals("k")) {
-                    return null;
-                }
+                if (!sb.equals("L") && !sb.equals("l")) { return null; }
+                if (!sc.equals("A") && !sc.equals("a")) { return null; }
+                if (!sd.equals("C") && !sd.equals("c")) { return null; }
+                if (!se.equals("K") && !se.equals("k")) { return null; }
                 return "BLACK";
             }
             return null;
@@ -484,12 +442,8 @@ public class Server {
         return null;
     }
     private boolean thatsEqual(String s, String t) {
-        if (s == null) {
-            return (t == null);
-        }
-        if (t == null) {
-            return false;
-        }
+        if (s == null) { return (t == null); }
+        if (t == null) { return false; }
         return s.equals(t);
     }
     private void sendAll(boolean b, org.eclipse.jetty.websocket.api.Session a, ServerMessage.ServerMessageType smt, String mss, ChessGame cg) {
@@ -530,9 +484,6 @@ public class Server {
             }
         }
     }
-
-
-
     public void stop() {
         Spark.stop();
         Spark.awaitStop();
