@@ -284,8 +284,8 @@ public class ServiceTests {
         int k = svc.addGame("Kasparov is Bad At Chess");
         int l = svc.addGame("Kasparov is Good At Chess");
         try {
-            Collection<GameData> gE = svc.getGames(authy);
-            for (GameData gF: gE) { gD.add(new GameDataWithout(gF.gameID(), gF.whiteUsername(), gF.blackUsername(), gF.gameName())); }
+            Collection<GameData> jt = svc.getGames(authy);
+            for (GameData pg: jt) { gD.add(new GameDataWithout(pg.gameID(), pg.whiteUsername(), pg.blackUsername(), pg.gameName())); }
         } catch (DataAccessException e) {
             i = 0;
             j = 0;
