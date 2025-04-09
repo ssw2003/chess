@@ -35,7 +35,7 @@ public class Client extends Endpoint {
     //private MisterClient mC;
     public Session ss;
     //private MisterClient mC;
-    private int fs;
+    private volatile int fs;
     ChessGame cg;
     public int run(int desiredPort) {
         sF = new ServerFacade("http://localhost:" + desiredPort);
@@ -76,6 +76,7 @@ public class Client extends Endpoint {
     private void dealWithGame(LoadGameMessage s) {
         cg = s.getGame().clone();
         bDC.dB(cg, null, role);
+        fs = 1;
     }
 
     private void dealWithError(ErrorMessage s) {
@@ -110,7 +111,7 @@ public class Client extends Endpoint {
                 height = evaluateLoggedIn(theirInput);
             }
             else {
-                height = evaluateGame(theirInput);
+                height = evaluateGame();
             }
         }
     }
@@ -182,7 +183,7 @@ public class Client extends Endpoint {
             }
             //mC = new MisterClient(role);
             //mC = new MisterClient(role);
-            return "";
+            return evaluateGame();
         }
         if (iC.equals("CREATE GAME")) {
             System.out.println("Game Name:");
@@ -210,7 +211,7 @@ public class Client extends Endpoint {
         }
         //mC = new MisterClient(role);
         //mC = new MisterClient(role);
-        return "";
+        return evaluateGame();
     }
     private String evaluateOut(String iC) {
         if (iC.equals("LOGOUT")) {
@@ -389,11 +390,14 @@ public class Client extends Endpoint {
         }
     }
 
-    private String evaluateGame(String theirInput) {
+    private String evaluateGame() {
         fs = 2;
         sendCommand(UserGameCommand.CommandType.CONNECT, authToken, wGI, null);
-        while (fs == 2) {}
+        while (fs == 2) {
+            Thread.onSpinWait();
+        }
         if (fs == 0) {
+            System.out.println("Debug here");
             wGI = 0;
             role = BoardDrawingClass.Role.WHITE;
             return "logged in";
@@ -410,6 +414,40 @@ public class Client extends Endpoint {
             }
             if (commands.equals("HELP")) {
                 System.out.println("Help\nDraw Board\nLeave\nMake Non-Promoting Move\nMake Promoting Move\nResign\nHighlight Legal Moves");
+            }
+            else if (commands.equals("DRAW BOARD")) {
+                bDC.dB(cg, null, role);
+            }
+            else if (commands.equals("MAKE NON-PROMOTING MOVE")) {
+                //
+            }
+            else if (commands.equals("MAKE PROMOTING MOVE")) {
+                //
+            }
+            else if (commands.equals("RESIGN")) {
+                System.out.println("Confirm?");
+                if (!capitalizeLetters(getThing.nextLine()).equals("CONFIRM")) {
+                    continue;
+                }
+                sendCommand(UserGameCommand.CommandType.RESIGN, authToken, wGI, null);
+            }
+            else if (commands.equals("HIGHLIGHT LEGAL MOVES")) {
+                System.out.println("Square");
+                String sq = getThing.nextLine();
+                sq = capitalizeLetters(sq);
+                if (sq.length() != 2) {
+                    System.out.println("Bad command\n");
+                }
+                else if (sq.charAt(0) < 'A' || sq.charAt(0) > 'H' || sq.charAt(1) < '1' || sq.charAt(1) > '8') {
+                    System.out.println("Bad command\n");
+                }
+                else {
+                    bDC.dB(cg, new ChessPosition((sq.charAt(0) - 'E') + 5, (sq.charAt(1) - '3') + 3), role);
+                }
+                bDC.dB(cg, null, role);
+            }
+            else {
+                System.out.println("Bad command\n");
             }
         }
         //mC.sendNotification(UserGameCommand.CommandType.CONNECT, authToken, wGI, null);

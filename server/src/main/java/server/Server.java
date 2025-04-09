@@ -87,10 +87,10 @@ public class Server {
         String mssg = "observer";
         if (uct == UserGameCommand.CommandType.LEAVE) {
             for (GameData gdt: cgd) {
-                if (gdt.gameID() == tgid && gdt.whiteUsername().equals(aT)) {
+                if (gdt.gameID() == tgid && thatsEqual(gdt.whiteUsername(), aT)) {
                     mssg = "white";
                 }
-                else if (gdt.gameID() == tgid && gdt.blackUsername().equals(aT)) {
+                else if (gdt.gameID() == tgid && thatsEqual(gdt.blackUsername(), aT)) {
                     mssg = "black";
                 }
             }
@@ -107,10 +107,10 @@ public class Server {
             sat.add(new SessionAuthToken(ast, aT, tgid));
             ChessGame chg = null;
             for (GameData gdt: cgd) {
-                if (gdt.gameID() == tgid && gdt.blackUsername().equals(aT)) {
+                if (gdt.gameID() == tgid && thatsEqual(gdt.blackUsername(), aT)) {
                     mssg = "black";
                 }
-                else if (gdt.gameID() == tgid && gdt.whiteUsername().equals(aT)) {
+                else if (gdt.gameID() == tgid && thatsEqual(gdt.whiteUsername(), aT)) {
                     mssg = "white";
                 }
                 if (gdt.gameID() == tgid) {
@@ -123,10 +123,10 @@ public class Server {
         }
         else if (uct == UserGameCommand.CommandType.RESIGN) {
             for (GameData gdt: cgd) {
-                if (gdt.whiteUsername().equals(aT) && gdt.gameID() == tgid) {
+                if (thatsEqual(gdt.whiteUsername(), aT) && gdt.gameID() == tgid) {
                     mssg = "white";
                 }
-                else if (gdt.blackUsername().equals(aT) && gdt.gameID() == tgid) {
+                else if (thatsEqual(gdt.blackUsername(), aT) && gdt.gameID() == tgid) {
                     mssg = "black";
                 }
             }
@@ -148,10 +148,10 @@ public class Server {
             return;
         }
         for (GameData gdt: cgd) {
-            if (gdt.gameID() == tgid && gdt.whiteUsername().equals(aT)) {
+            if (gdt.gameID() == tgid && thatsEqual(aT, gdt.whiteUsername())) {
                 mssg = "white";
             }
-            else if (gdt.blackUsername().equals(aT) && gdt.gameID() == tgid) {
+            else if (thatsEqual(aT, gdt.blackUsername()) && gdt.gameID() == tgid) {
                 mssg = "black";
             }
         }
@@ -481,6 +481,15 @@ public class Server {
             return null;
         }
         return null;
+    }
+    private boolean thatsEqual(String s, String t) {
+        if (s == null) {
+            return (t == null);
+        }
+        if (t == null) {
+            return false;
+        }
+        return s.equals(t);
     }
     private void sendAll(boolean b, org.eclipse.jetty.websocket.api.Session a, ServerMessage.ServerMessageType smt, String mss, ChessGame cg) {
         String s;
