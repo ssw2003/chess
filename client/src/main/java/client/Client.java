@@ -349,15 +349,6 @@ public class Client extends Endpoint {
         }
         return "=";
     }
-    private void drawBoard(Collection<GameData> gD, int jd, ChessPosition ch, BoardDrawingClass.Role rl) {
-        ChessGame cg = null;
-        for (GameData gd: gD) {
-            if (gd.gameID() == jd) {
-                cg = gd.game().clone();
-            }
-        }
-        bDC.dB(cg, ch, rl);
-    }
     private void sendCommand(UserGameCommand.CommandType uct, String auth, int gameID, ChessMove cm) {
         if (uct == UserGameCommand.CommandType.MAKE_MOVE) {
             try {

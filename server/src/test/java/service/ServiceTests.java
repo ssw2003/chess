@@ -11,7 +11,6 @@ import passoff.server.TestServerFacade;
 import server.Server;
 import java.net.HttpURLConnection;
 import java.util.*;
-
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class ServiceTests {
     private static Service svc;
@@ -253,18 +252,14 @@ public class ServiceTests {
         Collection<GameDataWithout> gD = new ArrayList<>();
         int i = svc.addGame("Anand is Champion");
         try {
-            Collection<GameData> gE = svc.getGames(authy);
-            for (GameData gF: gE) {
-                gD.add(new GameDataWithout(gF.gameID(), gF.whiteUsername(), gF.blackUsername(), gF.gameName()));
+            Collection<GameData> gw = svc.getGames(authy);
+            for (GameData gx: gw) {
+                gD.add(new GameDataWithout(gx.gameID(), gx.whiteUsername(), gx.blackUsername(), gx.gameName()));
             }
-        } catch (DataAccessException e) {
-            i = 0;
-        }
+        } catch (DataAccessException e) { i = 0; }
         Assertions.assertEquals(1, i);
         GameDataWithout gW = null;
-        for (GameDataWithout gDW: gD) {
-            gW = gDW;
-        }
+        for (GameDataWithout gDW: gD) { gW = gDW; }
         Assertions.assertNotNull(gW);
         Assertions.assertEquals(1, gW.gameID());
         Assertions.assertNull(gW.whiteUsername());
@@ -290,9 +285,7 @@ public class ServiceTests {
         int l = svc.addGame("Kasparov is Good At Chess");
         try {
             Collection<GameData> gE = svc.getGames(authy);
-            for (GameData gF: gE) {
-                gD.add(new GameDataWithout(gF.gameID(), gF.whiteUsername(), gF.blackUsername(), gF.gameName()));
-            }
+            for (GameData gF: gE) { gD.add(new GameDataWithout(gF.gameID(), gF.whiteUsername(), gF.blackUsername(), gF.gameName())); }
         } catch (DataAccessException e) {
             i = 0;
             j = 0;
@@ -305,18 +298,10 @@ public class ServiceTests {
         GameDataWithout gWK = null;
         GameDataWithout gWL = null;
         for (GameDataWithout gDW: gD) {
-            if (gDW.gameID() == i) {
-                gWI = gDW;
-            }
-            if (gDW.gameID() == j) {
-                gWJ = gDW;
-            }
-            if (gDW.gameID() == k) {
-                gWK = gDW;
-            }
-            if (gDW.gameID() == l) {
-                gWL = gDW;
-            }
+            if (gDW.gameID() == i) { gWI = gDW; }
+            if (gDW.gameID() == j) { gWJ = gDW; }
+            if (gDW.gameID() == k) { gWK = gDW; }
+            if (gDW.gameID() == l) { gWL = gDW; }
         }
         Assertions.assertEquals(1, i);
         Assertions.assertEquals(2, j);
@@ -398,9 +383,9 @@ public class ServiceTests {
         int j = svc.addGame("Bad game");
         Collection<GameDataWithout> gD = new ArrayList<>();
         try {
-            Collection<GameData> gE = svc.getGames(authy);
-            for (GameData gF: gE) {
-                gD.add(new GameDataWithout(gF.gameID(), gF.whiteUsername(), gF.blackUsername(), gF.gameName()));
+            Collection<GameData> hs = svc.getGames(authy);
+            for (GameData ehr: hs) {
+                gD.add(new GameDataWithout(ehr.gameID(), ehr.whiteUsername(), ehr.blackUsername(), ehr.gameName()));
             }
         } catch (DataAccessException e) {
             authy = "";
@@ -466,9 +451,9 @@ public class ServiceTests {
         Assertions.assertEquals(0, j);
         Collection<GameDataWithout> gD = new ArrayList<>();
         try {
-            Collection<GameData> gE = svc.getGames(authy);
-            for (GameData gF: gE) {
-                gD.add(new GameDataWithout(gF.gameID(), gF.whiteUsername(), gF.blackUsername(), gF.gameName()));
+            Collection<GameData> pw = svc.getGames(authy);
+            for (GameData mn: pw) {
+                gD.add(new GameDataWithout(mn.gameID(), mn.whiteUsername(), mn.blackUsername(), mn.gameName()));
             }
         } catch (DataAccessException e) {
             i = j;
