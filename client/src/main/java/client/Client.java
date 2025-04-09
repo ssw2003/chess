@@ -385,7 +385,6 @@ public class Client extends Endpoint {
             Thread.onSpinWait();
         }
         if (fs == 0) {
-            System.out.println("Debug here");
             wGI = 0;
             role = BoardDrawingClass.Role.WHITE;
             return "logged in";
